@@ -49,7 +49,7 @@ class Matrix:
 
     def get_ok_recall(self) -> np.float32:
         mat = self.get_confusion_matrix()
-        ok_recall = mat.fn / (mat.fn + mat.tn) if (mat.fn + mat.tn) != 0 else 0
+        ok_recall = mat.tn / (mat.tn + mat.fp) if (mat.tn + mat.fp) != 0 else 0
         return ok_recall
 
     def get_precision(self) -> np.float32:
