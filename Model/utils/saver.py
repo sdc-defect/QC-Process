@@ -18,7 +18,7 @@ class Saver:
 
         self._columns = ["epoch", "timestamp",
                          "train_loss", "train_accuracy", "train_recall", "train_f1", "train_matrix(tp, fn, fp, tn)",
-                         "val_loss", "train_accuracy", "val_recall", "val_f1", "val_matrix(tp, fn, fp, tn)", "val2"]
+                         "val_loss", "val_accuracy", "val_recall", "val_f1", "val_matrix(tp, fn, fp, tn)", "val2"]
         self._log = pd.DataFrame([], columns=self._columns)
 
         self._best_val_recall = float("-inf")
@@ -50,9 +50,11 @@ class Saver:
     def save_test_log(self, tester: MyTester):
         tm = tester.get_confusion_matrix()
         tm_str = f"{tm.tp}-{tm.fn}-{tm.fp}-{tm.tn}"
-        data = [tester.get_loss(), tester.get_accuracy(), tester.get_recall(), tester.get_f1_score(), tm_str]
+        data = [tester.get_loss(), tester.get_accuracy(),
+                tester.get_recall(), tester.get_f1_score(),
+                tester.get_ok_recall(), tester.get_ok_f1_score(), tm_str]
         test_log = pd.DataFrame([data],
-                                columns=["loss", "accuracy", "recall", "f1", "matrix(tp, fn, fp, tn)"])
+                                columns=["loss", "accuracy", "recall", "f1", "ok_recall", "ok_f1", "matrix(tp, fn, fp, tn)"])
         test_log.to_csv(os.path.join(self.save_dir, f"test_log.csv"), index=False)
 
     def save_best_model(self, model, new_recall, new_ok_recall) -> None:

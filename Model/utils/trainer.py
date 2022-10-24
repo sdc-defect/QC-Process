@@ -20,7 +20,7 @@ class MyTester(Matrix):
     def __init__(self, model) -> None:
         super().__init__()
         self._model = model
-        self._loss_func = BinaryCrossentropy(from_logits=True)
+        self._loss_func = BinaryCrossentropy()
         self._loss = Mean(name='Loss')
 
     @tf.function
