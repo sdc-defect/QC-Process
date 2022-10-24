@@ -1,9 +1,7 @@
 .idea
 __pycache__/
 train/*
-!train/hsd/model
-!train/jjh/model
-!train/jsh/model
-!train/kmy/model
-!train/ksj/model
-!train/rjh/model
+
+!*.yaml
+!*.csv
+!*.py
