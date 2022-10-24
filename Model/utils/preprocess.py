@@ -1,66 +1,86 @@
-import albumentations as A
+import random
+from typing import List
+
+import albumentations as album
 import numpy as np
 
-import tensorflow as tf
+
+def get_index_batch_slices(size: int, batch_size: int):
+    slice_list = [i for i in range(size)]
+    random.shuffle(slice_list)
+    return np.array_split(slice_list, int(size / batch_size))
 
 
 def sample_beta_distribution(size, concentration_0=0.2, concentration_1=0.2):
-    gamma_1_sample = tf.random.gamma(shape=[size], alpha=concentration_1)
-    gamma_2_sample = tf.random.gamma(shape=[size], alpha=concentration_0)
+    gamma_1_sample = np.random.gamma(shape=[size], scale=concentration_0)
+    gamma_2_sample = np.random.gamma(shape=[size], scale=concentration_1)
     return gamma_1_sample / (gamma_1_sample + gamma_2_sample)
 
 
-def mixup(image: tf.Tensor, label: tf.Tensor):
-    image1, image2 = tf.split(image, num_or_size_splits=2)
-    label1, label2 = tf.split(label, num_or_size_splits=2)
-    batch_size = tf.shape(image)[0] / 2
+def mix_up(images: List, labels: List):
+    image1 = images[:int(len(images) / 2)]
+    image2 = images[int(len(images) / 2):]
+    label1 = labels[:int(len(labels) / 2)]
+    label2 = labels[int(len(labels) / 2):]
 
-    mat = sample_beta_distribution(batch_size)
-    x_l = tf.reshape(mat, (batch_size, 1, 1, 1))
-    y_l = tf.reshape(mat, (batch_size, 1))
+    mat = sample_beta_distribution(int(len(labels) / 2))
 
-    mix_images = image1 * x_l + image2 * (1 - x_l)
-    mix_labels = label1 * y_l + label2 * (1 - y_l)
+    mix_images = image1 * mat + image2 * (1 - mat)
+    mix_labels = label1 * mat + label2 * (1 - mat)
     return mix_images, mix_labels
 
 
 class Preprocessor:
     def __init__(self) -> None:
-        self._flipper1 = A.OneOf([
-            A.HorizontalFlip(p=1),
-            A.VerticalFlip(p=1),
+        self._flipper1 = album.OneOf([
+            album.HorizontalFlip(p=1),
+            album.VerticalFlip(p=1),
         ], p=1)
-        self._flipper2 = A.Compose([
-            A.HorizontalFlip(p=1),
-            A.VerticalFlip(p=1)
+        self._flipper2 = album.Compose([
+            album.HorizontalFlip(p=1),
+            album.VerticalFlip(p=1)
         ])
-        self._rotator = A.ShiftScaleRotate(shift_limit=0, rotate_limit=150, scale_limit=0, p=1,
-                                           border_mode=1)
-        self._shifter = A.ShiftScaleRotate(shift_limit=0.08, rotate_limit=0, scale_limit=0, p=1,
-                                           border_mode=1)
-        self._gaussian = A.GaussNoise(var_limit=(0.0005, 0.0005), p=1)
+        self._rotator = album.ShiftScaleRotate(shift_limit=0, rotate_limit=150, scale_limit=0, p=1,
+                                               border_mode=1)
+        self._shifter = album.ShiftScaleRotate(shift_limit=0.08, rotate_limit=0, scale_limit=0, p=1,
+                                               border_mode=1)
+        self._gaussian = album.GaussNoise(var_limit=(0.0005, 0.0005), p=1)
 
-    def preprocess(self, image: tf.Tensor, label: tf.Tensor):
-        b, w, h, c = image.shape
+    def augment_dataset(self, train_img_list: list, train_label_list: list, slices: list):
+        target_img = [train_img_list[i] for i in slices]
+        target_label = [train_label_list[i] for i in slices]
 
-        imgs = image.numpy()
-        labels = label.numpy()
+        img_list = []
+        label_list = []
+        for img, lab in zip(target_img, target_label):
+            img_list.append(self._flipper1(image=img)['image'])
+            label_list.append(lab)
 
-        img_pallete = np.empty([b * 6 + int(b / 2), w, h, c])
-        label_pallete = np.empty([b * 6 + int(b / 2), 2])
-        for i, (img, lab) in enumerate(zip(imgs, labels)):
-            img_pallete[i] = img
-            img_pallete[i + b * 1] = self._flipper1(image=img)['image']
-            img_pallete[i + b * 2] = self._flipper2(image=img)['image']
-            img_pallete[i + b * 3] = self._rotator(image=img)['image']
-            img_pallete[i + b * 4] = self._shifter(image=img)['image']
-            img_pallete[i + b * 5] = self._gaussian(image=img)['image']
-            for j in range(6):
-                label_pallete[i + b * j] = lab
+            img_list.append(self._flipper2(image=img)['image'])
+            label_list.append(lab)
 
-        mixup_img, mixup_label = mixup(image, label)
-        for i, (mi, ml) in enumerate(zip(mixup_img, mixup_label)):
-            img_pallete[b * 6 + i] = mi
-            label_pallete[b * 6 + i] = ml
+            img_list.append(self._rotator(image=img)['image'])
+            label_list.append(lab)
 
-        return tf.convert_to_tensor(img_pallete), tf.convert_to_tensor(label_pallete)
+            img_list.append(self._shifter(image=img)['image'])
+            label_list.append(lab)
+
+            img_list.append(self._gaussian(image=img)['image'])
+            label_list.append(lab)
+
+        idx = [i for i in range(len(slices))]
+        random.shuffle(idx)
+        image1 = [target_img[i] for i in idx[:int(len(target_img) / 2)]]
+        image2 = [target_img[i] for i in idx[int(len(target_img) / 2):]]
+        label1 = [target_label[i] for i in idx[:int(len(target_label) / 2)]]
+        label2 = [target_label[i] for i in idx[int(len(target_label) / 2):]]
+
+        mat = sample_beta_distribution(int(len(target_label) / 2))
+
+        mix_img = [img1 * mat + img2 * (1 - mat) for img1, img2 in zip(image1, image2)]
+        mix_labels = [lab1 * mat + lab2 * (1 - mat) for lab1, lab2 in zip(label1, label2)]
+        for mi, ml in zip(mix_img, mix_labels):
+            img_list.append(mi)
+            label_list.append(ml)
+
+        return img_list, label_list
