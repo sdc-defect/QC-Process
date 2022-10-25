@@ -9,10 +9,8 @@ from utils.trainer import MyTrainer, MyTester
 
 
 class Saver:
-    def __init__(self, folder, save) -> None:
-        self.dir = folder
-        self.save = save
-        self.save_dir = os.path.join(folder, save)
+    def __init__(self, user, save) -> None:
+        self.save_dir = os.path.join("train", user, save)
         if not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir, exist_ok=True)
 
@@ -23,6 +21,10 @@ class Saver:
 
         self._best_val_recall = float("-inf")
         self._best_val_ok_recall = float("-inf")
+        self._best_loss = float("inf")
+
+    def clear(self):
+        self._log = pd.DataFrame([], columns=self._columns)
 
     def save_train_log(self, fold, epoch, trainer: MyTrainer, validator: MyTester, val2_cnt: int):
         tm = trainer.get_confusion_matrix()
@@ -57,9 +59,13 @@ class Saver:
                                 columns=["loss", "accuracy", "recall", "f1", "ok_recall", "ok_f1", "matrix(tp, fn, fp, tn)"])
         test_log.to_csv(os.path.join(self.save_dir, f"test_log.csv"), index=False)
 
-    def save_best_model(self, model, new_recall, new_ok_recall) -> None:
-        if self._best_val_recall <= new_recall and self._best_val_ok_recall <= new_ok_recall:
+    def save_best_model(self, fold, epoch, model, new_recall, new_ok_recall, new_loss) -> None:
+        if self._best_val_recall <= new_recall and self._best_val_ok_recall <= new_ok_recall \
+                and self._best_loss > new_loss:
             self._best_val_recall = new_recall
             self._best_val_ok_recall = new_ok_recall
+            self._best_loss = new_loss
             print("saving...")
+            with open(os.path.join(self.save_dir, f"best_model.txt"), "w") as note:
+                note.write(f"{fold} fold, {epoch} epoch")
             tf.saved_model.save(model, self.save_dir)

@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 from keras.optimizers.schedules.learning_rate_schedule import CosineDecayRestarts
 from keras.optimizers.optimizer_v2.adam import Adam
-from keras.losses import BinaryCrossentropy
+from keras.losses import CategoricalCrossentropy
 from keras.metrics import Mean
 
 from utils.matrix import Matrix
@@ -11,16 +11,16 @@ from utils.matrix import Matrix
 
 @tf.function
 def inference(model, images) -> tf.Tensor:
-    preds: tf.Tensor = model(images, training=False)
+    predictions: tf.Tensor = model(images, training=False)
 
-    return tf.argmax(preds, axis=1)
+    return tf.argmax(predictions, axis=1)
 
 
 class MyTester(Matrix):
     def __init__(self, model) -> None:
         super().__init__()
         self._model = model
-        self._loss_func = BinaryCrossentropy()
+        self._loss_func = CategoricalCrossentropy()
         self._loss = Mean(name='Loss')
 
     @tf.function
