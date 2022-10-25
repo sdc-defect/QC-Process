@@ -1,0 +1,8 @@
+module: train.hsd.model.mymodel
+class: MyModel1
+root_dir: train/hsd
+save_dir: case1
+batch_size: 16
+epochs: 50
+init_lr: 0.0005
+decay_steps: 1000
