@@ -1,0 +1,8 @@
+module: train.jsh.model.mymodel
+class: MyModel
+root_dir: train/jsh
+save_dir: case1
+batch_size: 8
+epochs: 50
+init_lr: 0.0005
+decay_steps: 1000
