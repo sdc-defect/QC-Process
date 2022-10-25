@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 import yaml
+
 from sklearn.model_selection import KFold
 import tensorflow as tf
 from keras.utils import Progbar
@@ -22,18 +23,19 @@ if __name__ == "__main__":
                         default=".")
     parser.add_argument("--config",
                         type=str,
-                        help="input yaml file",
+                        help="input your yaml file path",
                         required=True)
     args = parser.parse_args()
 
     os.chdir(args.root)
-    with open(args.config) as f:
+
+    with open(args.config, "r") as f:
         config = yaml.load(f, yaml.FullLoader)
 
+    user = config['user']
+    save = config['save']
     module = config['module']
     cls = config['class']
-    root_dir = config['root_dir']
-    save_dir = config['save_dir']
     batch_size = config['batch_size']
     epochs = config['epochs']
     init_lr = config['init_lr']
@@ -55,12 +57,14 @@ if __name__ == "__main__":
     val2_dataset_img, _ = get_dataset("dataset/val2.tfrecord")
 
     # Saver & Preprocessor
-    saver = Saver(folder=root_dir, save=save_dir)
+    saver = Saver(user=user, save=save)
     pre = Preprocessor()
 
     # Train
     module = importlib.import_module(module)
     for fold, (slices_train, slices_val) in enumerate(KFold(5, shuffle=True).split(range(len(train_dataset_img)))):
+        saver.clear()
+
         train_aug_img, train_aug_label = pre.augment_dataset(train_dataset_img, train_dataset_label, slices_train)
 
         train_ds_img = train_dataset_img + train_aug_img
@@ -75,8 +79,8 @@ if __name__ == "__main__":
 
         # Load Model
         model = getattr(module, cls)()
-        model.build(input_shape=(None, 300, 300, 3))
-        model.summary()
+        # model.build(input_shape=(None, 300, 300, 3))
+        # model.summary()
 
         # Load Trainers
         trainer = MyTrainer(model=model, init_lr=init_lr, decay_steps=decay_steps)
@@ -125,22 +129,7 @@ if __name__ == "__main__":
                 f"recall: {validator.get_recall():.4f}, ok_recall: {validator.get_ok_recall():.4f}, "
                 f"f1 score: {validator.get_f1_score():.4f}, ok_f1 score: {validator.get_ok_f1_score():.4f}")
             print(f"2nd validation: {cnt} / 50\n")
-            saver.save_train_log(fold, epoch, trainer, validator, cnt)
+            saver.save_train_log(fold + 1, epoch, trainer, validator, cnt)
             if cnt >= 48:
-                saver.save_best_model(model, validator.get_recall(), validator.get_ok_recall())
-
-    # Test
-    best_model = tf.saved_model.load(os.path.join(root_dir, save_dir))
-    tester = MyTester(model=best_model)
-    test_dataset_img, test_dataset_label = get_dataset("dataset/test.tfrecord")
-    test_ds_slices = get_index_batch_slices(len(test_dataset_img), batch_size)
-    for slice_list in test_ds_slices:
-        img = np.array([test_dataset_img[i] for i in slice_list])
-        label = np.array([test_dataset_label[i] for i in slice_list])
-        img = tf.image.grayscale_to_rgb(tf.convert_to_tensor(img))
-        lab = tf.convert_to_tensor(label)
-        tester.test(img, lab)
-    print(f"test result - loss: {tester.get_loss():.4f}, accuracy: {tester.get_accuracy():.4f}, "
-          f"recall: {tester.get_recall():.4f}, f1: {tester.get_f1_score():.4f}, "
-          f"ok_recall: {tester.get_ok_recall():.4f}, ok_f1: {tester.get_ok_f1_score():.4f}")
-    saver.save_test_log(tester)
+                saver.save_best_model(fold + 1, epoch, model,
+                                      validator.get_recall(), validator.get_ok_recall(), validator.get_loss())
