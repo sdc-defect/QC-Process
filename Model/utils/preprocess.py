@@ -1,11 +1,10 @@
 import random
-from typing import List
+from typing import List, Tuple
 
 import albumentations as album
 import numpy as np
 
 import tensorflow as tf
-import cv2
 
 
 def get_index_batch_slices(size: int, batch_size: int):
@@ -33,12 +32,14 @@ def mix_up(images: List, labels: List):
     label2 = [labels[i] for i in idx[int(len(labels) / 2):]]
     label2 = tf.convert_to_tensor(label2)
 
-    mat = sample_beta_distribution(int(len(labels) / 2))
+    mat = sample_beta_distribution(int(len(labels) / 2)) / 5
+
     x_l = tf.reshape(mat, (len(image1), 1, 1, 1))
     y_l = tf.reshape(mat, (len(image1), 1))
 
     mix_images = image1 * x_l + image2 * (1 - x_l)
     mix_labels = label1 * y_l + label2 * (1 - y_l)
+
     return mix_images, mix_labels
 
 
@@ -58,9 +59,13 @@ class Preprocessor:
                                                border_mode=1)
         self._gaussian = album.GaussNoise(var_limit=(0.0005, 0.0005), p=1)
 
-    def augment_dataset(self, train_img_list: list, train_label_list: list, slices: list):
-        target_img = [train_img_list[i] for i in slices]
-        target_label = [train_label_list[i] for i in slices]
+    def augment_dataset(self, train_img_list: list, train_label_list: list, slices: list = None) -> Tuple[List, List]:
+        if slices is not None:
+            target_img = [train_img_list[i] for i in slices]
+            target_label = [train_label_list[i] for i in slices]
+        else:
+            target_img = train_img_list
+            target_label = train_label_list
 
         img_list = []
         label_list = []

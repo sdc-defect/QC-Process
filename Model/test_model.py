@@ -64,3 +64,5 @@ if __name__ == "__main__":
                             columns=["loss", "accuracy", "recall", "f1", "ok_recall", "ok_f1",
                                      "matrix(tp, fn, fp, tn)"])
     test_log.to_csv(os.path.join(args.model, f"test_log.csv"), index=False)
+
+
