@@ -56,7 +56,8 @@ class Saver:
                 tester.get_recall(), tester.get_f1_score(),
                 tester.get_ok_recall(), tester.get_ok_f1_score(), tm_str]
         test_log = pd.DataFrame([data],
-                                columns=["loss", "accuracy", "recall", "f1", "ok_recall", "ok_f1", "matrix(tp, fn, fp, tn)"])
+                                columns=["loss", "accuracy", "recall", "f1",
+                                         "ok_recall", "ok_f1", "matrix(tp, fn, fp, tn)"])
         test_log.to_csv(os.path.join(self.save_dir, f"test_log.csv"), index=False)
 
     def save_best_model(self, fold, epoch, model, new_recall, new_ok_recall, new_loss) -> None:
