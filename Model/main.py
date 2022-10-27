@@ -61,7 +61,7 @@ if __name__ == "__main__":
     pre = Preprocessor()
 
     # Train
-    module = importlib.import_module(module)
+    module = importlib.import_module(f"train.{user}.{module}")
     for fold, (slices_train, slices_val) in enumerate(KFold(5, shuffle=True).split(range(len(train_dataset_img)))):
         saver.clear()
 
