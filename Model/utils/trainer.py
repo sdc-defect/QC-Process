@@ -11,9 +11,7 @@ from utils.matrix import Matrix
 
 @tf.function
 def inference(model, images) -> tf.Tensor:
-    predictions: tf.Tensor = model(images, training=False)
-
-    return tf.argmax(predictions, axis=1)
+    return model(images, training=False)
 
 
 class MyTester(Matrix):
