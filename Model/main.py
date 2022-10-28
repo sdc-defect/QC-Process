@@ -134,5 +134,5 @@ if __name__ == "__main__":
         print(f"2nd validation: {cnt} / 50\n")
         saver.save_train_log(epoch, trainer, validator, cnt, musts)
         if cnt >= 48:
-            saver.save_best_model("", epoch, model,
+            saver.save_best_model(epoch, model,
                                   validator.get_recall(), validator.get_ok_recall(), validator.get_loss())

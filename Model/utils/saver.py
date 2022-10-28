@@ -64,12 +64,12 @@ class Saver:
 
         new_data = pd.DataFrame([data], columns=self._columns)
         self._log = pd.concat([self._log, new_data])
-        self._log.to_csv(os.path.join(self.save_dir, f"log.csv"), index=False)
+        self._log.to_csv(os.path.join(self.save_dir, f"train_log.csv"), index=False)
         self._must_log[epoch] = convert_must_list_to_dict(musts)
         with open(os.path.join(self.save_dir, "train_must_log.json"), 'w') as f:
             json.dump(self._must_log, f)
 
-    def save_best_model(self, fold, epoch, model, new_recall, new_ok_recall, new_loss) -> None:
+    def save_best_model(self, epoch, model, new_recall, new_ok_recall, new_loss) -> None:
         if self._best_val_recall <= new_recall and self._best_val_ok_recall <= new_ok_recall \
                 and self._best_loss > new_loss:
             self._best_val_recall = new_recall
@@ -77,5 +77,5 @@ class Saver:
             self._best_loss = new_loss
             print("saving...")
             with open(os.path.join(self.save_dir, f"best_model.txt"), "w") as note:
-                note.write(f"{fold} fold, {epoch} epoch")
+                note.write(f"{epoch} epoch")
             tf.saved_model.save(model, self.save_dir)
