@@ -1,11 +1,26 @@
 import os
 from datetime import datetime
 
+import json
+from typing import List, Dict, Union
+
 import pandas as pd
 
 import tensorflow as tf
 
 from utils.trainer import MyTrainer, MyTester
+from utils.matrix import Must, convert_must_list_to_dict, count_def_in_must_list
+
+
+def save_test_log(path: str, tester: MyTester, musts: List[Must]):
+    tm = tester.get_confusion_matrix()
+    data = {"loss": float(tester.get_loss()), "accuracy": tester.get_accuracy(), "recall": tester.get_recall(),
+            "f1": tester.get_f1_score(), "ok_recall": tester.get_ok_recall(), "ok_f1": tester.get_ok_f1_score(),
+            "tp": tm.tp, "fn": tm.fn, "fp": tm.fp, "tn": tm.tn,
+            'must_cnt': count_def_in_must_list(musts), 'must': convert_must_list_to_dict(musts)}
+
+    with open(os.path.join(path, "test_log.json"), "w") as f:
+        json.dump(data, f)
 
 
 class Saver:
@@ -18,6 +33,7 @@ class Saver:
                          "train_loss", "train_accuracy", "train_recall", "train_f1", "train_matrix(tp, fn, fp, tn)",
                          "val_loss", "val_accuracy", "val_recall", "val_f1", "val_matrix(tp, fn, fp, tn)", "val2"]
         self._log = pd.DataFrame([], columns=self._columns)
+        self._must_log = dict()
 
         self._best_val_recall = float("-inf")
         self._best_val_ok_recall = float("-inf")
@@ -26,7 +42,8 @@ class Saver:
     def clear(self):
         self._log = pd.DataFrame([], columns=self._columns)
 
-    def save_train_log(self, fold, epoch, trainer: MyTrainer, validator: MyTester, val2_cnt: int):
+    def save_train_log(self, epoch, trainer: MyTrainer, validator: MyTester, val2_cnt: int,
+                       musts: List[Must]):
         tm = trainer.get_confusion_matrix()
         tl = trainer.get_loss()
         ta = trainer.get_accuracy()
@@ -47,18 +64,10 @@ class Saver:
 
         new_data = pd.DataFrame([data], columns=self._columns)
         self._log = pd.concat([self._log, new_data])
-        self._log.to_csv(os.path.join(self.save_dir, f"{fold}_log.csv"), index=False)
-
-    def save_test_log(self, tester: MyTester):
-        tm = tester.get_confusion_matrix()
-        tm_str = f"{tm.tp}-{tm.fn}-{tm.fp}-{tm.tn}"
-        data = [tester.get_loss(), tester.get_accuracy(),
-                tester.get_recall(), tester.get_f1_score(),
-                tester.get_ok_recall(), tester.get_ok_f1_score(), tm_str]
-        test_log = pd.DataFrame([data],
-                                columns=["loss", "accuracy", "recall", "f1",
-                                         "ok_recall", "ok_f1", "matrix(tp, fn, fp, tn)"])
-        test_log.to_csv(os.path.join(self.save_dir, f"test_log.csv"), index=False)
+        self._log.to_csv(os.path.join(self.save_dir, f"log.csv"), index=False)
+        self._must_log[epoch] = convert_must_list_to_dict(musts)
+        with open(os.path.join(self.save_dir, "train_must_log.json"), 'w') as f:
+            json.dump(self._must_log, f)
 
     def save_best_model(self, fold, epoch, model, new_recall, new_ok_recall, new_loss) -> None:
         if self._best_val_recall <= new_recall and self._best_val_ok_recall <= new_ok_recall \
