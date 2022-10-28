@@ -28,7 +28,7 @@ class MyModel(tf.keras.Model):
 
 class MyModel2(tf.keras.Model):
     def __init__(self):
-        super(MyModel, self).__init__()
+        super(MyModel2, self).__init__()
         
         self.baseModel = tf.keras.applications.efficientnet_v2.EfficientNetV2B1(include_top=False, input_shape=(300, 300, 3))
         self.norm = tf.keras.layers.BatchNormalization()
@@ -52,7 +52,7 @@ class MyModel2(tf.keras.Model):
 
 class MyModel3(tf.keras.Model):
     def __init__(self):
-        super(MyModel, self).__init__()
+        super(MyModel3, self).__init__()
         
         self.baseModel = tf.keras.applications.efficientnet_v2.EfficientNetV2B2(include_top=False, input_shape=(300, 300, 3))
         self.norm = tf.keras.layers.BatchNormalization()
@@ -75,7 +75,7 @@ class MyModel3(tf.keras.Model):
 
 class MyModel4(tf.keras.Model):
     def __init__(self):
-        super(MyModel, self).__init__()
+        super(MyModel4, self).__init__()
         
         self.baseModel = tf.keras.applications.efficientnet_v2.EfficientNetV2B3(include_top=False, input_shape=(300, 300, 3))
         self.norm = tf.keras.layers.BatchNormalization()
