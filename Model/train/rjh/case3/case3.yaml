@@ -1,5 +1,5 @@
 user: rjh
-save: case2
+save: case3
 module: model.mymodel
 class: MyModel2
 batch_size: 8
