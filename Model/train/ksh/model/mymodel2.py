@@ -13,6 +13,7 @@ class EfficientNetB4(tf.keras.Model):
         self.outputs = tf.keras.layers.Dense(2, activation="softmax")
     
     def call(self, x):
+        x = self.baseModel(x)
         x = self.headModel2(x)
         x = self.headModel3(x)
 
