@@ -1,0 +1,8 @@
+user: rjh
+save: EB0
+module: model.efficient
+class: EB0
+batch_size: 16
+epochs: 50
+init_lr: 0.0005
+decay_steps: 1200
