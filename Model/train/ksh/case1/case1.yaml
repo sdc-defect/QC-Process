@@ -1,7 +1,7 @@
-module: train.ksh.model.mymodel1
+user: ksh
+save: case1
+module: model.mymodel1
 class: EfficientNetB3
-root_dir: train/ksh
-save_dir: case1
 batch_size: 16
 epochs: 50
 init_lr: 0.001
