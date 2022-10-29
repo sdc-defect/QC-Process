@@ -1,3 +1,5 @@
+from typing import List, Dict, Union
+
 import numpy as np
 from dataclasses import dataclass
 
@@ -10,6 +12,28 @@ class ConfusionMatrix:
     tn: int
     fp: int
     fn: int
+
+
+@dataclass
+class Must:
+    fname: str
+    correct: bool
+    prob: List[Union[float, float]]
+
+
+def convert_must_list_to_dict(musts: List[Must]) -> Dict[str, Dict[str, Union[bool, List[Union[float, float]]]]]:
+    result = {}
+    for must in musts:
+        result[must.fname] = {'result': str(must.correct), 'probability': [float(p) for p in must.prob]}
+    return result
+
+
+def count_def_in_must_list(musts: List[Must]) -> int:
+    cnt = 0
+    for must in musts:
+        if must.correct:
+            cnt += 1
+    return cnt
 
 
 class Matrix:
