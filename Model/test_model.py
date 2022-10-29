@@ -1,13 +1,16 @@
 import argparse
+import json
 import os
 
 import pandas as pd
 import numpy as np
 import tensorflow as tf
 
-from utils.trainer import MyTester
+from utils.matrix import Must
+from utils.saver import save_test_log
+from utils.trainer import MyTester, inference
 from utils.preprocess import get_index_batch_slices
-from dataset.read_record import get_dataset
+from dataset.read_record import get_dataset, get_dataset_with_fname
 
 
 if __name__ == "__main__":
@@ -39,8 +42,9 @@ if __name__ == "__main__":
         except RuntimeError as e:
             print(e)
 
-    # Test
     best_model = tf.saved_model.load(os.path.join(args.model))
+
+    # Test
     tester = MyTester(model=best_model)
     test_dataset_img, test_dataset_label = get_dataset("dataset/test.tfrecord")
     test_ds_slices = get_index_batch_slices(len(test_dataset_img), args.batch)
@@ -54,15 +58,14 @@ if __name__ == "__main__":
           f"recall: {tester.get_recall():.4f}, f1: {tester.get_f1_score():.4f}, "
           f"ok_recall: {tester.get_ok_recall():.4f}, ok_f1: {tester.get_ok_f1_score():.4f}")
 
+    # Must
+    must_dataset_img, _, must_dataset_fname = get_dataset_with_fname("dataset/must.tfrecord")
+    img = tf.convert_to_tensor(np.array(must_dataset_img))
+    predictions = inference(best_model, img)
+    musts = []
+    for i, (fname, pred) in enumerate(zip(must_dataset_fname, predictions.numpy())):
+        correct = np.argmax(pred) == 1
+        musts.append(Must(fname, correct, pred))
+
     # Save Log
-    tm = tester.get_confusion_matrix()
-    tm_str = f"{tm.tp}-{tm.fn}-{tm.fp}-{tm.tn}"
-    data = [tester.get_loss(), tester.get_accuracy(),
-            tester.get_recall(), tester.get_f1_score(),
-            tester.get_ok_recall(), tester.get_ok_f1_score(), tm_str]
-    test_log = pd.DataFrame([data],
-                            columns=["loss", "accuracy", "recall", "f1", "ok_recall", "ok_f1",
-                                     "matrix(tp, fn, fp, tn)"])
-    test_log.to_csv(os.path.join(args.model, f"test_log.csv"), index=False)
-
-
+    save_test_log(args.model, tester, musts)
