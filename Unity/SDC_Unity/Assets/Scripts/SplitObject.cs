@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConvayorBelt2 : MonoBehaviour
+public class SplitObject : MonoBehaviour
 {
     public float speed;
     private float fDelayTime = 2f;
@@ -21,20 +21,19 @@ public class ConvayorBelt2 : MonoBehaviour
     void FixedUpdate()
     {
         fTime += Time.fixedDeltaTime;
-        
+
         // Debug.Log(fTime);
 
         if (fTime >= fDelayTime)
         {
             Vector3 pos = rBody.position;
-            rBody.position += Vector3.back * speed * Time.fixedDeltaTime;
+            rBody.position += Vector3.right * speed * Time.fixedDeltaTime;
             rBody.MovePosition(pos);
 
             if (fTime >= 4)
             {
-                Instantiate(Product);
-
                 fTime = 0.00f;
+                speed = -1 * speed;
             }
         }
     }
