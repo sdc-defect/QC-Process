@@ -74,10 +74,10 @@
 
 
 
-이전 실험과 다른 점 : case6과 비교 -> learning rate 0.001 -> 0.0005
+이전 실험과 다른 점 : case6과 비교 -> learning rate 0.005 -> 0.0001
 
 결론: 
 
-Train Loss는 낮아지고 accuracy는 올라감
+example과 유사하게 값이 나왔고 Loss와 accuracy도 좋아졌다. 
 
-Test Loss는 증가하고 acuracy는 낮아짐
+100epoch에서 베스트 모델인게 걸려서 150 epoch으로 바꿔서 진행
