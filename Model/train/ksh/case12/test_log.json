@@ -1,0 +1,85 @@
+{
+  "loss": 0.0361502543091774,
+  "accuracy": 0.9846153846153847,
+  "recall": 0.9726027397260274,
+  "f1": 0.9861111111111112,
+  "ok_recall": 1.0,
+  "ok_f1": 0.9827586206896551,
+  "tp": 71,
+  "fn": 2,
+  "fp": 0,
+  "tn": 57,
+  "must_cnt": 10,
+  "must": {
+    "cast_def_0_190.jpeg": {
+      "result": "True",
+      "probability": [
+        3.979759810590622e-08,
+        1.0
+      ]
+    },
+    "cast_def_0_1635.jpeg": {
+      "result": "True",
+      "probability": [
+        8.309277571560969e-11,
+        1.0
+      ]
+    },
+    "cast_def_0_2136.jpeg": {
+      "result": "True",
+      "probability": [
+        3.1123730082072143e-07,
+        0.9999996423721313
+      ]
+    },
+    "cast_def_0_7.jpeg": {
+      "result": "True",
+      "probability": [
+        3.424386159167625e-05,
+        0.9999657869338989
+      ]
+    },
+    "cast_def_0_87.jpeg": {
+      "result": "True",
+      "probability": [
+        1.3146146216058696e-07,
+        0.9999998807907104
+      ]
+    },
+    "cast_def_0_661.jpeg": {
+      "result": "True",
+      "probability": [
+        7.861279300414026e-06,
+        0.9999921321868896
+      ]
+    },
+    "cast_def_0_538.jpeg": {
+      "result": "True",
+      "probability": [
+        5.623418815048353e-07,
+        0.9999994039535522
+      ]
+    },
+    "cast_def_0_154.jpeg": {
+      "result": "True",
+      "probability": [
+        9.896016948181019e-17,
+        1.0
+      ]
+    },
+    "cast_def_0_564.jpeg": {
+      "result": "True",
+      "probability": [
+        1.3409528598629095e-08,
+        1.0
+      ]
+    },
+    "cast_def_0_1565.jpeg": {
+      "result": "True",
+      "probability": [
+        4.72698366138502e-06,
+        0.999995231628418
+      ]
+    }
+  }
+}
