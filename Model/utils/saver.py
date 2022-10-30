@@ -12,12 +12,12 @@ from utils.trainer import MyTrainer, MyTester
 from utils.matrix import Must, convert_must_list_to_dict, count_def_in_must_list
 
 
-def save_test_log(path: str, tester: MyTester, musts: List[Must]):
+def save_test_log(path: str, tester: MyTester, musts: List[Must], test_logs: List[Dict]):
     tm = tester.get_confusion_matrix()
     data = {"loss": float(tester.get_loss()), "accuracy": tester.get_accuracy(), "recall": tester.get_recall(),
             "f1": tester.get_f1_score(), "ok_recall": tester.get_ok_recall(), "ok_f1": tester.get_ok_f1_score(),
             "tp": tm.tp, "fn": tm.fn, "fp": tm.fp, "tn": tm.tn,
-            'must_cnt': count_def_in_must_list(musts), 'must': convert_must_list_to_dict(musts)}
+            'must_cnt': count_def_in_must_list(musts), 'must': convert_must_list_to_dict(musts), 'result': test_logs}
 
     with open(os.path.join(path, "test_log.json"), "w") as f:
         json.dump(data, f)
