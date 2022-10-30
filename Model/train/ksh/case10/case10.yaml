@@ -1,8 +1,8 @@
 user: ksh
-save: case8
+save: case10
 module: model.mymodel3
 class: MyModel
-batch_size: 16
+batch_size: 32
 epochs: 50
-init_lr: 0.001
+init_lr: 0.0005
 decay_steps: 1200
