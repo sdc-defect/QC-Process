@@ -1,3 +1,5 @@
+from typing import Tuple, List
+
 import numpy as np
 
 import tensorflow as tf
@@ -22,13 +24,19 @@ class MyTester(Matrix):
         self._loss = Mean(name='Loss')
 
     @tf.function
-    def test(self, images, labels) -> None:
-        preds: tf.Tensor = self._model(images, training=False)
-        loss: tf.Tensor = self._loss_func(labels, preds)
+    def test(self, images: tf.Tensor, labels: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
+        probs: tf.Tensor = self._model(images, training=False)
+        loss: tf.Tensor = self._loss_func(labels, probs)
+
+        ground = tf.argmax(labels, axis=1)
+        preds = tf.argmax(probs, axis=1)
+        results = tf.equal(ground, preds)
 
         self._loss.update_state(loss)
-        self.update_matrix(tf.cast(tf.argmax(labels, axis=1), dtype=tf.int64),
-                           tf.cast(tf.argmax(preds, axis=1), dtype=tf.int64))
+        self.update_matrix(tf.cast(ground, dtype=tf.int64),
+                           tf.cast(preds, dtype=tf.int64))
+
+        return probs, results
 
     def get_loss(self) -> np.float32:
         return self._loss.result().numpy()
@@ -43,12 +51,12 @@ class MyTrainer(MyTester):
     @tf.function
     def train(self, images, labels) -> None:
         with tf.GradientTape() as tape:
-            preds: tf.Tensor = self._model(images, training=True)
-            loss: tf.Tensor = self._loss_func(labels, preds)
+            probs: tf.Tensor = self._model(images, training=True)
+            loss: tf.Tensor = self._loss_func(labels, probs)
         gradients: list = tape.gradient(loss, self._model.trainable_variables)
         self._optimizer.apply_gradients(zip(gradients, self._model.trainable_variables))
 
         self._loss.update_state(loss)
         self.update_matrix(tf.cast(tf.argmax(labels, axis=1), dtype=tf.int64),
-                           tf.cast(tf.argmax(preds, axis=1), dtype=tf.int64))
+                           tf.cast(tf.argmax(probs, axis=1), dtype=tf.int64))
 
