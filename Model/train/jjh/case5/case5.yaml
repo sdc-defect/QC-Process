@@ -1,0 +1,10 @@
+# GC적용
+
+user: jjh
+save: case5
+module: model.mymodel
+class: MyModel
+batch_size: 8
+epochs: 50
+init_lr: 0.0001
+decay_steps: 1000

@@ -15,15 +15,15 @@ from dataset.read_record import get_dataset, get_dataset_with_fname
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root",
+    parser.add_argument("--root train/jjh/case1/case1",
                         type=str,
                         help="input root dir",
                         default=".")
-    parser.add_argument("--model",
+    parser.add_argument("--model train/jjh/case1/case1",
                         type=str,
                         help="input folder name where your saved model file exists",
                         required=True)
-    parser.add_argument("--batch",
+    parser.add_argument("--batch train/jjh/case1/case1",
                         type=int,
                         help="input batch size",
                         default=8)
@@ -46,14 +46,21 @@ if __name__ == "__main__":
 
     # Test
     tester = MyTester(model=best_model)
-    test_dataset_img, test_dataset_label = get_dataset("dataset/test.tfrecord")
+    test_dataset_img, test_dataset_label, test_dataset_fname = get_dataset_with_fname("dataset/test.tfrecord")
     test_ds_slices = get_index_batch_slices(len(test_dataset_img), args.batch)
+    test_logs = []
     for slice_list in test_ds_slices:
         img = np.array([test_dataset_img[i] for i in slice_list])
         label = np.array([test_dataset_label[i] for i in slice_list])
+        fnames = [test_dataset_fname[i] for i in slice_list]
         img = tf.image.grayscale_to_rgb(tf.convert_to_tensor(img))
         lab = tf.convert_to_tensor(label)
-        tester.test(img, lab)
+        probs, results = tester.test(img, lab)
+        for prob, result, fname in zip(probs, results, fnames):
+            prob = prob.numpy()
+            result = str(result.numpy())
+            test_logs.append({fname: {"result": result, "probability": [float(prob[0]), float(prob[1])]}})
+
     print(f"test result - loss: {tester.get_loss():.4f}, accuracy: {tester.get_accuracy():.4f}, "
           f"recall: {tester.get_recall():.4f}, f1: {tester.get_f1_score():.4f}, "
           f"ok_recall: {tester.get_ok_recall():.4f}, ok_f1: {tester.get_ok_f1_score():.4f}")
@@ -68,4 +75,4 @@ if __name__ == "__main__":
         musts.append(Must(fname, correct, pred))
 
     # Save Log
-    save_test_log(args.model, tester, musts)
+    save_test_log(args.model, tester, musts, test_logs)

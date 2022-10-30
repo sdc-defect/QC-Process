@@ -1,4 +1,4 @@
-# ksh-case2-LabNote01
+# ksh-case5-LabNote
 
 <table style="border: 2px; text-align:center;">
   <tr style="font-weight: bold;, font-size: 30px;">
@@ -7,7 +7,7 @@
   </tr>
   <tr>
     <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img src="image/image-20221030115827888.png"> </td>
+    <td> <img src="image/ksh-2022-10-30-mymodel3-B3.jpg"> </td>
   </tr>
   <tr>
     <td> optimizer </td>
@@ -46,11 +46,11 @@
   </tr>
   <tr>
     <td> Train Loss </td>
-    <td> 0.0278 </td>
+    <td> 0.0234 </td>
   </tr>
   <tr>
     <td> Test Loss </td>
-    <td> 0.0159 </td>
+    <td> 0.1018 </td>
   </tr>
   <tr>
     <td> Train accuracy / recall / F1-Score </td>
@@ -58,7 +58,7 @@
   </tr>
   <tr>
     <td> Test accuracy / recall / F1-Score </td>
-    <td> 0.9923 / 0.9863 / 0.9931 </td>
+    <td> 0.9846 / 0.9726 / 0.9861 </td>
   </tr>
   <tr>
     <td> val2_cnt (total 50) </td>
@@ -72,6 +72,8 @@
 
 
 
-이전 실험과 다른 점 : Batch Normalization 적용
 
-결론 : Batch Normalization 적용된 모델이 훨씬 좋다 !
+이전 실험과 다른 점 : EfficientNet V2 B2 => B3 모델로 변경
+
+결론 : 동일 조건에서 B3 모델이 B2에 비해 성능이 좋은 것 같다. B0 ~ B3까지 동일 조건에서 실험 결과 B0가 가장 성능이 좋았다. B0 hyper parameter 변경하면서 테스트 해봐야겠다.
+

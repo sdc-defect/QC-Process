@@ -1,4 +1,4 @@
-# ksh-case2-LabNote01
+# ksh-case8-LabNote
 
 <table style="border: 2px; text-align:center;">
   <tr style="font-weight: bold;, font-size: 30px;">
@@ -7,7 +7,7 @@
   </tr>
   <tr>
     <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img src="image/image-20221030115827888.png"> </td>
+    <td> <img src="image/ksh-2022-10-30-mymodel3-B0.jpg"> </td>
   </tr>
   <tr>
     <td> optimizer </td>
@@ -19,7 +19,7 @@
   </tr>
   <tr>
     <td> init learning rate </td>
-    <td> 0.0005 </td>
+    <td> 0.001 </td>
   </tr>
   <tr>
     <td> decay steps </td>
@@ -27,7 +27,7 @@
   </tr>
   <tr>
     <td> batch size </td>
-    <td> 16 </td>
+    <td> 32 </td>
   </tr>
   <tr>
     <td> epoch </td>
@@ -46,23 +46,23 @@
   </tr>
   <tr>
     <td> Train Loss </td>
-    <td> 0.0278 </td>
+    <td> 0.0446 </td>
   </tr>
   <tr>
     <td> Test Loss </td>
-    <td> 0.0159 </td>
+    <td> 0.0222 </td>
   </tr>
   <tr>
     <td> Train accuracy / recall / F1-Score </td>
-    <td> 1.0 / 1.0 / 1.0 </td>
+    <td> 0.9998 / 1.0 / 0.9999 </td>
   </tr>
   <tr>
     <td> Test accuracy / recall / F1-Score </td>
-    <td> 0.9923 / 0.9863 / 0.9931 </td>
+    <td> 0.9846 / 0.9726 / 0.9861 </td>
   </tr>
   <tr>
     <td> val2_cnt (total 50) </td>
-    <td> 48 </td>
+    <td> 49 </td>
   </tr>
   <tr>
     <td> must_cnt (total 10) </td>
@@ -72,6 +72,6 @@
 
 
 
-이전 실험과 다른 점 : Batch Normalization 적용
+이전 실험과 다른 점 : learning rate 0.001 batch size 16 -> 32로 변경
 
-결론 : Batch Normalization 적용된 모델이 훨씬 좋다 !
+결론 : 초기 모델과 비슷한데, 로스만 좀 올라간 것 같아서 다른 모델 이 조건으로도 실험 해봐야겠다.
