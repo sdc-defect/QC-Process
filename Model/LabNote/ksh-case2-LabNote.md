@@ -1,4 +1,4 @@
-# ksh-case2-LabNote01
+# ksh-case2-LabNote
 
 <table style="border: 2px; text-align:center;">
   <tr style="font-weight: bold;, font-size: 30px;">
@@ -7,7 +7,7 @@
   </tr>
   <tr>
     <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img src="image/image-20221030115827888.png"> </td>
+    <td> <img src="image/ksh-2022-10-30-mymodel3-B0.jpg"> </td>
   </tr>
   <tr>
     <td> optimizer </td>
@@ -72,6 +72,8 @@
 
 
 
+
 이전 실험과 다른 점 : Batch Normalization 적용
 
 결론 : Batch Normalization 적용된 모델이 훨씬 좋다 !
+

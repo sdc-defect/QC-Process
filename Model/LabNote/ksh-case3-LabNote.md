@@ -1,4 +1,4 @@
-# ksh-case2-LabNote01
+# ksh-case3-LabNote
 
 <table style="border: 2px; text-align:center;">
   <tr style="font-weight: bold;, font-size: 30px;">
@@ -7,7 +7,7 @@
   </tr>
   <tr>
     <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img src="image/image-20221030115827888.png"> </td>
+    <td> <img src="image/ksh-2022-10-30-mymodel3-B1.jpg"> </td>
   </tr>
   <tr>
     <td> optimizer </td>
@@ -46,11 +46,11 @@
   </tr>
   <tr>
     <td> Train Loss </td>
-    <td> 0.0278 </td>
+    <td> 0.0303 </td>
   </tr>
   <tr>
     <td> Test Loss </td>
-    <td> 0.0159 </td>
+    <td> 0.0831 </td>
   </tr>
   <tr>
     <td> Train accuracy / recall / F1-Score </td>
@@ -58,7 +58,7 @@
   </tr>
   <tr>
     <td> Test accuracy / recall / F1-Score </td>
-    <td> 0.9923 / 0.9863 / 0.9931 </td>
+    <td> 0.9846 / 0.9726 / 0.9861 </td>
   </tr>
   <tr>
     <td> val2_cnt (total 50) </td>
@@ -72,6 +72,7 @@
 
 
 
-이전 실험과 다른 점 : Batch Normalization 적용
+이전 실험과 다른 점 : EfficientNet V2 B0 => B1 모델로 변경
 
-결론 : Batch Normalization 적용된 모델이 훨씬 좋다 !
+결론 : 동일 조건에서 B0 모델이 더 성능이 좋다.
+

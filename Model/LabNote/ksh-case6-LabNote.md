@@ -1,4 +1,4 @@
-# ksh-case2-LabNote01
+# ksh-case6-LabNote
 
 <table style="border: 2px; text-align:center;">
   <tr style="font-weight: bold;, font-size: 30px;">
@@ -7,7 +7,7 @@
   </tr>
   <tr>
     <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img src="image/image-20221030115827888.png"> </td>
+    <td> <img src="image/ksh-2022-10-30-mymodel3-B0.jpg"> </td>
   </tr>
   <tr>
     <td> optimizer </td>
@@ -23,7 +23,7 @@
   </tr>
   <tr>
     <td> decay steps </td>
-    <td> 1200 </td>
+    <td> 800 </td>
   </tr>
   <tr>
     <td> batch size </td>
@@ -46,19 +46,19 @@
   </tr>
   <tr>
     <td> Train Loss </td>
-    <td> 0.0278 </td>
+    <td> 0.0974 </td>
   </tr>
   <tr>
     <td> Test Loss </td>
-    <td> 0.0159 </td>
+    <td> 0.0472 </td>
   </tr>
   <tr>
     <td> Train accuracy / recall / F1-Score </td>
-    <td> 1.0 / 1.0 / 1.0 </td>
+    <td> 0.9977 / 0.9974 / 0.9980 </td>
   </tr>
   <tr>
     <td> Test accuracy / recall / F1-Score </td>
-    <td> 0.9923 / 0.9863 / 0.9931 </td>
+    <td> 0.9769 / 0.9589 / 0.9790 </td>
   </tr>
   <tr>
     <td> val2_cnt (total 50) </td>
@@ -72,6 +72,9 @@
 
 
 
-이전 실험과 다른 점 : Batch Normalization 적용
 
-결론 : Batch Normalization 적용된 모델이 훨씬 좋다 !
+
+이전 실험과 다른 점 : decay steps 1200 -> 800 변경
+
+결론 : decay steps 줄어들면서 전체적으로 성능이 떨어진 것 같다. 600 / 1000 으로도 나중에 돌려보면서 비교해볼 예정
+

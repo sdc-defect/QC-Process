@@ -25,7 +25,6 @@ class MyModel(tf.keras.Model):
         return self.outputs(x)
 
 
-
 class MyModel2(tf.keras.Model):
     def __init__(self):
         super(MyModel2, self).__init__()

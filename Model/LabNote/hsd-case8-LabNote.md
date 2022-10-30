@@ -1,4 +1,4 @@
-# ksh-case2-LabNote01
+# hsd-case8-LabNote
 
 <table style="border: 2px; text-align:center;">
   <tr style="font-weight: bold;, font-size: 30px;">
@@ -7,7 +7,7 @@
   </tr>
   <tr>
     <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img src="image/image-20221030115827888.png"> </td>
+    <td> <img src="image/hsd-image-20221030-mymodel2.png"> </td>
   </tr>
   <tr>
     <td> optimizer </td>
@@ -19,7 +19,7 @@
   </tr>
   <tr>
     <td> init learning rate </td>
-    <td> 0.0005 </td>
+    <td> 0.001 </td>
   </tr>
   <tr>
     <td> decay steps </td>
@@ -31,7 +31,7 @@
   </tr>
   <tr>
     <td> epoch </td>
-    <td> 50 </td>
+    <td> 100 </td>
   </tr>
   <tr>
     <td> GPU 여부 (O / X) </td>
@@ -46,23 +46,23 @@
   </tr>
   <tr>
     <td> Train Loss </td>
-    <td> 0.0278 </td>
+    <td> 0.0770 </td>
   </tr>
   <tr>
     <td> Test Loss </td>
-    <td> 0.0159 </td>
+    <td> 0.1687 </td>
   </tr>
   <tr>
     <td> Train accuracy / recall / F1-Score </td>
-    <td> 1.0 / 1.0 / 1.0 </td>
+    <td> 0.9975 / 0.9966 / 0.9979 </td>
   </tr>
   <tr>
     <td> Test accuracy / recall / F1-Score </td>
-    <td> 0.9923 / 0.9863 / 0.9931 </td>
+    <td> 0.9077 / 1.0000 / 0.9241 </td>
   </tr>
   <tr>
     <td> val2_cnt (total 50) </td>
-    <td> 48 </td>
+    <td> 49 </td>
   </tr>
   <tr>
     <td> must_cnt (total 10) </td>
@@ -72,6 +72,8 @@
 
 
 
-이전 실험과 다른 점 : Batch Normalization 적용
+이전 실험과 다른 점 : decay-steps 1000 -> 1200
 
-결론 : Batch Normalization 적용된 모델이 훨씬 좋다 !
+결론: Test Loss가   0.7501 -> 0.1687로 낮아짐. 
+
+decay-steps는 800으로 고정으로 다음 실험 진행
