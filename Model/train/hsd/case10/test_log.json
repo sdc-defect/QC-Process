@@ -1,0 +1,837 @@
+{
+  "loss": 0.024248529225587845,
+  "accuracy": 0.9923076923076923,
+  "recall": 0.9863013698630136,
+  "f1": 0.993103448275862,
+  "ok_recall": 1.0,
+  "ok_f1": 0.9913043478260869,
+  "tp": 72,
+  "fn": 1,
+  "fp": 0,
+  "tn": 57,
+  "must_cnt": 10,
+  "must": {
+    "cast_def_0_7.jpeg": {
+      "result": "True",
+      "probability": [2.5497352493242254e-11, 1.0]
+    },
+    "cast_def_0_1565.jpeg": {
+      "result": "True",
+      "probability": [8.42791394006781e-7, 0.9999991655349731]
+    },
+    "cast_def_0_87.jpeg": {
+      "result": "True",
+      "probability": [5.4907747681909314e-8, 1.0]
+    },
+    "cast_def_0_190.jpeg": {
+      "result": "True",
+      "probability": [5.34017488007521e-8, 1.0]
+    },
+    "cast_def_0_538.jpeg": {
+      "result": "True",
+      "probability": [2.568017862358829e-6, 0.9999973773956299]
+    },
+    "cast_def_0_2136.jpeg": {
+      "result": "True",
+      "probability": [6.882611342007294e-5, 0.9999312162399292]
+    },
+    "cast_def_0_564.jpeg": {
+      "result": "True",
+      "probability": [1.1950254474868416e-7, 0.9999998807907104]
+    },
+    "cast_def_0_1635.jpeg": {
+      "result": "True",
+      "probability": [7.688709047215525e-6, 0.9999923706054688]
+    },
+    "cast_def_0_154.jpeg": {
+      "result": "True",
+      "probability": [1.2664089395209022e-11, 1.0]
+    },
+    "cast_def_0_661.jpeg": {
+      "result": "True",
+      "probability": [6.587775260413764e-6, 0.9999934434890747]
+    }
+  },
+  "result": [
+    {
+      "ok_8974.jpeg": {
+        "result": "True",
+        "probability": [1.0, 4.109653950479242e-9]
+      }
+    },
+    {
+      "def_7455.jpeg": {
+        "result": "True",
+        "probability": [0.003253814997151494, 0.9967461824417114]
+      }
+    },
+    {
+      "ok_1187.jpeg": {
+        "result": "True",
+        "probability": [1.0, 2.577716373686201e-10]
+      }
+    },
+    {
+      "def_6259.jpeg": {
+        "result": "True",
+        "probability": [2.5773699618980572e-8, 1.0]
+      }
+    },
+    {
+      "ok_6869.jpeg": {
+        "result": "True",
+        "probability": [0.9999991655349731, 7.777067025926954e-7]
+      }
+    },
+    {
+      "def_3741.jpeg": {
+        "result": "True",
+        "probability": [0.0002440847601974383, 0.9997559189796448]
+      }
+    },
+    {
+      "ok_199.jpeg": {
+        "result": "True",
+        "probability": [0.9999998807907104, 1.7871391833068628e-7]
+      }
+    },
+    {
+      "def_4171.jpeg": {
+        "result": "True",
+        "probability": [0.0007466392125934362, 0.9992533326148987]
+      }
+    },
+    {
+      "ok_1584.jpeg": {
+        "result": "True",
+        "probability": [0.9994600415229797, 0.0005399567889980972]
+      }
+    },
+    {
+      "def_3010.jpeg": {
+        "result": "True",
+        "probability": [6.436027319978166e-7, 0.9999994039535522]
+      }
+    },
+    {
+      "def_6406.jpeg": {
+        "result": "True",
+        "probability": [1.0467515743073363e-9, 1.0]
+      }
+    },
+    {
+      "ok_6477.jpeg": {
+        "result": "True",
+        "probability": [1.0, 3.197358697248909e-11]
+      }
+    },
+    {
+      "def_9507.jpeg": {
+        "result": "True",
+        "probability": [9.706949640531093e-6, 0.9999903440475464]
+      }
+    },
+    {
+      "def_7086.jpeg": {
+        "result": "True",
+        "probability": [5.728547876060475e-7, 0.9999994039535522]
+      }
+    },
+    {
+      "def_1188.jpeg": {
+        "result": "True",
+        "probability": [3.676487066173184e-12, 1.0]
+      }
+    },
+    {
+      "def_8675.jpeg": {
+        "result": "True",
+        "probability": [1.8761290299096345e-9, 1.0]
+      }
+    },
+    {
+      "def_1772.jpeg": {
+        "result": "True",
+        "probability": [1.3843402868474186e-8, 1.0]
+      }
+    },
+    {
+      "def_4995.jpeg": {
+        "result": "True",
+        "probability": [7.957626024790443e-8, 0.9999998807907104]
+      }
+    },
+    {
+      "def_7724.jpeg": {
+        "result": "False",
+        "probability": [0.9446727633476257, 0.05532730370759964]
+      }
+    },
+    {
+      "ok_1018.jpeg": {
+        "result": "True",
+        "probability": [0.999988317489624, 1.1710591024893802e-5]
+      }
+    },
+    {
+      "ok_4697.jpeg": {
+        "result": "True",
+        "probability": [0.9997633099555969, 0.00023671718372497708]
+      }
+    },
+    {
+      "ok_2865.jpeg": {
+        "result": "True",
+        "probability": [0.9991002082824707, 0.0008998171542771161]
+      }
+    },
+    {
+      "ok_1192.jpeg": {
+        "result": "True",
+        "probability": [0.9999997615814209, 2.1535866778776835e-7]
+      }
+    },
+    {
+      "ok_3337.jpeg": {
+        "result": "True",
+        "probability": [0.9999969005584717, 3.156751063215779e-6]
+      }
+    },
+    {
+      "def_9276.jpeg": {
+        "result": "True",
+        "probability": [4.001488923677243e-5, 0.9999599456787109]
+      }
+    },
+    {
+      "ok_2241.jpeg": {
+        "result": "True",
+        "probability": [0.9991897940635681, 0.0008102495921775699]
+      }
+    },
+    {
+      "def_146.jpeg": {
+        "result": "True",
+        "probability": [2.893726369634919e-9, 1.0]
+      }
+    },
+    {
+      "def_3179.jpeg": {
+        "result": "True",
+        "probability": [9.510322911410185e-7, 0.9999990463256836]
+      }
+    },
+    {
+      "ok_6537.jpeg": {
+        "result": "True",
+        "probability": [0.9999995231628418, 4.548297738438123e-7]
+      }
+    },
+    {
+      "ok_8127.jpeg": {
+        "result": "True",
+        "probability": [0.9999881982803345, 1.1776015526265837e-5]
+      }
+    },
+    {
+      "ok_5447.jpeg": {
+        "result": "True",
+        "probability": [0.9999997615814209, 2.6645287221072067e-7]
+      }
+    },
+    {
+      "def_3362.jpeg": {
+        "result": "True",
+        "probability": [2.864632369892206e-5, 0.9999713897705078]
+      }
+    },
+    {
+      "def_5241.jpeg": {
+        "result": "True",
+        "probability": [1.0844040249091691e-10, 1.0]
+      }
+    },
+    {
+      "def_4677.jpeg": {
+        "result": "True",
+        "probability": [1.9521117792464793e-5, 0.9999804496765137]
+      }
+    },
+    {
+      "ok_2541.jpeg": {
+        "result": "True",
+        "probability": [1.0, 1.8514311861395072e-8]
+      }
+    },
+    {
+      "ok_4177.jpeg": {
+        "result": "True",
+        "probability": [0.9999998807907104, 1.510555875938735e-7]
+      }
+    },
+    {
+      "def_2753.jpeg": {
+        "result": "True",
+        "probability": [2.0996116845140023e-8, 1.0]
+      }
+    },
+    {
+      "def_773.jpeg": {
+        "result": "True",
+        "probability": [8.755139901950315e-7, 0.9999991655349731]
+      }
+    },
+    {
+      "def_4336.jpeg": {
+        "result": "True",
+        "probability": [1.0149088893740554e-6, 0.999998927116394]
+      }
+    },
+    {
+      "def_4363.jpeg": {
+        "result": "True",
+        "probability": [9.385880267442914e-11, 1.0]
+      }
+    },
+    {
+      "ok_37.jpeg": {
+        "result": "True",
+        "probability": [0.9999990463256836, 9.625767916077166e-7]
+      }
+    },
+    {
+      "ok_1723.jpeg": {
+        "result": "True",
+        "probability": [0.9999957084655762, 4.329113835410681e-6]
+      }
+    },
+    {
+      "def_7987.jpeg": {
+        "result": "True",
+        "probability": [2.3866541596362367e-5, 0.9999761581420898]
+      }
+    },
+    {
+      "def_8756.jpeg": {
+        "result": "True",
+        "probability": [0.02890869788825512, 0.9710912704467773]
+      }
+    },
+    {
+      "ok_7256.jpeg": {
+        "result": "True",
+        "probability": [0.9999827146530151, 1.7330421542283148e-5]
+      }
+    },
+    {
+      "ok_2152.jpeg": {
+        "result": "True",
+        "probability": [1.0, 3.871201670335722e-8]
+      }
+    },
+    {
+      "def_466.jpeg": {
+        "result": "True",
+        "probability": [0.000132709217723459, 0.99986732006073]
+      }
+    },
+    {
+      "ok_1290.jpeg": {
+        "result": "True",
+        "probability": [1.0, 2.5468944730988596e-9]
+      }
+    },
+    {
+      "def_7113.jpeg": {
+        "result": "True",
+        "probability": [2.240880370152354e-9, 1.0]
+      }
+    },
+    {
+      "ok_4561.jpeg": {
+        "result": "True",
+        "probability": [0.9999998807907104, 6.624514981012908e-8]
+      }
+    },
+    {
+      "ok_8762.jpeg": {
+        "result": "True",
+        "probability": [0.9999997615814209, 2.306003636931564e-7]
+      }
+    },
+    {
+      "def_6322.jpeg": {
+        "result": "True",
+        "probability": [7.827991184948535e-13, 1.0]
+      }
+    },
+    {
+      "ok_8284.jpeg": {
+        "result": "True",
+        "probability": [0.9999983310699463, 1.6274677818728378e-6]
+      }
+    },
+    {
+      "def_2014.jpeg": {
+        "result": "True",
+        "probability": [1.347301150644853e-7, 0.9999998807907104]
+      }
+    },
+    {
+      "def_7324.jpeg": {
+        "result": "True",
+        "probability": [2.234431037547932e-13, 1.0]
+      }
+    },
+    {
+      "ok_7519.jpeg": {
+        "result": "True",
+        "probability": [0.9998290538787842, 0.0001709696080069989]
+      }
+    },
+    {
+      "def_1831.jpeg": {
+        "result": "True",
+        "probability": [3.564284511980986e-8, 1.0]
+      }
+    },
+    {
+      "def_3756.jpeg": {
+        "result": "True",
+        "probability": [9.415361273568124e-5, 0.9999058246612549]
+      }
+    },
+    {
+      "def_4683.jpeg": {
+        "result": "True",
+        "probability": [1.5044084022974857e-7, 0.9999998807907104]
+      }
+    },
+    {
+      "def_2304.jpeg": {
+        "result": "True",
+        "probability": [3.7422530894427875e-13, 1.0]
+      }
+    },
+    {
+      "def_8631.jpeg": {
+        "result": "True",
+        "probability": [0.006031032186001539, 0.9939689636230469]
+      }
+    },
+    {
+      "def_8519.jpeg": {
+        "result": "True",
+        "probability": [3.781185867884895e-12, 1.0]
+      }
+    },
+    {
+      "def_7538.jpeg": {
+        "result": "True",
+        "probability": [2.5899918909999542e-5, 0.9999741315841675]
+      }
+    },
+    {
+      "ok_3199.jpeg": {
+        "result": "True",
+        "probability": [0.9999996423721313, 3.9182205568977224e-7]
+      }
+    },
+    {
+      "ok_8076.jpeg": {
+        "result": "True",
+        "probability": [0.9999058246612549, 9.41898106248118e-5]
+      }
+    },
+    {
+      "ok_8533.jpeg": {
+        "result": "True",
+        "probability": [0.9999874830245972, 1.2479431461542845e-5]
+      }
+    },
+    {
+      "def_880.jpeg": {
+        "result": "True",
+        "probability": [3.681058791116243e-10, 1.0]
+      }
+    },
+    {
+      "ok_4433.jpeg": {
+        "result": "True",
+        "probability": [0.9999998807907104, 1.4088739419548801e-7]
+      }
+    },
+    {
+      "ok_3246.jpeg": {
+        "result": "True",
+        "probability": [0.9999979734420776, 2.064682121272199e-6]
+      }
+    },
+    {
+      "ok_9307.jpeg": {
+        "result": "True",
+        "probability": [1.0, 1.8239366683658886e-9]
+      }
+    },
+    {
+      "ok_129.jpeg": {
+        "result": "True",
+        "probability": [0.9999995231628418, 4.789454806086724e-7]
+      }
+    },
+    {
+      "ok_9411.jpeg": {
+        "result": "True",
+        "probability": [0.9999995231628418, 4.95149379275972e-7]
+      }
+    },
+    {
+      "def_9163.jpeg": {
+        "result": "True",
+        "probability": [3.3014130167430267e-6, 0.9999966621398926]
+      }
+    },
+    {
+      "def_6154.jpeg": {
+        "result": "True",
+        "probability": [4.3104941838123523e-10, 1.0]
+      }
+    },
+    {
+      "ok_2417.jpeg": {
+        "result": "True",
+        "probability": [0.999692440032959, 0.00030760932713747025]
+      }
+    },
+    {
+      "def_2515.jpeg": {
+        "result": "True",
+        "probability": [3.3221059236865358e-9, 1.0]
+      }
+    },
+    {
+      "ok_9389.jpeg": {
+        "result": "True",
+        "probability": [1.0, 9.493046349007273e-10]
+      }
+    },
+    {
+      "def_7636.jpeg": {
+        "result": "True",
+        "probability": [3.990416070492886e-12, 1.0]
+      }
+    },
+    {
+      "ok_7076.jpeg": {
+        "result": "True",
+        "probability": [0.9999966621398926, 3.3324477044516243e-6]
+      }
+    },
+    {
+      "def_1087.jpeg": {
+        "result": "True",
+        "probability": [0.001392617472447455, 0.9986074566841125]
+      }
+    },
+    {
+      "def_8101.jpeg": {
+        "result": "True",
+        "probability": [7.610545435454696e-5, 0.9999239444732666]
+      }
+    },
+    {
+      "def_1427.jpeg": {
+        "result": "True",
+        "probability": [1.4128020585021939e-12, 1.0]
+      }
+    },
+    {
+      "ok_5609.jpeg": {
+        "result": "True",
+        "probability": [0.9999746084213257, 2.537234831834212e-5]
+      }
+    },
+    {
+      "ok_9667.jpeg": {
+        "result": "True",
+        "probability": [0.9999991655349731, 7.916136723906675e-7]
+      }
+    },
+    {
+      "def_3403.jpeg": {
+        "result": "True",
+        "probability": [4.978508716391161e-9, 1.0]
+      }
+    },
+    {
+      "def_2090.jpeg": {
+        "result": "True",
+        "probability": [9.683778046110092e-8, 0.9999998807907104]
+      }
+    },
+    {
+      "ok_5565.jpeg": {
+        "result": "True",
+        "probability": [0.9999204874038696, 7.954745524330065e-5]
+      }
+    },
+    {
+      "def_2148.jpeg": {
+        "result": "True",
+        "probability": [1.7512503946992553e-10, 1.0]
+      }
+    },
+    {
+      "def_3487.jpeg": {
+        "result": "True",
+        "probability": [3.6335077169269425e-9, 1.0]
+      }
+    },
+    {
+      "def_2020.jpeg": {
+        "result": "True",
+        "probability": [0.00010861855844268575, 0.9998914003372192]
+      }
+    },
+    {
+      "def_9188.jpeg": {
+        "result": "True",
+        "probability": [1.114067837981736e-9, 1.0]
+      }
+    },
+    {
+      "def_9060.jpeg": {
+        "result": "True",
+        "probability": [6.535142892971635e-5, 0.9999346733093262]
+      }
+    },
+    {
+      "def_4815.jpeg": {
+        "result": "True",
+        "probability": [1.571580554582397e-7, 0.9999998807907104]
+      }
+    },
+    {
+      "def_6239.jpeg": {
+        "result": "True",
+        "probability": [5.439999647039069e-15, 1.0]
+      }
+    },
+    {
+      "def_2263.jpeg": {
+        "result": "True",
+        "probability": [6.142283837107243e-8, 0.9999998807907104]
+      }
+    },
+    {
+      "def_7474.jpeg": {
+        "result": "True",
+        "probability": [1.4341823284524935e-9, 1.0]
+      }
+    },
+    {
+      "ok_6890.jpeg": {
+        "result": "True",
+        "probability": [0.9999979734420776, 2.0640795810322743e-6]
+      }
+    },
+    {
+      "def_1800.jpeg": {
+        "result": "True",
+        "probability": [8.454293833892734e-7, 0.9999991655349731]
+      }
+    },
+    {
+      "ok_8466.jpeg": {
+        "result": "True",
+        "probability": [0.999953031539917, 4.693608934758231e-5]
+      }
+    },
+    {
+      "ok_9536.jpeg": {
+        "result": "True",
+        "probability": [0.9999947547912598, 5.191930085857166e-6]
+      }
+    },
+    {
+      "ok_7511.jpeg": {
+        "result": "True",
+        "probability": [0.9999587535858154, 4.129458102397621e-5]
+      }
+    },
+    {
+      "def_9068.jpeg": {
+        "result": "True",
+        "probability": [6.508565064677896e-8, 0.9999998807907104]
+      }
+    },
+    {
+      "def_2690.jpeg": {
+        "result": "True",
+        "probability": [2.5742734610645357e-9, 1.0]
+      }
+    },
+    {
+      "def_9475.jpeg": {
+        "result": "True",
+        "probability": [3.826854111377287e-11, 1.0]
+      }
+    },
+    {
+      "def_717.jpeg": {
+        "result": "True",
+        "probability": [0.009584353305399418, 0.9904156923294067]
+      }
+    },
+    {
+      "ok_1879.jpeg": {
+        "result": "True",
+        "probability": [0.9999996423721313, 3.196766442670196e-7]
+      }
+    },
+    {
+      "def_583.jpeg": {
+        "result": "True",
+        "probability": [1.9795450612036802e-7, 0.9999997615814209]
+      }
+    },
+    {
+      "def_6232.jpeg": {
+        "result": "True",
+        "probability": [0.0005245233769528568, 0.9994755387306213]
+      }
+    },
+    {
+      "ok_5853.jpeg": {
+        "result": "True",
+        "probability": [0.9999998807907104, 7.328475248868926e-8]
+      }
+    },
+    {
+      "def_7475.jpeg": {
+        "result": "True",
+        "probability": [7.006122814345872e-6, 0.9999929666519165]
+      }
+    },
+    {
+      "ok_9464.jpeg": {
+        "result": "True",
+        "probability": [0.9962079524993896, 0.0037919848691672087]
+      }
+    },
+    {
+      "def_6837.jpeg": {
+        "result": "True",
+        "probability": [0.1390562504529953, 0.8609437346458435]
+      }
+    },
+    {
+      "ok_8726.jpeg": {
+        "result": "True",
+        "probability": [0.999995231628418, 4.8094843805301934e-6]
+      }
+    },
+    {
+      "ok_9216.jpeg": {
+        "result": "True",
+        "probability": [0.9999994039535522, 5.591482477029786e-7]
+      }
+    },
+    {
+      "ok_4059.jpeg": {
+        "result": "True",
+        "probability": [1.0, 2.3770838630809976e-9]
+      }
+    },
+    {
+      "def_8451.jpeg": {
+        "result": "True",
+        "probability": [1.3292282119437004e-7, 0.9999998807907104]
+      }
+    },
+    {
+      "def_637.jpeg": {
+        "result": "True",
+        "probability": [8.511092872143244e-12, 1.0]
+      }
+    },
+    {
+      "def_5768.jpeg": {
+        "result": "True",
+        "probability": [3.5723203382076463e-6, 0.9999964237213135]
+      }
+    },
+    {
+      "ok_7523.jpeg": {
+        "result": "True",
+        "probability": [0.9999988079071045, 1.1536805004652706e-6]
+      }
+    },
+    {
+      "ok_3869.jpeg": {
+        "result": "True",
+        "probability": [0.9999997615814209, 2.4147749400071916e-7]
+      }
+    },
+    {
+      "ok_2437.jpeg": {
+        "result": "True",
+        "probability": [0.9991361498832703, 0.0008638629224151373]
+      }
+    },
+    {
+      "def_2917.jpeg": {
+        "result": "True",
+        "probability": [0.00013850044342689216, 0.999861478805542]
+      }
+    },
+    {
+      "ok_8646.jpeg": {
+        "result": "True",
+        "probability": [0.9999963045120239, 3.665243639261462e-6]
+      }
+    },
+    {
+      "def_4239.jpeg": {
+        "result": "True",
+        "probability": [0.00014271531836129725, 0.9998573064804077]
+      }
+    },
+    {
+      "def_9963.jpeg": {
+        "result": "True",
+        "probability": [1.6986565469778725e-6, 0.9999983310699463]
+      }
+    },
+    {
+      "def_976.jpeg": {
+        "result": "True",
+        "probability": [3.341117105204461e-10, 1.0]
+      }
+    },
+    {
+      "ok_7642.jpeg": {
+        "result": "True",
+        "probability": [0.9999942779541016, 5.733281795983203e-6]
+      }
+    },
+    {
+      "ok_3842.jpeg": {
+        "result": "True",
+        "probability": [1.0, 9.47987244259707e-10]
+      }
+    },
+    {
+      "def_8668.jpeg": {
+        "result": "True",
+        "probability": [2.942455168408742e-8, 1.0]
+      }
+    },
+    {
+      "ok_8496.jpeg": {
+        "result": "True",
+        "probability": [0.9999986886978149, 1.2971560181540553e-6]
+      }
+    }
+  ]
+}
