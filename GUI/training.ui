@@ -475,6 +475,11 @@
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen_other_File">
+   <property name="text">
+    <string>Open other File</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

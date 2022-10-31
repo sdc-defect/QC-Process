@@ -2,9 +2,11 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import os
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import *
 
 from all_images import AllImageWindowClass
+from inference_init import InferenceInitWindowClass
 
 
 #UI파일 연결
@@ -21,12 +23,24 @@ class WindowClass(QMainWindow, form_class) :
         self.setupUi(self)
 
         self.updateLog()
+        self.initUI()
 
         self.pushButtonOpenImageFile.clicked.connect(self.imageFileDirButtonClicked) # 이미지파일선택 클릭 이벤트
         self.pushButtonOpenModelSaveFile.clicked.connect(self.modelFileButtonClicked) # 모델파일선택 클릭 이벤트
 
         self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen) # 모든 이미지 리스트 창 열기
 
+    # 초기화
+    def initUI(self):
+        _openFile = QtWidgets.QAction("다른 파일 열기", self)
+        
+        # Menu Bar Settings
+        menu = self.menuBar()
+        _file = menu.addMenu("파일")
+        _file.addAction(_openFile)
+
+        # Connect Actions
+        _openFile.triggered.connect(self.editFileDir)
 
     # 추론할 이미지 파일들 디렉토리 주소 가져오기
     def imageFileDirButtonClicked(self):
@@ -80,6 +94,10 @@ class WindowClass(QMainWindow, form_class) :
         #     print(text)
 
 
+    # 메뉴에 파일 다시 열기 누르면
+    def editFileDir(self):
+        self.inferenceInit = InferenceInitWindowClass()
+        self.inferenceInit.show()
 
 
 if __name__ == "__main__" :

@@ -1,7 +1,10 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
+from PyQt5 import QtCore, QtWidgets
 import os
+
+from training_init import TrainingInitWindowClass
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -20,6 +23,8 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.setupUi(self)
         self.setWindowTitle("Training")
 
+        self.initUI()
+
         self.pushButtonOpenImageFile.clicked.connect(self.imageFileDirButtonClicked) # 이미지파일선텍 클릭 이벤트
 
         # 하이퍼파라미터 - 초기값 설정
@@ -31,8 +36,26 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.comboBoxLearningRate.currentTextChanged.connect(self.changeLearningRate)
         self.comboBoxDecayStep.currentTextChanged.connect(self.changeDecayStep)
 
+        # 메뉴로 파일 변경하기 누르면
+        self.actionOpen_other_File.toggled.connect(self.editFileDir)
+
     def test(self):
         print(self.setEpoch)
+
+    # 초기화
+    def initUI(self):
+        _openFile = QtWidgets.QAction("다른 파일 열기", self)
+        
+        # Menu Bar Settings
+        menu = self.menuBar()
+        _file = menu.addMenu("파일")
+        _file.addAction(_openFile)
+
+        # Connect Actions
+        _openFile.triggered.connect(self.editFileDir)
+
+
+
 
     # 추론할 이미지 파일들 디렉토리 주소 가져오기
     def imageFileDirButtonClicked(self):
@@ -60,6 +83,13 @@ class trainingWindowClass(QMainWindow, form_class) :
     def changeDecayStep(self):
         self.setDecayStep = self.comboBoxDecayStep.currentText()
         print(self.setDecayStep)
+
+    # 메뉴에 파일 다시 열기 누르면
+    def editFileDir(self):
+        self.trainingInit = TrainingInitWindowClass()
+        self.trainingInit.show()
+
+
     
 
 if __name__ == "__main__" :
