@@ -1,0 +1,8 @@
+user: hsd
+save: case11
+module: model.mymodel
+class: MyModel2
+batch_size: 16
+epochs: 150
+init_lr: 0.0001
+decay_steps: 800
