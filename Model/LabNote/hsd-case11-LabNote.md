@@ -1,4 +1,4 @@
-# hsd-case9-LabNote
+# hsd-case11-LabNote
 
 <table style="border: 2px; text-align:center;">
   <tr style="font-weight: bold;, font-size: 30px;">
@@ -19,7 +19,7 @@
   </tr>
   <tr>
     <td> init learning rate </td>
-    <td> 0.0005 </td>
+    <td> 0.0001 </td>
   </tr>
   <tr>
     <td> decay steps </td>
@@ -31,7 +31,7 @@
   </tr>
   <tr>
     <td> epoch </td>
-    <td> 100 </td>
+    <td> 150 </td>
   </tr>
   <tr>
     <td> GPU 여부 (O / X) </td>
@@ -46,15 +46,15 @@
   </tr>
   <tr>
     <td> Train Loss </td>
-    <td> 0.0314 </td>
+    <td> 0.0230 </td>
   </tr>
   <tr>
     <td> Test Loss </td>
-    <td> 0.0391 </td>
+    <td> 0.0306 </td>
   </tr>
   <tr>
     <td> Train accuracy / recall / F1-Score </td>
-    <td> 0.9997 / 0.9995 / 0.9997 </td>
+    <td> 1.0 / 1.0 / 1.0 </td>
   </tr>
   <tr>
     <td> Test accuracy / recall / F1-Score </td>
@@ -74,10 +74,9 @@
 
 
 
-이전 실험과 다른 점 : case6과 비교 -> learning rate 0.001 -> 0.0005
+
+이전 실험과 다른 점 : case10과 비교 -> epoch 100 -> 150으로 증가
 
 결론: 
 
-Train Loss는 낮아지고 accuracy는 올라감
-
-Test Loss는 증가하고 acuracy는 낮아짐
+epoch만 증가했는데 베스트 모델이 100번째에서 바뀌고 더 떨어졌다.
