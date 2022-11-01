@@ -1,8 +1,56 @@
+# #!/usr/bin/env python3
+# import sys
+# from PyQt5.QtWidgets import *
+# from PyQt5.QtCore import *
+
+# class InferenceInitWindowClass(QMainWindow):
+#     def __init__(self):
+#         super().__init__()
+#         # 윈도우 설정
+#         self.setGeometry(300, 300, 400, 300)  # x, y, w, h
+#         self.setWindowTitle('Status Window')
+
+#         # QButton 위젯 생성
+#         self.button = QPushButton('Dialog Button', self)
+#         self.button.clicked.connect(self.dialog_open)
+#         self.button.setGeometry(10, 10, 200, 50)
+
+#         # QDialog 설정
+#         self.dialog = QDialog()
+
+#     # 버튼 이벤트 함수
+#     def dialog_open(self):
+#         # 버튼 추가
+#         btnDialog = QPushButton("OK", self.dialog)
+#         btnDialog.move(100, 100)
+#         btnDialog.clicked.connect(self.dialog_close)
+
+#         # QDialog 세팅
+#         self.dialog.setWindowTitle('Dialog')
+#         self.dialog.setWindowModality(Qt.ApplicationModal)
+#         self.dialog.resize(300, 200)
+#         self.dialog.show()
+
+#     # Dialog 닫기 이벤트
+#     def dialog_close(self):
+#         self.dialog.close()
+
+# if __name__ == '__main__':
+#     app = QApplication(sys.argv)
+#     mainWindow = InferenceInitWindowClass()
+#     mainWindow.show()
+#     sys.exit(app.exec_())
+
+
 
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+# from PyQt5 import QtCore, QtGui, QtWidgets
+
 import os
 
 #UI파일 연결
@@ -10,10 +58,13 @@ import os
 form_class = uic.loadUiType("inference_init.ui")[0]
 
 #화면을 띄우는데 사용되는 Class 선언
-class InferenceInitWindowClass(QMainWindow, form_class) :
+class InferenceInitWindowClass(QDialog, form_class) :
 
     inferenceDir = ""
     modelDir = ""
+
+    # 데이터를 전달하는 통로
+    command = pyqtSignal(list)
 
     def __init__(self) :
         super().__init__()
@@ -23,8 +74,18 @@ class InferenceInitWindowClass(QMainWindow, form_class) :
         self.initUI()
     
     def initUI(self):
+        # self.dialog = QDialog()
+
         self.pushButtonInferenceListDir.clicked.connect(self.clickOpenInferenceSet)
         self.pushButtonModelDir.clicked.connect(self.clickModelFileSet)
+
+        # 완료 버튼 누르면 창 닫기
+        self.pushButtonInitNext.clicked.connect(self.clickComplete)
+        # self.pushButtonInitNext.clicked.connect(QCoreApplication.instance().quit)
+        
+    
+    def test(self):
+        print("test")
 
     # inference set 파일 경로 설정
     def clickOpenInferenceSet(self):
@@ -37,9 +98,22 @@ class InferenceInitWindowClass(QMainWindow, form_class) :
         fname = QFileDialog.getOpenFileName(self, '', 'Open file')
         # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
         self.labelModelDir.setText(fname[0])
+        self.modelDir = fname[0]
 
-        
+    # 완료 버튼 누르기
+    def clickComplete(self):
+        # msgInferenceDir = self.inferenceDir
+        # self.command.emit(msgInferenceDir)
 
+        print("happy")
+        self.pushButtonInitNext.clicked.connect(self.sendCommand)
+
+    # @pyqtSlot()
+    def sendCommand(self):
+        msg = [self.inferenceDir, self.modelDir]
+        # self.command.emit(msg)
+        print(msg)
+            
 
 if __name__ == "__main__" :
     #QApplication : 프로그램을 실행시켜주는 클래스
@@ -53,3 +127,4 @@ if __name__ == "__main__" :
 
     #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
+    # sys.exit(app.exec_())
