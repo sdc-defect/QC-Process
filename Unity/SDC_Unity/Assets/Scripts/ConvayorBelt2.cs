@@ -14,7 +14,7 @@ public class ConvayorBelt2 : MonoBehaviour
     void Start()
     {
         rBody = GetComponent<Rigidbody>();
-        fTime = 4f;
+        fTime = 6f;
     }
 
     // Update is called once per frame
@@ -27,10 +27,10 @@ public class ConvayorBelt2 : MonoBehaviour
         if (fTime >= fDelayTime)
         {
             Vector3 pos = rBody.position;
-            rBody.position += Vector3.back * speed * Time.fixedDeltaTime;
+            rBody.position += Vector3.right * speed * Time.fixedDeltaTime;
             rBody.MovePosition(pos);
 
-            if (fTime >= 4)
+            if (fTime >= 6)
             {
                 Instantiate(Product);
 
