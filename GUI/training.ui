@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1920</width>
-    <height>1062</height>
+    <width>1916</width>
+    <height>1060</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,19 +18,19 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>20</y>
+      <y>0</y>
       <width>901</width>
-      <height>91</height>
+      <height>128</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayoutFileDir" stretch="1,2,0">
+    <layout class="QVBoxLayout" name="verticalLayoutFileDir" stretch="1,2,0,0">
      <item>
       <widget class="QLabel" name="labelFileDir">
        <property name="styleSheet">
         <string notr="true"/>
        </property>
        <property name="text">
-        <string>파일 불러오기</string>
+        <string>파일 위치</string>
        </property>
       </widget>
      </item>
@@ -39,7 +39,7 @@
        <item>
         <widget class="QLabel" name="labelImageFileLabel">
          <property name="text">
-          <string>학습 이미지 파일 경로</string>
+          <string>Train 이미지 파일 경로</string>
          </property>
         </widget>
        </item>
@@ -66,16 +66,47 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="2,5,2">
+      <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="2,5,2">
        <item>
-        <widget class="QLabel" name="labelImageFileLabel_2">
+        <widget class="QLabel" name="labelImageFileLabel_3">
          <property name="text">
-          <string>학습 이미지 파일 경로</string>
+          <string>Test 이미지 파일 경로</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelImageFile_2">
+        <widget class="QLabel" name="labelImageFile_3">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonOpenImageFile_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>이미지 파일 선택</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="2,5,2">
+       <item>
+        <widget class="QLabel" name="labelImageFileLabel_2">
+         <property name="text">
+          <string>모델 저장 파일 경로</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelModelSaveDir">
          <property name="text">
           <string>TextLabel</string>
          </property>
@@ -235,12 +266,12 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>610</y>
+      <y>740</y>
       <width>391</width>
-      <height>291</height>
+      <height>161</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,1,1,1">
+    <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0,1,1,1">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
@@ -268,7 +299,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
        <item>
         <widget class="QLabel" name="labelEpoch">
          <property name="text">
@@ -277,46 +308,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBoxEpoch">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <item>
-          <property name="text">
-           <string>25</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>50</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>100</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>200</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>사용자 지정</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEditEpoch">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-        </widget>
+        <widget class="QSpinBox" name="spinBox"/>
        </item>
       </layout>
      </item>
@@ -368,7 +360,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,1,1">
+      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0,0">
        <item>
         <widget class="QLabel" name="labelLearningRate">
          <property name="text">
@@ -377,32 +369,10 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBoxLearningRate">
-         <item>
-          <property name="text">
-           <string>0.001</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>0.0005</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>0.0003</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>0.0001</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>사용자 지정</string>
-          </property>
-         </item>
+        <widget class="QSlider" name="horizontalSlider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
         </widget>
        </item>
        <item>
@@ -463,18 +433,75 @@
      </item>
     </layout>
    </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>610</y>
+      <width>171</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Agumentation</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_2">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>640</y>
+      <width>171</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Flip</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_3">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>660</y>
+      <width>171</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Spin</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_4">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>680</y>
+      <width>171</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Spin</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1920</width>
+     <width>1916</width>
      <height>26</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen_other_File">
+   <property name="text">
+    <string>Open other File</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
