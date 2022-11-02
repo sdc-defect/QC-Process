@@ -62,8 +62,8 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>150</y>
+      <x>440</x>
+      <y>400</y>
       <width>297</width>
       <height>111</height>
      </rect>
@@ -87,36 +87,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>전체</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonOkListShow">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>양품</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonDefListShow">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>불량품</string>
+          <string>추론 완료 이미지</string>
          </property>
         </widget>
        </item>
@@ -127,49 +98,45 @@
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>310</y>
-      <width>261</width>
-      <height>91</height>
+      <x>440</x>
+      <y>170</y>
+      <width>281</width>
+      <height>161</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayoutControl" stretch="1,4">
+    <layout class="QVBoxLayout" name="verticalLayoutControl" stretch="1,1,1">
      <item>
       <widget class="QLabel" name="labelControl">
        <property name="text">
-        <string>제어</string>
+        <string>모든 이미지 추론 제어</string>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayoutControl">
-       <item>
-        <widget class="QPushButton" name="pushButtonControlStart">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>시작</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonControlStop">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>정지</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QPushButton" name="pushButtonControlStart">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>시작</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonControlStop">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>정지</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -199,12 +166,12 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>30</y>
+      <y>10</y>
       <width>871</width>
       <height>89</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayoutFileDir" stretch="1,0">
+    <layout class="QVBoxLayout" name="verticalLayoutFileDir" stretch="1,2">
      <item>
       <widget class="QLabel" name="labelFileDir">
        <property name="styleSheet">
@@ -259,7 +226,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="labelSingleImageShow">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -298,7 +265,7 @@
      <string>CAM이미지 또는 이미지 상세설명</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButtonSingleStartInference">
     <property name="geometry">
      <rect>
       <x>580</x>
@@ -311,12 +278,12 @@
      <string>추론하기</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="labelSingleImageDir">
     <property name="geometry">
      <rect>
       <x>30</x>
       <y>590</y>
-      <width>161</width>
+      <width>511</width>
       <height>16</height>
      </rect>
     </property>
@@ -324,65 +291,17 @@
      <string>이미지 위치 출력</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="pushButtonOpenSingleImageDir">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>560</x>
       <y>550</y>
-      <width>131</width>
+      <width>141</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>파일 열</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonOpenImageFile">
-    <property name="geometry">
-     <rect>
-      <x>950</x>
-      <y>30</y>
-      <width>171</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string>이미지 파일 선택</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonOpenModelSaveFile">
-    <property name="geometry">
-     <rect>
-      <x>1000</x>
-      <y>80</y>
-      <width>171</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string>저장 경로 선택</string>
-    </property>
-   </widget>
-   <widget class="QTableView" name="tableViewImageList">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>140</y>
-      <width>311</width>
-      <height>391</height>
-     </rect>
+     <string>파일 열기</string>
     </property>
    </widget>
   </widget>

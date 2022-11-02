@@ -1,4 +1,91 @@
 # #!/usr/bin/env python3
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5 import uic
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+# from PyQt5 import QtCore, QtGui, QtWidgets
+
+# from inference import WindowClass
+
+import os
+
+#UI파일 연결
+#단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
+form_init = uic.loadUiType("inference_init_dialog.ui")[0]
+
+class InferenceInitModal(QDialog, form_init):
+    
+
+    inferenceDir = ""
+    modelDir = ""
+
+    def __init__(self) :
+        super().__init__()
+        self.setupUi(self)
+        self.show()
+        self.initUI()
+    
+
+    def initUI(self):
+        # 파일 열기 버튼 연결
+        self.pushButtonInferenceListDir.clicked.connect(self.clickOpenInferenceSet)
+        self.pushButtonModelDir.clicked.connect(self.clickModelFileSet)
+        
+        # 완료 버튼 연결
+        self.pushButtonInitNext.clicked.connect(self.clickComplete)
+    
+    # inference set 파일 경로 설정
+    def clickOpenInferenceSet(self):
+        fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        self.inferenceDir = fname
+        print("self.inferenceDir: ", self.inferenceDir)
+        self.labelInferenceListDir.setText(fname)
+
+
+    # model 파일 찾기
+    def clickModelFileSet(self):
+        fname = QFileDialog.getOpenFileName(self, '', 'Open file')
+        # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
+        self.labelModelDir.setText(fname[0])
+        self.modelDir = fname[0]
+
+
+    # 화면 닫기
+    def clickComplete(self):
+        print("self.inferenceDir: ", self.inferenceDir)
+        self.close()
+
+
+
+if __name__ == "__main__" :
+    #QApplication : 프로그램을 실행시켜주는 클래스
+    app = QApplication(sys.argv) 
+
+    #WindowClass의 인스턴스 생성
+    myWindow = InferenceInitModal() 
+
+    #프로그램 화면을 보여주는 코드
+    myWindow.show()
+
+    #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
+    app.exec_()
+    # sys.exit(app.exec_())
+
+
+
+
+
+
+
+
+
+
+
+
+
 # import sys
 # from PyQt5.QtWidgets import *
 # from PyQt5.QtCore import *
@@ -43,22 +130,15 @@
 
 
 
-import sys
-from PyQt5.QtWidgets import *
-from PyQt5 import uic
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-# from PyQt5 import QtCore, QtGui, QtWidgets
 
-# from inference import WindowClass
 
-import os
 
-#UI파일 연결
-#단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
-form_class = uic.loadUiType("inference_init_dialog.ui")[0]
 
+
+
+
+
+    
 #화면을 띄우는데 사용되는 Class 선언
 # class InferenceInitWindowClass(QDialog, form_class) :
 
@@ -115,58 +195,3 @@ form_class = uic.loadUiType("inference_init_dialog.ui")[0]
 #         msg = [self.inferenceDir, self.modelDir]
 #         # self.command.emit(msg)
 #         print(msg)
-class InferenceInitModal(QDialog, form_class):
-    
-    inferenceDir = ""
-    modelDir = ""
-
-    def __init__(self) :
-        super().__init__()
-        self.setupUi(self)
-        self.show()
-        self.initUI()
-
-        
-    
-
-    def initUI(self):
-        # 파일 열기 버튼 연결
-        self.pushButtonInferenceListDir.clicked.connect(self.clickOpenInferenceSet)
-        self.pushButtonModelDir.clicked.connect(self.clickModelFileSet)
-        # 완료 버튼 연결
-        self.pushButtonInitNext.clicked.connect(self.clickComplete)
-    
-    # inference set 파일 경로 설정
-    def clickOpenInferenceSet(self):
-        fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
-        self.inferenceDir = fname
-        self.labelInferenceListDir.setText(fname)
-
-    # model 파일 찾기
-    def clickModelFileSet(self):
-        fname = QFileDialog.getOpenFileName(self, '', 'Open file')
-        # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
-        self.labelModelDir.setText(fname[0])
-        self.modelDir = fname[0]
-
-    # 화면 닫기
-    def clickComplete(self):
-        global globalmodelDir
-        globalmodelDir = self.modelDir
-        
-        self.close()
-        return self.modelDir
-
-if __name__ == "__main__" :
-    #QApplication : 프로그램을 실행시켜주는 클래스
-    app = QApplication(sys.argv) 
-
-    #WindowClass의 인스턴스 생성
-    myWindow = InferenceInitModal() 
-
-    #프로그램 화면을 보여주는 코드
-    myWindow.show()
-
-    #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
-    app.exec_()
-    # sys.exit(app.exec_())
