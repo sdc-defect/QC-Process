@@ -10261,7 +10261,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6971fdcc25b02374c902b0696316c48c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 2099827541}
 --- !u!1001 &487076144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19290,12 +19289,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 915333061}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffa1f9ac02c1cad4ea07b73e5f1e86d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 6971fdcc25b02374c902b0696316c48c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrCam:
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1001 &916185510
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43166,7 +43162,7 @@ Camera:
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.8
+    x: 0
     y: 0
     width: 0.2
     height: 0.4
