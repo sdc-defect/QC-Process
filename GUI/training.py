@@ -3,12 +3,28 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5 import QtCore, QtWidgets
 import os
+# graph lib
+import pandas as pd
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 
 # from training_init import TrainingInitWindowClass
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 form_class = uic.loadUiType("training.ui")[0]
+
+# 그래프 띄워줄 데이터 import
+log_data = pd.read_csv('./_log.csv')
+log_data1=log_data['train_loss']
+log_data2=log_data[ 'train_accuracy']
+log_data3=log_data['train_recall']
+# log_data4=log_data['train_f1']
+log_data5=log_data['val_loss']
+log_data6=log_data['val_accuracy']
+log_data7=log_data['val_recall']
+# log_data8=log_data['val_f1']
 
 #화면을 띄우는데 사용되는 Class 선언
 class trainingWindowClass(QMainWindow, form_class) :
@@ -88,7 +104,104 @@ class trainingWindowClass(QMainWindow, form_class) :
     def editFileDir(self):
         self.trainingInit = TrainingInitWindowClass()
         self.trainingInit.show()
+        
+    # 그래프 플로팅
+    def firstAction(self):
+        self.layout().removeWidget(self.lblAreaLoss)
+        self.layout().removeWidget(self.lblAreaAcc)
+        self.layout().removeWidget(self.lblAreaRecall)
+        self.lblAreaLoss.setParent(None)
+        self.lblAreaAcc.setParent(None)
+        self.lblAreaRecall.setParent(None)
+        self.plotLoss = WidgetPlotLoss(self.centralwidget)  
+        self.plotAcc = WidgetPlotAcc(self.centralwidget)   
+        self.plotRecall = WidgetPlotRecall(self.centralwidget)      
+            
+        self.gridLayout.addWidget(self.plotLoss)
+        self.gridLayout.addWidget(self.plotAcc)
+        self.gridLayout.addWidget(self.plotRecall)
 
+# 그래프용 Class 선언
+class WidgetPlotLoss(QWidget):
+    def __init__(self, *args, **kwargs):
+        QWidget.__init__(self, *args, **kwargs)
+        self.setLayout(QVBoxLayout())
+        self.canvas = PlotCanvasLoss(self, width=10, height=8)
+        self.layout().addWidget(self.canvas)
+        
+class PlotCanvasLoss(FigureCanvas):
+    def __init__(self, parent=None, width=10, height=8, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+        FigureCanvas.setSizePolicy(self, 
+                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plot()
+        
+    def plot(self):        
+        ax = self.figure.add_subplot(111)
+        ax.plot(log_data1, color='#d62828', marker='o', linestyle='dashed', label='train_loss')
+        ax.plot(log_data5, color='#003049', marker='o', linestyle='solid',label= 'val_loss')
+        ax.grid(True,axis='y',linestyle='--')
+        ax.legend(loc='best')
+        ax.set_title('Loss')
+        self.draw()
+
+class WidgetPlotAcc(QWidget):
+    def __init__(self, *args, **kwargs):
+        QWidget.__init__(self, *args, **kwargs)
+        self.setLayout(QVBoxLayout())
+        self.canvas = PlotCanvasAcc(self, width=10, height=8)
+        self.layout().addWidget(self.canvas)
+        
+class PlotCanvasAcc(FigureCanvas):
+    def __init__(self, parent=None, width=10, height=8, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+        FigureCanvas.setSizePolicy(self, 
+                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plotacc()
+        
+    def plotacc(self):
+        ax = self.figure.add_subplot(111)
+        ax.plot(log_data2, color='#d62828', marker='o', linestyle='dashed', label='train_accuracy')
+        ax.plot(log_data6, color='#003049', marker='o', linestyle='solid',label= 'val_accuracy')
+        ax.grid(True,axis='y',linestyle='--')
+        ax.legend(loc='best')
+        ax.set_title('Accuracy')
+        self.draw()
+        
+class WidgetPlotRecall(QWidget):
+    def __init__(self, *args, **kwargs):
+        QWidget.__init__(self, *args, **kwargs)
+        self.setLayout(QVBoxLayout())
+        self.canvas = PlotCanvasRecall(self, width=10, height=8)
+        self.layout().addWidget(self.canvas)
+        
+class PlotCanvasRecall(FigureCanvas):
+    def __init__(self, parent=None, width=10, height=8, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+        FigureCanvas.setSizePolicy(self, 
+                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plotrecall()
+        
+    def plotrecall(self):
+        ax = self.figure.add_subplot(111)
+        ax.plot(log_data3, color='#d62828', marker='o', linestyle='dashed', label='train_recall')
+        ax.plot(log_data7, color='#003049', marker='o', linestyle='solid', label= 'val_recall')
+        ax.grid(True,axis='y',linestyle='--')
+        ax.legend(loc='best')
+        ax.set_title('Recall')
+        
+        self.draw()
+        
+# 그래프 끝
 
 # ----------------------------------------------------------------------------------------------------
 #UI파일 연결
@@ -236,6 +349,9 @@ if __name__ == "__main__" :
 
     #프로그램 화면을 보여주는 코드
     myWindow.show()
+    
+    # 그래프를 그려주는 코드
+    myWindow.firstAction()
 
     #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
