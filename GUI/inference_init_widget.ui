@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>dialog</class>
- <widget class="QDialog" name="dialog">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>759</width>
-    <height>428</height>
+    <width>748</width>
+    <height>441</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Form</string>
   </property>
   <widget class="QPushButton" name="pushButtonInitNext">
    <property name="geometry">
     <rect>
      <x>610</x>
-     <y>360</y>
+     <y>350</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -30,7 +30,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>50</y>
+     <y>40</y>
      <width>651</width>
      <height>291</height>
     </rect>

@@ -378,10 +378,10 @@
    <widget class="QTableView" name="tableViewImageList">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>480</y>
-      <width>256</width>
-      <height>321</height>
+      <x>30</x>
+      <y>140</y>
+      <width>311</width>
+      <height>391</height>
      </rect>
     </property>
    </widget>
