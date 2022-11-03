@@ -27,5 +27,8 @@ if __name__ == "__main__":
     while True:
         tmp = read(0)
         time.sleep(0.2)
-        print(tmp)
+        if tmp>75:
+            print('Arrived!')
         
+        else:
+            print('Waiting...')
