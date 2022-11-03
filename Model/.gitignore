@@ -4,3 +4,6 @@
 **/assets/
 **/variables/
 **/*.pb
+
+**/*.npy
+**/*.onnx

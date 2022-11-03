@@ -27,10 +27,10 @@ public class SplitObject : MonoBehaviour
         if (fTime >= fDelayTime)
         {
             Vector3 pos = rBody.position;
-            rBody.position += Vector3.right * speed * Time.fixedDeltaTime;
+            rBody.position += Vector3.back * speed * Time.fixedDeltaTime;
             rBody.MovePosition(pos);
 
-            if (fTime >= 4)
+            if (fTime >= 6)
             {
                 fTime = 0.00f;
                 speed = -1 * speed;
