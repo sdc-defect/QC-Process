@@ -1,20 +1,20 @@
-from asyncio.windows_events import NULL
+
 import sys
-from tokenize import String
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import os
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
-form_class = uic.loadUiType("training_init.ui")[0]
+init_form_class = uic.loadUiType("training_init.ui")[0]
 
 #화면을 띄우는데 사용되는 Class 선언
-class TrainingInitWindowClass(QMainWindow, form_class) :
+class TrainingInitWindowClass(QMainWindow, init_form_class) :
 
     trainSetDir = ""
     testSetDir = ""
     validationSetDir = ""
+    modelSaveDir = ""
 
     trainFileCount = 0
     testFileCount = 0
@@ -115,6 +115,12 @@ class TrainingInitWindowClass(QMainWindow, form_class) :
         self.validationFileCount = fileCount
         self.labelValidationCount.setText("(" + str(fileCount) + ")")
 
+    # 모델 저장할 위치 경로 설정
+    def clickOpenModelSaveDir(self):
+        fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        self.modelSaveDir = fname
+        self.labelModelSaveDir.setText(fname)
+
     # 디렉토리 내부 파일 개수 세기
     def countFileNumber(self, dir):
         fileCount = len(os.listdir(dir))
@@ -128,7 +134,8 @@ class TrainingInitWindowClass(QMainWindow, form_class) :
             "testSetDir": self.testSetDir, 
             "testFileCount": self.testFileCount, 
             "validationSetDir": self.validationSetDir,
-            "validationFileCount": self.validationFileCount
+            "validationFileCount": self.validationFileCount,
+            "modelSaveDir": self.modelSaveDir,
         }
         print(response)
         # self.ratioModal = 
