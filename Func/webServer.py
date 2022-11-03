@@ -1,5 +1,5 @@
 from fastapi import WebSocket
-
+ 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     print("started")
