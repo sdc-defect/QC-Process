@@ -1,0 +1,8 @@
+user: jsh
+save: case3
+module: model.mymodel
+class: MyModel3
+batch_size: 8
+epochs: 50
+init_lr: 0.0005
+decay_steps: 1000
