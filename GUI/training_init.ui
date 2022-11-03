@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>820</x>
-      <y>570</y>
+      <y>560</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -33,7 +33,7 @@
       <x>120</x>
       <y>70</y>
       <width>791</width>
-      <height>481</height>
+      <height>461</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -161,6 +161,45 @@
       <widget class="QLabel" name="labelValidationListDir">
        <property name="text">
         <string>이미지 dir 위치</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="labelModelSave">
+         <property name="text">
+          <string>model save dir</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelValidationCount_2">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonModelSaveDir">
+         <property name="text">
+          <string>열기</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelModelSaveDir">
+       <property name="text">
+        <string>모델 저장 dir 주소</string>
        </property>
       </widget>
      </item>
