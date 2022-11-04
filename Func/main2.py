@@ -20,7 +20,7 @@ app = FastAPI()
 async def connection():
     return { "messege" : "Successfully Connected"}
 
-# 웹소켓 설정 ws://127.0.0.1:8081/ws 로 접속할 수 있음
+# 웹소켓 설정
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     print(f"client connected : {websocket.client}")
