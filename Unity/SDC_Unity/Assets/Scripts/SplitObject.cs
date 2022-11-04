@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class SplitObject : MonoBehaviour
 {
-    public float speed;
+    public float speed = 4f;
     private float fDelayTime = 2f;
     private float fTime = 0.00f;
-    public GameObject Product;
     Rigidbody rBody;
 
     // Start is called before the first frame update
@@ -15,6 +14,8 @@ public class SplitObject : MonoBehaviour
     {
         rBody = GetComponent<Rigidbody>();
         fTime = 4f;
+        speed = 4f;
+
     }
 
     // Update is called once per frame
@@ -24,17 +25,20 @@ public class SplitObject : MonoBehaviour
 
         // Debug.Log(fTime);
 
-        if (fTime >= fDelayTime)
-        {
-            Vector3 pos = rBody.position;
-            rBody.position += Vector3.back * speed * Time.fixedDeltaTime;
-            rBody.MovePosition(pos);
 
-            if (fTime >= 6)
-            {
-                fTime = 0.00f;
-                speed = -1 * speed;
-            }
+        Vector3 pos = rBody.position;
+        rBody.position += Vector3.forward * speed * Time.fixedDeltaTime;
+        rBody.MovePosition(pos);
+
+        fTime = 0.00f;
+        if (ConvayorBelt2.direction)
+        {
+            speed = - 4f;
         }
+        else
+        {
+            speed = 4f;
+        }
+  
     }
 }

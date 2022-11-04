@@ -15,7 +15,7 @@ public class Test : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.P))
         {// 그냥 R 키 누르면 실행
             try
             {
