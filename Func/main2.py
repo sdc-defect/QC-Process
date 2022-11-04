@@ -1,4 +1,6 @@
 from enum import Enum
+from utils.data import Large_Data
+
 from fastapi import FastAPI, Response, status, WebSocket, Request
 
 from fastapi.responses import HTMLResponse
@@ -14,7 +16,7 @@ is_connected = True
 async def connection():
     return { "messege" : "Successfully Connected"}
 
-# 웹소켓 설정 ws://127.0.0.1:8000/ws 로 접속할 수 있음
+# 웹소켓 설정
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     print(f"client connected : {websocket.client}")
@@ -22,6 +24,8 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         await websocket.send_text(f"Welcome client : {websocket.client}")
         while True:
+            if service :
+                pass
             # 수정해야됨 메시지 -> 이미지
             data = await websocket.receive_text()  # client 메시지 수신대기
             print(f"message received : {data} from : {websocket.client}")
