@@ -37,7 +37,7 @@ class MyTester(Matrix):
 class MyTrainer(MyTester):
     def __init__(self, model, init_lr: float = 0.001, decay_steps: int = 1000) -> None:
         super().__init__(model=model)
-        self._schedular = CosineDecay(init_lr, decay_steps)
+        self._schedular = CosineDecayRestarts(init_lr, decay_steps)
         self._optimizer = Adam(self._schedular)
 
     @tf.function
@@ -46,7 +46,7 @@ class MyTrainer(MyTester):
             preds: tf.Tensor = self._model(images, training=True)
             loss: tf.Tensor = self._loss_func(labels, preds)
         gradients: list = tape.gradient(loss, self._model.trainable_variables)
-        gradients: list = [(tf.clip_by_norm(grad, clip_norm=2.0)) for grad in gradients]
+        # gradients: list = [(tf.clip_by_norm(grad, clip_norm=2.0)) for grad in gradients]
         self._optimizer.apply_gradients(zip(gradients, self._model.trainable_variables))
 
         self._loss.update_state(loss)

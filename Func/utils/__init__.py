@@ -41,17 +41,16 @@ def get_logger(name):
     return logger
 
 
-def load_onnx(path: str, gpu: bool = True) -> ONNXRuntime:
-    try:
-        model = onnx.load_model(path)
-        runtime = onnxruntime.InferenceSession(path, providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+def load_onnx(path: str) -> ONNXRuntime:
+    if not os.path.exists(path):
+        raise FileNotFoundError
+    model = onnx.load_model(path)
+    runtime = onnxruntime.InferenceSession(path)
 
-        for w in reversed(model.graph.initializer):
-            dense = numpy_helper.to_array(w)
-            if dense.ndim == 2 and dense.shape[1] == 2:
-                return ONNXRuntime(runtime=runtime, dense=dense)
-    except FileNotFoundError as e:
-        print(e)
+    for w in reversed(model.graph.initializer):
+        dense = numpy_helper.to_array(w)
+        if dense.ndim == 2 and dense.shape[1] == 2:
+            return ONNXRuntime(runtime=runtime, dense=dense)
 
 
 def merge_two_imgs(img1: np.ndarray, img2: np.ndarray, per_1: float = 0.5, per_2: float = 0.3) -> np.float64:

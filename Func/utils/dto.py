@@ -7,8 +7,10 @@ import onnxruntime
 
 @dataclass
 class InferenceResult:
-    idx: int
+    timestamp: str
     prob: List[float]
+    label: int
+    img: np.ndarray
     cam: np.ndarray
     merged: np.ndarray
 
