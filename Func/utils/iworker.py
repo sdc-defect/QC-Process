@@ -1,5 +1,5 @@
-import pathlib
 import time
+import datetime
 from typing import List, Union, Tuple, Dict
 
 import multiprocessing as mp
@@ -16,6 +16,7 @@ class IWorker:
         self._size = size
         self._runtime: Union[ONNXRuntime, None] = None
         self._img0 = None
+        self._timestamp = None
 
     def __getstate__(self) -> Dict:
         return {'path': self._path, 'size': self._size}
@@ -26,6 +27,7 @@ class IWorker:
         self._runtime = utils.load_onnx(self._path)
 
     def _preprocess(self, img: np.ndarray) -> np.ndarray:
+        self._timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self._img0 = img.copy()
 
         return np.expand_dims(img / 255, axis=0).astype('float32')
@@ -44,7 +46,7 @@ class IWorker:
         cam = self._get_cam(conv_layer, 1)
         merged = utils.merge_two_imgs(self._img0, cam)
 
-        return InferenceResult(label, list(prob), cam, merged)
+        return InferenceResult(self._timestamp, [float(p) for p in prob], label, self._img0, cam, merged)
 
     def _get_cam(self, conv_layer: np.ndarray, target_label: int, is_rgb: bool = False):
         c, h, w = conv_layer.shape
@@ -73,7 +75,7 @@ class IProcess(mp.Process):
             rimg = np.uint8(np.random.rand(300, 300, 3) * 255)
 
             result = self._worker.inference(rimg)
-            print(result.prob)
+            print(result.timestamp)
             self._queue.put(result)
 
 
@@ -105,7 +107,7 @@ class IService:
         self._process = IProcess(self.queue, self._path, self._size)
         self._process.start()
 
-    def stop_inference(self):
+    async def stop_inference(self):
         self._process.terminate()
         self._process.join()
 
@@ -119,5 +121,5 @@ if __name__ == "__main__":
     service = IService()
     service.update_onnx_info("../temp/case2/onnx/modified.onnx")
     service.run_process()
-    # time.sleep(5)
-    # service.stop_inference()
+    time.sleep(10)
+    service.stop_inference()
