@@ -1,0 +1,130 @@
+
+-----------------------------
+ ./dataset/test2/ok_front/ 
+total average of inference time 0.4659630396893916
+[correct, wrong,ok, def] [260, 2, 260, 2]
+
+-----------------------------
+ ./dataset/test2/def_front/ 
+total average of inference time 0.4573589071269593
+[correct, wrong,ok, def] [451, 2, 2, 451]
+
+-----------------------------
+ ./dataset/train2/ok_front/ 
+total average of inference time 0.4560040285690971
+[correct, wrong,ok, def] [2795, 80, 2795, 80]
+
+-----------------------------
+ ./dataset/train2/def_front/ 
+total average of inference time 0.4495744421610241
+[correct, wrong,ok, def] [3738, 20, 20, 3738]
+
+-------------def-------------
+
+cast_def_0_1591.jpeg
+cast_def_0_150.jpeg
+cast_def_0_3047.jpeg
+cast_def_0_357.jpeg
+cast_def_0_6988.jpeg
+cast_def_0_2535.jpeg
+cast_def_0_2949.jpeg
+cast_def_0_4073.jpeg
+cast_def_0_3464.jpeg
+cast_def_0_4710.jpeg
+cast_def_0_7847.jpeg
+cast_def_0_2838.jpeg
+cast_def_0_1053.jpeg
+cast_def_0_1016.jpeg
+cast_def_0_4932.jpeg
+cast_def_0_7057.jpeg
+cast_def_0_5152.jpeg
+cast_def_0_3041.jpeg
+cast_def_0_8041.jpeg
+cast_def_0_7878.jpeg
+cast_def_0_9965.jpeg
+cast_def_0_4669.jpeg
+
+-------------ok--------------
+
+cast_ok_0_2885.jpeg
+cast_ok_0_2915.jpeg
+cast_ok_0_2517.jpeg
+cast_ok_0_1443.jpeg
+cast_ok_0_9041.jpeg
+cast_ok_0_9070.jpeg
+cast_ok_0_5752.jpeg
+cast_ok_0_5717.jpeg
+cast_ok_0_6073.jpeg
+cast_ok_0_5465.jpeg
+cast_ok_0_6093.jpeg
+cast_ok_0_7847.jpeg
+cast_ok_0_5194.jpeg
+cast_ok_0_1755.jpeg
+cast_ok_0_3238.jpeg
+cast_ok_0_4046.jpeg
+cast_ok_0_7477.jpeg
+cast_ok_0_7627.jpeg
+cast_ok_0_6657.jpeg
+cast_ok_0_3642.jpeg
+cast_ok_0_8210.jpeg
+cast_ok_0_6437.jpeg
+cast_ok_0_5818.jpeg
+cast_ok_0_2207.jpeg
+cast_ok_0_7987.jpeg
+cast_ok_0_570.jpeg
+cast_ok_0_9705.jpeg
+cast_ok_0_7948.jpeg
+cast_ok_0_5945.jpeg
+cast_ok_0_102.jpeg
+cast_ok_0_9631.jpeg
+cast_ok_0_6997.jpeg
+cast_ok_0_4723.jpeg
+cast_ok_0_1688.jpeg
+cast_ok_0_4245.jpeg
+cast_ok_0_7859.jpeg
+cast_ok_0_1964.jpeg
+cast_ok_0_7288.jpeg
+cast_ok_0_5579.jpeg
+cast_ok_0_9840.jpeg
+cast_ok_0_2099.jpeg
+cast_ok_0_4590.jpeg
+cast_ok_0_7836.jpeg
+cast_ok_0_5351.jpeg
+cast_ok_0_6041.jpeg
+cast_ok_0_4816.jpeg
+cast_ok_0_4638.jpeg
+cast_ok_0_7671.jpeg
+cast_ok_0_2631.jpeg
+cast_ok_0_8888.jpeg
+cast_ok_0_9387.jpeg
+cast_ok_0_286.jpeg
+cast_ok_0_6699.jpeg
+cast_ok_0_6947.jpeg
+cast_ok_0_4949.jpeg
+cast_ok_0_5638.jpeg
+cast_ok_0_6934.jpeg
+cast_ok_0_9087.jpeg
+cast_ok_0_1968.jpeg
+cast_ok_0_7531.jpeg
+cast_ok_0_7134.jpeg
+cast_ok_0_6522.jpeg
+cast_ok_0_6647.jpeg
+cast_ok_0_8891.jpeg
+cast_ok_0_1970.jpeg
+cast_ok_0_4075.jpeg
+cast_ok_0_8199.jpeg
+cast_ok_0_7674.jpeg
+cast_ok_0_3865.jpeg
+cast_ok_0_3853.jpeg
+cast_ok_0_3898.jpeg
+cast_ok_0_6293.jpeg
+cast_ok_0_4986.jpeg
+cast_ok_0_9671.jpeg
+cast_ok_0_1307.jpeg
+cast_ok_0_6424.jpeg
+cast_ok_0_1556.jpeg
+cast_ok_0_6728.jpeg
+cast_ok_0_5979.jpeg
+cast_ok_0_2336.jpeg
+cast_ok_0_8603.jpeg
+cast_ok_0_7852.jpeg
