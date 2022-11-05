@@ -46,7 +46,7 @@ class IWorker:
         cam = self._get_cam(conv_layer, 1)
         merged = utils.merge_two_imgs(self._img0, cam)
 
-        return InferenceResult(self._timestamp, list(prob), label, self._img0, cam, merged)
+        return InferenceResult(self._timestamp, [float(p) for p in prob], label, self._img0, cam, merged)
 
     def _get_cam(self, conv_layer: np.ndarray, target_label: int, is_rgb: bool = False):
         c, h, w = conv_layer.shape
@@ -75,7 +75,7 @@ class IProcess(mp.Process):
             rimg = np.uint8(np.random.rand(300, 300, 3) * 255)
 
             result = self._worker.inference(rimg)
-
+            print(result.timestamp)
             self._queue.put(result)
 
 
@@ -107,7 +107,7 @@ class IService:
         self._process = IProcess(self.queue, self._path, self._size)
         self._process.start()
 
-    def stop_inference(self):
+    async def stop_inference(self):
         self._process.terminate()
         self._process.join()
 
