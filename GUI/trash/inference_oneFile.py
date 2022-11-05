@@ -5,21 +5,19 @@ import os
 from PyQt5 import QtCore, QtWidgets
 # from PyQt5.QtCore import *
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtGui import QPixmap
 
 from all_images import AllImageWindowClass
-from inference_init import InferenceInitModal
 # import inference_init
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
-
 form_class = uic.loadUiType("inference.ui")[0]
 
 #화면을 띄우는데 사용되는 Class 선언
-class InferenceWindowClass(QMainWindow, form_class) :
-    inferenceDir = ""
-    modelDir = ""
+class WindowClass(QMainWindow, form_class) :
+    imageDir = ""
 
     def __init__(self) :
         super().__init__()
@@ -28,7 +26,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.updateLog()
         self.initUI()
 
-        # self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen) # 모든 이미지 리스트 창 열기
+        self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen) # 모든 이미지 리스트 창 열기
 
 
     # 초기화
@@ -52,48 +50,38 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.pushButtonOpenSingleImageDir.clicked.connect(self.showSingleImage)
 
         # 추론 모든 이미지 보기
-        self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen)
-
-        # 개별 이미지 추론 시작 버튼
-        self.pushButtonSingleStartInference.clicked.connect(self.singleStartInference)
-
-        # 전체 이미지 추론 시작 버튼
-        self.pushButtonControlStart.clicked.connect(self.allStartInference)
-        # 전체 이미지 추론 정지 버튼
-        self.pushButtonControlStop.clicked.connect(self.allStopInference)
-        
-
-        
+        self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen) # 모든 이미지 리스트 창 열기
 
     # 추론할 이미지 파일들 디렉토리 주소 가져오기 -> 없애고 이미지 가져오는거만 남겨놓기
     def imageFileDirButtonClicked(self):
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
         self.textBrowserImageFile.setText(fname)
-
         if fname: # 가져온 파일 안에 있는 파일 이름 가져오기 -> 큐로 보내줘야함..! 시작 버튼 눌렀을때로 옮겨야할듯
+            
+            # global images
+            # images = "hello!!!!!!!"
             images = {}
+
             images["dir"] = fname
             images["fileLst"] = os.listdir(fname)
-            # print(os.listdir(fname))
-            # for filename in os.listdir(fname):
-            #     # images["fileLst"].append(filename)
-            #     print(filename)
-            #     # with open(os.path.join(fname, filename), 'r') as f: # 파일 내용 읽기
-            #     #     text = f.read()
-            #     #     print(text)
-            # print(images)
+            print(os.listdir(fname))
+            for filename in os.listdir(fname):
+                # images["fileLst"].append(filename)
+                print(filename)
+                # with open(os.path.join(fname, filename), 'r') as f: # 파일 내용 읽기
+                #     text = f.read()
+                #     print(text)
+            print(images)
     
 
     # 모달 창 - 모든 이미지 파일 리스트
     def allImagesWindowOpen(self):
-        # 주소 어디에 있는지 정해지면 변경@@@@@@@@@@
-        images = {}
-        images["dir"] = self.inferenceDir
-        images["fileLst"] = os.listdir(self.inferenceDir)
-        # 주소 어디에 있는지 정해지면 변경@@@@@@@@@@
-
+        
+        global images
+        # images = self.inferenceDir
         self.allImages = AllImageWindowClass(images)
         self.allImages.show()
+        # self.allImages.textBrowserSelectedImage.setText(text)
 
     # 로그 csv 파일 로그창에 출력하기
     def updateLog(self):
@@ -112,14 +100,13 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
     # 메뉴에 파일 다시 열기 누르면
     def editFileDir(self):
+        # self.inferenceInit = InferenceInitWindowClass()
+        # self.inferenceInit.show()
         initModal = InferenceInitModal()
         initModal.exec_()
-
         self.inferenceDir = initModal.inferenceDir
-        self.modelDir = initModal.modelDir
-
         self.textBrowserImageFile.setText(self.inferenceDir)
-        self.textBrowserModelSaveFile.setText(self.modelDir)
+        print("parent", self.inferenceDir, "end")
 
         self.printImageListTable(self.inferenceDir)
     
@@ -127,21 +114,30 @@ class InferenceWindowClass(QMainWindow, form_class) :
     def printImageListTable(self, directory):
         
         if directory: # 가져온 파일 안에 있는 파일 이름 가져오기 -> 큐로 보내줘야함..! 시작 버튼 눌렀을때로 옮겨야할듯
+            
+            # images = "hello!!!!!!!"
+            global images
             images = {}
+
             images["dir"] = directory
             images["fileLst"] = os.listdir(directory)
-            # for filename in os.listdir(directory):
-            #     # images["fileLst"].append(filename)
-            #     print(filename)
-            #     # with open(os.path.join(fname, filename), 'r') as f: # 파일 내용 읽기
-            #     #     text = f.read()
-            #     #     print(text)
-            # print(images)
+            print(os.listdir(directory))
+            for filename in os.listdir(directory):
+                # images["fileLst"].append(filename)
+                print(filename)
+                # with open(os.path.join(fname, filename), 'r') as f: # 파일 내용 읽기
+                #     text = f.read()
+                #     print(text)
+            print(images)
 
         self.tableWidgetImageList.setRowCount(len(images["fileLst"]))
 
         for fileIdx in range(len(images["fileLst"])):
             self.tableWidgetImageList.setItem(fileIdx, 0, QTableWidgetItem(images["fileLst"][fileIdx]))
+
+    
+        return 0
+        
 
     # 이미지 미리보기
     def showSingleImage(self):
@@ -154,17 +150,67 @@ class InferenceWindowClass(QMainWindow, form_class) :
         pixmap = QPixmap(singleImageDir)
         self.labelSingleImageShow.setPixmap(pixmap)
 
-    # 개별 이미지 추론 시작
-    def singleStartInference(self):
-        pass
 
-    # 모든 이미지 추론 시작
-    def allStartInference(self):
-        pass
+    @pyqtSlot(list)
+    def receiveMsg(self, msg):
+        self.textBrowserImageFile.setText(msg[0])
+        self.textBrowserModelSaveFile.setText(msg[1])
 
-    # 모든 이미지 추론 정지
-    def allStopInference(self):
-        pass
+
+
+form_init = uic.loadUiType("inference_init_dialog.ui")[0]
+
+class InferenceInitModal(QDialog, form_init):
+    
+    inferenceDir = "aaa"
+    modelDir = ""
+
+    def __init__(self) :
+        super().__init__()
+        self.setupUi(self)
+        self.show()
+        self.initUI()
+    
+
+    def initUI(self):
+        # 파일 열기 버튼 연결
+        self.pushButtonInferenceListDir.clicked.connect(self.clickOpenInferenceSet)
+        self.pushButtonModelDir.clicked.connect(self.clickModelFileSet)
+        # 완료 버튼 연결
+        self.pushButtonInitNext.clicked.connect(self.clickComplete)
+    
+    # inference set 파일 경로 설정
+    def clickOpenInferenceSet(self):
+        fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        self.inferenceDir = fname
+        print("self.inferenceDir: ", self.inferenceDir)
+        self.labelInferenceListDir.setText(fname)
+
+        # self.fileDirModel.data["inferenceDir"] = fname
+        # print(self.fileDirModel.data)
+
+    # model 파일 찾기
+    def clickModelFileSet(self):
+        fname = QFileDialog.getOpenFileName(self, '', 'Open file')
+        # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
+        self.labelModelDir.setText(fname[0])
+        self.modelDir = fname[0]
+
+
+    # 화면 닫기
+    def clickComplete(self):
+        print("self.inferenceDir: ", self.inferenceDir)
+        self.close()
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__" :
@@ -172,7 +218,7 @@ if __name__ == "__main__" :
     app = QApplication(sys.argv) 
 
     #WindowClass의 인스턴스 생성
-    myWindow = InferenceWindowClass() 
+    myWindow = WindowClass() 
 
     #프로그램 화면을 보여주는 코드
     myWindow.show()
@@ -184,53 +230,3 @@ if __name__ == "__main__" :
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-# class InferenceInitModal(QDialog, modal_form_class):
-    
-#     inferenceDir = ""
-#     modelDir = ""
-
-#     def __init__(self) :
-#         super().__init__()
-#         self.setupUi(self)
-#         self.show()
-#         self.initUI()
-    
-
-#     def initUI(self):
-#         # 파일 열기 버튼 연결
-#         self.pushButtonInferenceListDir.clicked.connect(self.clickOpenInferenceSet)
-#         self.pushButtonModelDir.clicked.connect(self.clickModelFileSet)
-#         # 완료 버튼 연결
-#         self.pushButtonInitNext.clicked.connect(self.clickComplete)
-    
-#     # inference set 파일 경로 설정
-#     def clickOpenInferenceSet(self):
-#         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
-#         self.inferenceDir = fname
-#         self.labelInferenceListDir.setText(fname)
-
-#     # model 파일 찾기
-#     def clickModelFileSet(self):
-#         fname = QFileDialog.getOpenFileName(self, '', 'Open file')
-#         # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
-#         self.labelModelDir.setText(fname[0])
-#         self.modelDir = fname[0]
-
-#     # 화면 닫기
-#     def clickComplete(self):
-
-#         self.close()
