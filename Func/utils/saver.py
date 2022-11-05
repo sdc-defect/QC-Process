@@ -3,6 +3,7 @@ import time
 import subprocess
 
 import numpy as np
+
 from onnx import load, shape_inference, checker, save_model
 import onnx.numpy_helper as numpy_helper
 
