@@ -32,6 +32,8 @@ class AllImageWindowClass(QMainWindow, form_class) :
 
     # 파일 리스트에 데이터 넣기
     def showList(self, images):
+        
+        print("images:::", images)
         self.tableWidgetAllFile.setColumnCount(2)
         self.tableWidgetAllFile.setRowCount(len(images["fileLst"]))
         print(len(images["fileLst"]))
@@ -60,6 +62,9 @@ class AllImageWindowClass(QMainWindow, form_class) :
         row = self.tableWidgetAllFile.currentIndex().row()
         print(row)
         self.showDetail(row)
+
+
+class 
 
 if __name__ == "__main__" :
     #QApplication : 프로그램을 실행시켜주는 클래스
