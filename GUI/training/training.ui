@@ -215,7 +215,7 @@
       <height>251</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayoutLog" stretch="1,6">
+    <layout class="QVBoxLayout" name="verticalLayoutLog" stretch="1,5">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,1">
        <item>
@@ -235,11 +235,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QLabel" name="labelLogContent">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
+      <widget class="QTextBrowser" name="textBrowser"/>
      </item>
     </layout>
    </widget>
