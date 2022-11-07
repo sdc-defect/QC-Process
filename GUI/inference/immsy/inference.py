@@ -1,4 +1,5 @@
 import sys
+import json
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import os
@@ -6,9 +7,25 @@ from PyQt5 import QtCore, QtWidgets
 # from PyQt5.QtCore import *
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
+from PyQt5 import QtWebSockets
+from PyQt5.QtCore import QUrl
+from PyQt5 import QtCore, QtWebSockets, QtNetwork
+from PyQt5.QtCore import QUrl, QCoreApplication, QTimer
+from PyQt5.QtWidgets import QApplication
+
+from PyQt5.QtWebSockets import QWebSocket
+from threading import Thread
+from multiprocessing import Process, Queue
+
+from fastapi import FastAPI
+import websockets
+import asyncio
+import base64
 
 from all_images import AllImageWindowClass
 from inference_init import InferenceInitModal
+from client import Client
+from backports.cached_property import cached_property
 # import inference_init
 
 #UI파일 연결
@@ -21,12 +38,78 @@ class InferenceWindowClass(QMainWindow, form_class) :
     inferenceDir = ""
     modelDir = ""
 
-    def __init__(self) :
-        super().__init__()
+    def __init__(self, parent=None) :
+        super().__init__(parent)
         self.setupUi(self)
 
         self.updateLog()
         self.initUI()
+
+        self.client = QtWebSockets.QWebSocket("", QtWebSockets.QWebSocketProtocol.Version13, None)
+
+        
+        self.client.error.connect(self.error)
+        self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
+        self.client.textMessageReceived.connect(self.handle_message)
+        
+        
+        self.client.pong.connect(self.onPong)
+
+        self.do_ping()
+        # self.textSend()
+
+    def textSend(self):
+        QTimer.singleShot(2000, self.do_ping)
+        QTimer.singleShot(3000, self.send_message)
+
+
+    @cached_property
+    def client(self):
+        return QWebSocket()
+
+    def handle_message(self, message):
+        print(f"messages: ", message)
+        
+        
+        # try:
+        #     d = json.loads(text)
+        # except json.decoder.JSONDecodeError as e:
+        #     print("error:", e)
+        # else:
+        #     if "intent" in d:
+        #         intent = d["intent"]
+        #         if "name" in intent:
+        #             name = intent["name"]
+        #             self.label.setText(name)
+
+    def closeEvent(self, event):
+        super().closeEvent(event)
+        self.client.close()
+    
+    #다른ref
+    def do_ping(self):
+        print("client: do_ping")
+        self.client.ping(b"foo")
+
+    def send_message(self):
+        print("client: send_message")
+        self.client.sendTextMessage("asd")
+
+    def onPong(self, elapsedTime, payload):
+        print("onPong - time: {} ; payload: {}".format(elapsedTime, payload))
+
+    def error(self, error_code):
+        print("error code: {}".format(error_code))
+        print(self.client.errorString())
+
+    def close(self):
+        self.client.close()
+    #다른ref
+
+        # client =  QtWebSockets.QWebSocket("",QtWebSockets.QWebSocketProtocol.Version13,None)
+        # client.open(QUrl("ws://k7b306.p.ssafy.io/api/ws"))
+        # client.sendTextMessage("asd")
+        # client.close()
 
         # self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen) # 모든 이미지 리스트 창 열기
 
@@ -130,14 +213,6 @@ class InferenceWindowClass(QMainWindow, form_class) :
             images = {}
             images["dir"] = directory
             images["fileLst"] = os.listdir(directory)
-            # for filename in os.listdir(directory):
-            #     # images["fileLst"].append(filename)
-            #     print(filename)
-            #     # with open(os.path.join(fname, filename), 'r') as f: # 파일 내용 읽기
-            #     #     text = f.read()
-            #     #     print(text)
-            # print(images)
-
         self.tableWidgetImageList.setRowCount(len(images["fileLst"]))
 
         for fileIdx in range(len(images["fileLst"])):
@@ -147,7 +222,6 @@ class InferenceWindowClass(QMainWindow, form_class) :
     def showSingleImage(self):
         
         fname = QFileDialog.getOpenFileName(self, '', 'Open file')
-        # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
         self.labelSingleImageDir.setText(fname[0])
 
         singleImageDir = fname[0]
@@ -166,19 +240,121 @@ class InferenceWindowClass(QMainWindow, form_class) :
     def allStopInference(self):
         pass
 
+def main():
+    print("th1")
+
+    app = QApplication(sys.argv) 
+    myWindow = InferenceWindowClass() 
+    myWindow.show()
+    app.exec_()
+
+# class websocketClient(QtCore.QObject):
+#     def __init__(self, parent):
+#         super().__init__(parent)
+
+#         self.client = QtWebSockets.QWebSocket("", QtWebSockets.QWebSocketProtocol.Version13, None)
+#         self.client.error.connect(self.error)
+
+#         self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
+#         self.client.pong.connect(self.onPong)
+
+#         print("th2")
+        
+#     def do_ping(self):
+#         print("client: do_ping")
+#         self.client.ping(b"foo")
+
+#     def send_message(self):
+#         print("client: send_message")
+#         self.client.sendTextMessage("asd")
+
+#     def onPong(self, elapsedTime, payload):
+#         print("onPong - time: {} ; payload: {}".format(elapsedTime, payload))
+
+#     def error(self, error_code):
+#         print("error code: {}".format(error_code))
+#         print(self.client.errorString())
+
+#     def close(self):
+#         self.client.close()
+
+# def quit_app():
+#     print("timer timeout - exiting")
+#     QCoreApplication.quit()
+
+# def ping():
+#     client.do_ping()
+
+# def send_message():
+#     client.send_message()
+
+    
+#     # APP = FastAPI()
+
+#     # # 웹소켓 client 연결
+#     # async def clientListen():
+#     #     url = "ws://127.0.0.1:8081"
+#     #     async with webSocket(url) as ws:
+#     #         await ws.send("heellp")
+#     #         while True:
+#     #             msg = await ws.recv()
+#     #             print(msg)
+            
+
+#     # # connect 확인
+#     # @APP.post("/conn")
+#     # async def connection(request):
+#     #     print(request)
+    
+
+            
+#     # asyncio.get_event_loop().run_until_complete(clientListen())
+
+# def webSocket():
+#     global client
+#     app = QApplication(sys.argv)
+
+#     QTimer.singleShot(2000, ping)
+#     QTimer.singleShot(3000, send_message)
+#     QTimer.singleShot(5000, quit_app)
+
+#     client = Client(app)
+
+#     app.exec_()
+
+#     # websocketClient()
+#     global client
+#     app = QApplication(sys.argv)
+
+#     QTimer.singleShot(2000, ping)
+#     QTimer.singleShot(3000, send_message)
+#     QTimer.singleShot(5000, quit_app)
+
+#     client = websocketClient(app)
+
+#     app.exec_()
+
+
 
 if __name__ == "__main__" :
-    #QApplication : 프로그램을 실행시켜주는 클래스
-    app = QApplication(sys.argv) 
+    # #QApplication : 프로그램을 실행시켜주는 클래스
+    # app = QApplication(sys.argv) 
+    # #WindowClass의 인스턴스 생성
+    # myWindow = InferenceWindowClass() 
+    # #프로그램 화면을 보여주는 코드
+    # myWindow.show()
+    # #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
+    # app.exec_()
 
-    #WindowClass의 인스턴스 생성
-    myWindow = InferenceWindowClass() 
+    # th1 = Thread(target=main())
+    # th2 = Thread(target=webSocket())
+    # th1.start()
+    # th2.start()
+    # th1.join()
+    # th2.join()
 
-    #프로그램 화면을 보여주는 코드
-    myWindow.show()
-
-    #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
-    app.exec_()
+    main()
+    
 
 
 
@@ -234,4 +410,3 @@ if __name__ == "__main__" :
 #     def clickComplete(self):
 
 #         self.close()
-
