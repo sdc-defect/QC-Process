@@ -270,7 +270,7 @@ class showLogProgress(QtCore.QThread):
         super().__init__(parent)
         self.parent = parent
 
-        self.logFileDir = "C:/Users/multicampus/Desktop/3ssafy/reaaaal/GUI/training/_log.csv"
+        self.logFileDir = "./_log.csv"
         # self.updateLogLabel()
         print("asdasfa")
 
