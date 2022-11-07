@@ -22,9 +22,9 @@ is_connected = True
 async def websocket_endpoint(websocket: WebSocket):
     print(f"client connected : {websocket.client}")
     await websocket.accept()
-    try:
-        # await websocket.send_text(f"Welcome client : {websocket.client}")
-        while True:
+    # await websocket.send_text(f"Welcome client : {websocket.client}")
+    while True:
+        try:
             time.sleep(0.1)
             if not service.queue.empty():
                 data = await websocket.receive_text()  # client 메시지 수신대기
@@ -32,9 +32,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 result = service.queue.get()
                 data = transfer_image(result)
                 await websocket.send_text(data)
-    except WebSocketDisconnect:
-        await websocket.send_text(f"Bye client : {websocket.client}")
-        # await websocket.close()
+        except WebSocketDisconnect:
+    # except:
+    #     # await websocket.send_text(f"Bye client : {websocket.client}")
+            # await websocket.close()
+            break
 
 
 @app.post("/conn", status_code=200)

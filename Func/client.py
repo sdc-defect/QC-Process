@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
     QTimer.singleShot(2000, ping)
     QTimer.singleShot(3000, send_message)
-    # QTimer.singleShot(5000, quit_app)
+    QTimer.singleShot(10000, quit_app)
     
     client = Client(app)
 
