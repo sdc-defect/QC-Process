@@ -8,6 +8,7 @@ from PyQt5.QtCore import QUrl, QCoreApplication, QTimer
 from PyQt5.QtWidgets import QApplication
 
 from utils.dto import InferenceResult
+from utils.data import reverse_transfer_image, base64_to_image
 
 
 
@@ -59,10 +60,8 @@ class Client(QtCore.QObject):
         self.client.sendTextMessage("asd")
         
     def handle_message(self, message):
-        print(f"messages: ", type(message))
-        msg = json.loads(json.loads(message))
-        print(f"messages: ", type(msg))
-        print()
+        msg = json.loads(message)
+        test = reverse_transfer_image(msg)
 
     def onPong(self, elapsedTime, payload):
         # payload = InferenceResult(timestamp, prob, label, img, cam, merged)
@@ -102,7 +101,7 @@ if __name__ == '__main__':
 
     QTimer.singleShot(2000, ping)
     QTimer.singleShot(3000, send_message)
-    QTimer.singleShot(5000, quit_app)
+    # QTimer.singleShot(5000, quit_app)
     
     client = Client(app)
 

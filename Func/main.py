@@ -31,7 +31,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 print(data)
                 result = service.queue.get()
                 data = transfer_image(result)
-                await websocket.send_json(data)
+                await websocket.send_text(data)
     except WebSocketDisconnect:
         await websocket.send_text(f"Bye client : {websocket.client}")
         # await websocket.close()
