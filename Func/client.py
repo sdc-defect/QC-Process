@@ -59,7 +59,10 @@ class Client(QtCore.QObject):
         self.client.sendTextMessage("asd")
         
     def handle_message(self, message):
-        print(f"messages: ", message)
+        print(f"messages: ", type(message))
+        msg = json.loads(json.loads(message))
+        print(f"messages: ", type(msg))
+        print()
 
     def onPong(self, elapsedTime, payload):
         # payload = InferenceResult(timestamp, prob, label, img, cam, merged)

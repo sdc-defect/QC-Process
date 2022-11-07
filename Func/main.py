@@ -31,11 +31,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 print(data)
                 result = service.queue.get()
                 data = transfer_image(result)
-                
-                await websocket.send_json(f"Message text was: {data}")
+                await websocket.send_json(data)
     except WebSocketDisconnect:
         await websocket.send_text(f"Bye client : {websocket.client}")
-        await websocket.close()
+        # await websocket.close()
 
 
 @app.post("/conn", status_code=200)
