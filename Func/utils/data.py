@@ -6,6 +6,19 @@ from dataclasses import asdict
 
 from utils.dto import InferenceResult
 
+def reverse_transfer_image(result: InferenceResult):
+    result['img'] = base64_to_image(result['img'])
+    result['cam'] = base64_to_image(result['cam'])
+    result['merged'] = base64_to_image(result['merged'])
+
+    return result
+
+def base64_to_image(img: str) -> np.ndarray:
+    binary = base64.b64decode(img)
+    image = np.asarray(bytearray(binary), dtype=np.uint8)
+
+    return cv2.imdecode(image, cv2.IMREAD_COLOR)
+
 
 def transfer_image(result: InferenceResult):
     result = asdict(result)
