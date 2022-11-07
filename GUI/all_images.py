@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import QPixmap
 import os
+from PyQt5.QtGui import QStandardItemModel
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -15,12 +16,22 @@ class AllImageWindowClass(QMainWindow, form_class) :
         self.setupUi(self)
         self.setWindowTitle("All")
 
-        self.showList(images)
+        # self.showList(images)
 
-        global imageSourceDir
-        imageSourceDir = images["dir"]
-        global imageNameLst
-        imageNameLst = images["fileLst"]
+        # global imageSourceDir
+        self.imageSourceDir = images["dir"]
+        # global imageNameLst
+        self.imageNameLst = images["fileLst"]
+
+        # view와 model 연결
+        self.allImageModel = AllImageModel()
+        self.okImageModel = OkImageModel()
+        self.defImageModel = DefImageModel()
+        # self.imageViewMode = ImageViewModel(self.tableViewImageList, self.allImageModel)
+        print(self.allImageModel)
+
+        self.allList()
+        # self.dataInit()
 
         # 리스트에서 이미지 선택할때..
         # imageDir = images["dir"] + "/"+ images["fileLst"][0]
@@ -29,6 +40,24 @@ class AllImageWindowClass(QMainWindow, form_class) :
         # 테이블 클릭 이벤트
         self.tableWidgetAllFile.clicked.connect(self.clickTableAllImages)
 
+    # def dataInit(self):
+    #     self.tableViewImageList.setModel(self.allImageModel.model)
+
+    # 초기 테이블 세팅
+    def initTabel(self):
+        self.tableWidgetAllFile.setColumnCount(2)
+        self.tableWidgetAllFile.setHorizontalHeaderLabels(['FileName', 'CreatedTime'])
+
+        pass
+
+    # 모든 이미지 파일 리스트 클래스에 데이터 넣기
+    def allList(self):
+        imageList = self.allImageModel.data
+        self.tableWidgetAllFile.setRowCount(len(imageList))
+        for fileIdx in range(len(imageList)):
+            self.tableWidgetAllFile.setItem(fileIdx, 0, QTableWidgetItem(imageList[fileIdx][0]))
+
+        pass
 
     # 파일 리스트에 데이터 넣기
     def showList(self, images):
@@ -46,16 +75,20 @@ class AllImageWindowClass(QMainWindow, form_class) :
 
     # self.tableWidgetAllFile
 
+
+
+
+
     # 이미지, 내용 출력
-    def showDetail(self, imageIdx):
-        global imageSourceDir
-        global imageNameLst
+    # def showDetail(self, imageIdx):
+    #     global imageSourceDir
+    #     global imageNameLst
 
-        imageDir = imageSourceDir + "/"+ imageNameLst[imageIdx]
-        print(imageDir)
+    #     imageDir = imageSourceDir + "/"+ imageNameLst[imageIdx]
+    #     print(imageDir)
 
-        pixmap = QPixmap(imageDir)
-        self.imageOriginal.setPixmap(pixmap)
+    #     pixmap = QPixmap(imageDir)
+    #     self.imageOriginal.setPixmap(pixmap)
 
     # 테이블 클릭 이벤트
     def clickTableAllImages(self):
@@ -64,7 +97,45 @@ class AllImageWindowClass(QMainWindow, form_class) :
         self.showDetail(row)
 
 
-class 
+class AllImageModel(list):
+    # def __init__(self, )
+
+    def __init__(self):
+        self.data = [
+            ['cast_def_0_3047.jpeg', 'def', {'ok':0.213, 'def':0.787}],
+            ['cast_def_0_3046.jpeg', 'ok', {'ok':0.787, 'def':0.213}],
+            ['cast_def_0_3046.jpeg', 'ok', {'ok':0.787, 'def':0.213}],
+            ['cast_def_0_3046.jpeg', 'ok', {'ok':0.787, 'def':0.213}],
+        ]
+        self.model = QStandardItemModel()
+        
+class DefImageModel(list):
+    def __init__(self, l=[]):
+        self.data = [
+            ['cast_def_0_3047.jpeg', 'def', {'ok':0.213, 'def':0.787}],
+            ['cast_def_0_3046.jpeg', 'def', {'ok':0.213, 'def':0.787}],
+        ]
+        self.model = QStandardItemModel()
+
+class OkImageModel(list):
+    def __init__(self, l=[]):
+        self.data = [
+            ['cast_def_0_3047.jpeg', 'ok', {'ok':0.787, 'def':0.213}],
+            ['cast_def_0_3046.jpeg', 'ok', {'ok':0.787, 'def':0.213}],
+            ['cast_def_0_3046.jpeg', 'ok', {'ok':0.787, 'def':0.213}],
+        ]
+        self.model = QStandardItemModel()
+
+# viewmodel에 view와 model 전달
+# class ImageViewModel:
+#     def __init__(self, view, model):
+#         self.view = view
+#         self.model = model
+#         self.dataInit()
+
+#     def dataInit(self):
+#         self.view.setModel(self.model.model)
+
 
 if __name__ == "__main__" :
     #QApplication : 프로그램을 실행시켜주는 클래스

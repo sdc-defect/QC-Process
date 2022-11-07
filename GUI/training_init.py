@@ -9,7 +9,7 @@ import os
 init_form_class = uic.loadUiType("training_init.ui")[0]
 
 #화면을 띄우는데 사용되는 Class 선언
-class TrainingInitWindowClass(QMainWindow, init_form_class) :
+class TrainingInitWindowClass(QDialog, init_form_class) :
 
     trainSetDir = ""
     testSetDir = ""
@@ -27,14 +27,20 @@ class TrainingInitWindowClass(QMainWindow, init_form_class) :
 
         self.initialization()
 
+        # 버튼 클릭 시 이벤트 연결
         self.pushButtonTrainListDir.clicked.connect(self.clickOpenTrainSet)
         self.pushButtonTestListDir.clicked.connect(self.clickOpenTestSet)
         self.pushButtonValidationListDir.clicked.connect(self.clickOpenValidationSet)
+        self.pushButtonModelSaveDir.clicked.connect(self.clickOpenModelSaveDir)
+
 
         self.checkBoxTest.clicked.connect(self.changeComboTest)
         self.checkBoxValidation.clicked.connect(self.changeComboValidation)
 
         self.pushButtonInitNext.clicked.connect(self.clickNextButton)
+
+    def test(self):
+        print("test")
 
     # 초기 체크 안되고 비활성화함
     def initialization(self):
@@ -114,10 +120,13 @@ class TrainingInitWindowClass(QMainWindow, init_form_class) :
         fileCount = self.countFileNumber(fname)
         self.validationFileCount = fileCount
         self.labelValidationCount.setText("(" + str(fileCount) + ")")
+        
 
     # 모델 저장할 위치 경로 설정
     def clickOpenModelSaveDir(self):
+        print("as")
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        print(fname)
         self.modelSaveDir = fname
         self.labelModelSaveDir.setText(fname)
 
@@ -128,17 +137,17 @@ class TrainingInitWindowClass(QMainWindow, init_form_class) :
 
     # 다음 버튼 누르면: 현재 모달 닫고 다음 모달 띄우기
     def clickNextButton(self):
-        response = {
-            "trainSetDir": self.trainSetDir, 
-            "trainFileCount": self.trainFileCount,
-            "testSetDir": self.testSetDir, 
-            "testFileCount": self.testFileCount, 
-            "validationSetDir": self.validationSetDir,
-            "validationFileCount": self.validationFileCount,
-            "modelSaveDir": self.modelSaveDir,
-        }
-        print(response)
-        # self.ratioModal = 
+        # response = {
+        #     "trainSetDir": self.trainSetDir, 
+        #     "trainFileCount": self.trainFileCount,
+        #     "testSetDir": self.testSetDir, 
+        #     "testFileCount": self.testFileCount, 
+        #     "validationSetDir": self.validationSetDir,
+        #     "validationFileCount": self.validationFileCount,
+        #     "modelSaveDir": self.modelSaveDir,
+        # }
+        # print(response)
+        self.close()
 
 
 
