@@ -79,11 +79,11 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.th = Thread()
         self.init_widget()
         # 쓰레드 시작
-        # self.th.start()
+        self.th.start()
 
     def init_widget(self):
         # 시그널 슬롯 연결
-        self.pushButtonControlStart.clicked.connect(self.trainingStart)
+        # self.pushButtonControlStart.clicked.connect(self.trainingStart)
         # self.th.change_value.connect(self.progressBar.setValue)
         self.th.change_value.connect(self.resultUpdate)
         self.th.update_log.connect(self.logUpdate)
@@ -92,8 +92,6 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.progressBar.setValue(progress)
 
     def logUpdate(self, logContext):
-        # self.labelLogContent.setText(logContext)
-        # 이어서 뜨게 하고싶은데..
         self.textBrowser.append(logContext + "\n")
 
     def test(self):
@@ -112,12 +110,6 @@ class trainingWindowClass(QMainWindow, form_class) :
         _openFile.triggered.connect(self.editFileDir)
 
         self.initData()
-
-        # self.threadclass = showLog()
-        # self.threadclass.start()
-        
-        # threadClass = showLogProgress(self)
-        # threadClass.start()
 
     # 파일 열기 모달 띄우기
     def editFileDir(self):
@@ -278,38 +270,24 @@ class trainingWindowClass(QMainWindow, form_class) :
     def changeProgressbar(self, progress):
         self.progressBar.setValue(progress)
 
-    @pyqtSlot()
-    def slot_clicked_button(self):
-        """
-        사용자정의 슬롯
-        쓰레드의 status 상태 변경
-        버튼 문자 변경
-        쓰레드 재시작
-        """
-        self.th.toggle_status()
-        self.pushButtonControlStart.setText({True: "Pause", False: "Resume"}[self.th.status])
-
     # 학습 시작
     @pyqtSlot()
     def trainingStart(self):
-        
-        self.th.start()
-        pass
-        # self.th.toggle_status()
-        # self.progressBar.setValue(15)
-        # self.labelControl_2.setText({True: "Pause", False: "Resume"}[self.th.status])
+        self.th.toggle_status()
+        self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
 
     # 학습 다시시작
     def trainingRestart(self):
         pass
 
-    # 학습 일시정자
+    # 학습 일시정지 - 없애고 시작 버튼으로 통일할 듯
     def trainingPause(self):
         pass
     
     # 학습 정지
     def trainingStop(self):
         pass
+
     # @staticmethod
     # def trainingStop():
     #     # 초기화 (재시작)
@@ -420,69 +398,7 @@ class PlotCanvasRecall(FigureCanvas):
         
 # 그래프 끝
 
-
-def main():
-    app = QApplication(sys.argv) 
-    myWindow = trainingWindowClass() 
-    myWindow.show()
-    myWindow.firstAction()
-    exit(app.exec_())
-
-# class showLog(trainingWindowClass):
-# class showLogProgress(QtCore.QThread):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.parent = parent
-
-        self.logFileDir = "./_log.csv"
-        # self.updateLogLabel()
-        print("asdasfa")
-
-    def run(self): 
-        f = open(self.logFileDir, 'r', encoding='utf-8')
-        self.logCsv = list(csv.reader(f))
-        f.close()
-
-        # print(self.logCsv[0])
-        b=""
-        for i in range(1, len(self.logCsv)):
-            # print(self.logCsv[i][0])
-            a = ""
-            for j in range(len(self.logCsv[i])):
-                a = a + ", " + self.logCsv[i][j]
-                # print(self.logCsv[i])
-            b = b + a + '\n'
-            self.parent.labelLogContent.setText(b)
-
-            nowEpoch = self.logCsv[i][0]
-            self.parent.updateLogLabel(int(nowEpoch))
-            time.sleep(1)
-
-
-    # def showProgress(self, nowEpoch):
-    #     # totalEpoch = int(self.parent.setEpoch)
-    #     totalEpoch = 100
-    #     print((nowEpoch/totalEpoch)*100)
-    #     progressRatio = (nowEpoch/totalEpoch)*100
-    #     # self.parent.progressBar.setValue(12)
-
-    
-
-
-    # def __init__(self):
-    #     self.logFileDir = "C:/Users/multicampus/Desktop/3ssafy/reaaaal/GUI/training/_log.csv"
-    #     self.printLogFile()
-
-    # def printLogFile(self):
-    #     f = open(self.logFileDir, 'r', encoding='utf-8')
-    #     logCsv = list(csv.reader(f))
-    #     f.close()
-
-    #     print(logCsv[0])
-    #     logLabel = logCsv[0]
-    #     # print(trainingWindowClass.labelParameter.text())
-        
-    #     # trainingWindowClass.labelLogContent.setText(logLabel)
+# 결과 출력 쓰레드
 
 class Thread(QThread, form_class):
     """
@@ -498,7 +414,7 @@ class Thread(QThread, form_class):
         self.cond = QWaitCondition()
         self.mutex = QMutex()
         self.cnt = 0
-        self._status = True
+        self._status = False # True로 바꿔야함
         print("threadProgress")
 
         self.logFileDir = "./_log.csv"
@@ -534,25 +450,15 @@ class Thread(QThread, form_class):
                 addprintContent = logIndex[i] + ": " + logContent[i]
                 printContent = printContent + ", " + addprintContent
             print(printContent)
-            
 
-
-            # print("0list", self.logCsv[0])
-            # print("listContent: ", self.logCsv[self.cnt])
-
-
-            # 프로그래스바
-            # print(self.logCsv[self.cnt][0])
-            # print(trainingWindowClass.setEpoch)
-            # print("percentage ", int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
             self.change_value.emit(int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
             
             self.update_log.emit(printContent)
 
             # print(self.cnt)
 
-            self.mutex.unlock()
             self.msleep(1000)
+            self.mutex.unlock()
 
     def toggle_status(self):
         self._status = not self._status
@@ -562,6 +468,14 @@ class Thread(QThread, form_class):
     @property
     def status(self):
         return self._status
+
+def main():
+    app = QApplication(sys.argv) 
+    myWindow = trainingWindowClass() 
+    myWindow.show()
+    myWindow.firstAction()
+    exit(app.exec_())
+
 if __name__ == "__main__" :
     main()
 
