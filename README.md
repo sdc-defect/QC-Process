@@ -1,4 +1,4 @@
-# Project
+# 기업연계 Project
 
 ![logo.png](https://upload.wikimedia.org/wikipedia/commons/5/58/Samsung_Display_Logo.jpg)
 
