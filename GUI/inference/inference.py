@@ -6,6 +6,19 @@ from PyQt5 import QtCore, QtWidgets
 # from PyQt5.QtCore import *
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
+# graph lib
+import pandas as pd
+import numpy as np
+from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtChart import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+import matplotlib.animation as animation
+from matplotlib.figure import Figure
 
 from all_images import AllImageWindowClass
 from inference_init import InferenceInitModal
@@ -27,7 +40,10 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
         self.updateLog()
         self.initUI()
-
+        
+        # 그래프
+        # self.axes = fig.add_subplot(211, xlim=(0, 50), ylim=(0, 1024))
+        # self.axes2 = fig.add_subplot(212, xlim=(0, 50), ylim=(0, 600))
         # self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen) # 모든 이미지 리스트 창 열기
 
 
@@ -165,6 +181,64 @@ class InferenceWindowClass(QMainWindow, form_class) :
     # 모든 이미지 추론 정지
     def allStopInference(self):
         pass
+    
+    # 그래프 플로팅
+    def firstAction(self):
+        self.layout().removeWidget(self.lblAreaLine)
+        self.lblAreaLine.setParent(None)
+        self.plotLine = WidgetPlotLine(self.centralwidget)
+            
+        self.gridLayoutGraph.addWidget(self.plotLine)
+        # self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=25)
+
+        
+# 그래프용 Class 선언
+class WidgetPlotLine(QWidget):
+    def __init__(self, *args, **kwargs):
+        QWidget.__init__(self, *args, **kwargs)
+        self.setLayout(QVBoxLayout())
+        self.canvas = PlotCanvasLine(self, width=10, height=8)
+        self.layout().addWidget(self.canvas)
+        
+class PlotCanvasLine(FigureCanvas):
+    def __init__(self, parent=None, width=10, height=8, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.axes = fig.add_subplot(211, xlim=(0, 50), ylim=(0, 1024))
+        self.axes2 = fig.add_subplot(212, xlim=(0, 50), ylim=(0, 600))
+        self.setParent(parent)
+        FigureCanvas.setSizePolicy(self, 
+                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plot()
+        
+    def plot(self):        
+        self.x = np.arange(50)
+        self.y = np.ones(50, dtype=np.float64)*np.nan
+        self.line, = self.axes.plot(self.x, self.y, animated=True, lw=2)
+
+        self.x2 = np.arange(50)
+        self.y2 = np.ones(50, dtype=np.float64)*np.nan
+        self.line2, = self.axes2.plot(self.x2, self.y2, animated=True,color='red', lw=2)
+
+    def update_line(self, i):
+        y = random.randint(0,1024)
+        old_y = self.line.get_ydata()
+        new_y = np.r_[old_y[1:], y]
+        # time.sleep(10)
+        self.line.set_ydata(new_y)
+        
+        # self.line.set_ydata(y)
+        print(self.y)
+        return [self.line]
+
+    def update_line2(self, i):
+        y2 = random.randint(0,510)
+        old_y2 = self.line2.get_ydata()
+        new_y2 = np.r_[old_y2[1:], y2]
+        self.line2.set_ydata(new_y2)
+        return [self.line2]
+        # self.line.set_ydata(y)
 
 
 if __name__ == "__main__" :
@@ -176,6 +250,8 @@ if __name__ == "__main__" :
 
     #프로그램 화면을 보여주는 코드
     myWindow.show()
+    
+    myWindow.firstAction()
 
     #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
