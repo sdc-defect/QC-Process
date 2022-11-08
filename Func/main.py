@@ -1,62 +1,72 @@
-import time
-import websockets
+import asyncio
+import multiprocessing as mp
 
 from fastapi import FastAPI, Response, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
-from utils.data import transfer_image
-from utils.iworker import IService
+from service import IService, Listener
 
 
 app = FastAPI()
-service = IService()
-is_connected = True
-
-# @app.post("/conn", status_code=200)
-# async def connection():
-#     return {"message": "Successfully Connected"}
+queue = mp.Queue()
+service = IService(queue)
+listener = Listener(queue)
 
 
-# 웹소켓 설정
+@app.on_event("startup")
+async def startup_event():
+    await listener.start_listening()
+    service.update_onnx_info("./data/modified.onnx")
+    service.run_process()
+    listener.start()
+    return
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await listener.stop_listening()
+    return
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    print(f"client connected : {websocket.client}")
+    if listener.get_flag():
+        return
+
     await websocket.accept()
-    # await websocket.send_text(f"Welcome client : {websocket.client}")
-    while True:
-        try:
-            time.sleep(0.1)
-            if not service.queue.empty():
-                data = await websocket.receive_text()  # client 메시지 수신대기
-                print(data)
-                result = service.queue.get()
-                data = transfer_image(result)
-                await websocket.send_text(data)
-        except WebSocketDisconnect:
-    # except:
-    #     # await websocket.send_text(f"Bye client : {websocket.client}")
-            # await websocket.close()
-            break
+    listener.set_flag(True)
+    q: asyncio.Queue = asyncio.Queue()
+
+    await listener.subscribe(q=q)
+    await service.restart_inference()
+
+    print(f"client connected : {websocket.client}")
+
+    try:
+        while True:
+            data = await q.get()
+
+            await websocket.send_text(data)
+    except WebSocketDisconnect:
+        print("websocket connection missing")
+        return
+    except Exception as e:
+        print("websocket connection missing", e)
+        await service.stop_inference()
+        is_sending = False
+        return
 
 
-@app.post("/conn", status_code=200)
-async def connection():
-    if is_connected:
-        return {"message": "Successfully Connected"}
-    else:
-        return {"message": "Connection Failed"}
+@app.post("/pause", status_code=200)
+async def pause_isystem():
+    await service.pause_inference()
+    return {"message": "Successfully Paused"}
 
 
-@app.post("/start", status_code=200)
-async def start_isystem(response: Response):
-    check = service.check_process_alive()
-    if check:
-        response.status_code = 409
-        return {"message": "Already Started"}
-    else:
-        service.update_onnx_info("./data/modified.onnx")
-        service.run_process()
-        return {"message": "Successfully Started"}
+@app.post("/restart", status_code=200)
+async def restart_isystem():
+    await service.restart_inference()
+    return {"message": "Successfully Restarted"}
 
 
 @app.post("/stop", status_code=200)
@@ -70,9 +80,6 @@ async def stop_isystem(response: Response):
         return {"message": "Successfully Stopped"}
 
 
-@app.post("/pause", status_code=200)
-async def pause_isystem():
-    return {"message": "Successfully Paused"}
 
 
 # 개발/디버깅용으로 사용할 앱 구동 함수
