@@ -1,8 +1,7 @@
 import asyncio
 import multiprocessing as mp
 
-from fastapi import FastAPI, Response, WebSocket
-from starlette.websockets import WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, UploadFile
 
 from service import IService, Listener
 
@@ -16,22 +15,19 @@ listener = Listener(queue)
 @app.on_event("startup")
 async def startup_event():
     await listener.start_listening()
-    service.update_onnx_info("./data/modified.onnx")
-    service.run_process()
+    await service.run_process("./model/default.onnx")
     listener.start()
-    return
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     await listener.stop_listening()
-    return
 
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     if listener.get_flag():
-        return
+        raise HTTPException(status_code=400, detail="Websocket is already connected")
 
     await websocket.accept()
     listener.set_flag(True)
@@ -47,39 +43,50 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await q.get()
 
             await websocket.send_text(data)
-    except WebSocketDisconnect:
-        print("websocket connection missing")
-        return
     except Exception as e:
         print("websocket connection missing", e)
-        await service.stop_inference()
-        is_sending = False
-        return
+        await service.pause_inference()
+        listener.set_flag(False)
 
 
 @app.post("/pause", status_code=200)
 async def pause_isystem():
+    if not service.get_flag():
+        raise HTTPException(status_code=500, detail="ISystem is not started")
     await service.pause_inference()
     return {"message": "Successfully Paused"}
 
 
 @app.post("/restart", status_code=200)
 async def restart_isystem():
+    if service.get_flag():
+        raise HTTPException(status_code=500, detail="ISystem is already started")
     await service.restart_inference()
     return {"message": "Successfully Restarted"}
 
 
-@app.post("/stop", status_code=200)
-async def stop_isystem(response: Response):
-    check = service.check_process_alive()
-    if not check:
-        response.status_code = 409
-        return {"message": "Already Stopped"}
+@app.put("/update", status_code=200)
+async def stop_isystem(file: UploadFile):
+    fname = f"model/{file.filename}"
+    f = file.file.read()
+    with open(fname, "wb+") as ff:
+        ff.write(f)
+
+    if listener.get_flag():
+        raise HTTPException(status_code=400, detail="Websocket is already connected")
+
+    await service.stop_inference()
+    await service.run_process(fname)
+
+    return {"message": "Successfully Updated"}
+
+
+@app.get("/status", status_code=200)
+def get_status():
+    if listener.get_flag():
+        return {"message": "Inference started"}
     else:
-        await service.stop_inference()
-        return {"message": "Successfully Stopped"}
-
-
+        return {"message": "Available to connect"}
 
 
 # 개발/디버깅용으로 사용할 앱 구동 함수
