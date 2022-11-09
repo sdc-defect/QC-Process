@@ -12,11 +12,7 @@ from PyQt5.QtCore import pyqtSlot
 import pandas as pd
 import time
 from pandas import Series
-<<<<<<< HEAD
 # import matplotlib.pyplot as plt
-=======
-import matplotlib.pyplot as plt
->>>>>>> 10538915bbd3926c4546b86fb8201fcfd27c4a93
 
 
 
@@ -24,11 +20,7 @@ class Worker(QThread):
     
     time = pyqtSignal(str)
     result = pyqtSignal(int)
-<<<<<<< HEAD
     cur_result = 1
-=======
-    cur_result = 0
->>>>>>> 10538915bbd3926c4546b86fb8201fcfd27c4a93
     def __init__(self):
         super().__init__()
 
@@ -51,11 +43,7 @@ class Worker(QThread):
         while True:
             self.cur_result += 1
             self.result.emit(self.cur_result)
-<<<<<<< HEAD
-            time.sleep(10)
-=======
-            time.sleep(1)
->>>>>>> 10538915bbd3926c4546b86fb8201fcfd27c4a93
+            time.sleep(5)
             
         for i in range(1, 10):
             cur_result += 1
@@ -78,10 +66,7 @@ class MyWindow(QMainWindow):
         self.setMinimumSize(800, 400)
         self.series = QBarSeries()
         
-<<<<<<< HEAD
         
-=======
->>>>>>> 10538915bbd3926c4546b86fb8201fcfd27c4a93
     # chart object
         chart = QChart()
         # chart.legend().hide()
@@ -90,19 +75,11 @@ class MyWindow(QMainWindow):
         self.resize(800, 600)
 
         chart.setTitle('수율')
-<<<<<<< HEAD
         chart.setAnimationOptions(QChart.SeriesAnimations)
 
         dt = QDateTime.currentDateTime()
         self.statusBar().showMessage(dt.toString('mm'))
         self.ts = dt.toString('mm')
-=======
-        # chart.setAnimationOptions(QChart.SeriesAnimations)
-
-        dt = QDateTime.currentDateTime()
-        self.statusBar().showMessage(dt.toString('M'))
-        self.ts = dt.toString('M')
->>>>>>> 10538915bbd3926c4546b86fb8201fcfd27c4a93
 
         months = (self.ts)
 
@@ -110,7 +87,6 @@ class MyWindow(QMainWindow):
         axisX.append(months)
 
         axisY = QValueAxis()
-<<<<<<< HEAD
         axisY.setRange(0, 500)
 
         chart.addAxis(axisX, Qt.AlignBottom)
@@ -122,18 +98,6 @@ class MyWindow(QMainWindow):
 
         self.chartView = QChartView(chart)
         self.setCentralWidget(self.chartView)
-=======
-        # axisY.setRange(0, 15)
-
-        chart.addAxis(axisX, Qt.AlignBottom)
-        chart.addAxis(axisY, Qt.AlignLeft)
-
-        chart.legend().setVisible(False)
-        chart.legend().setAlignment(Qt.AlignBottom)
-
-        chartView = QChartView(chart)
-        self.setCentralWidget(chartView)
->>>>>>> 10538915bbd3926c4546b86fb8201fcfd27c4a93
 
         # 코드 복붙 끝
 
@@ -159,18 +123,13 @@ class MyWindow(QMainWindow):
         
         # append current result
         dt = QDateTime.currentDateTime()
-<<<<<<< HEAD
         self.statusBar().showMessage(dt.toString('mm'))
-=======
-        self.statusBar().showMessage(dt.toString('M'))
->>>>>>> 10538915bbd3926c4546b86fb8201fcfd27c4a93
         self.ticks[dt] = cur_result
 
         # # check whether minute changed
         # #if dt.time().minute() != self.minute_cur.time().minute():
 
 
-<<<<<<< HEAD
         ts = dt.toString('mm')
         print(ts, cur_result, type(cur_result))
         
@@ -188,16 +147,6 @@ class MyWindow(QMainWindow):
         self.chartView.update()
         print('sum=',new_set[0])
         print('count=',self.series.count())
-=======
-        ts = dt.toString('M')
-        print(ts, cur_result, type(cur_result))
-        
-        new_set = QBarSet(f'{ts}')
-        # new_set.append(cur_result)
-        new_set << cur_result
-        self.series.append(new_set)
-        # print(new_set)
->>>>>>> 10538915bbd3926c4546b86fb8201fcfd27c4a93
 
 
 if __name__ == "__main__":
