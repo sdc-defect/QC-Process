@@ -3,8 +3,9 @@ import multiprocessing as mp
 
 from fastapi import FastAPI, HTTPException, WebSocket, UploadFile
 
+import utils
 from service import IService, Listener
-
+from utils.data import transfer_image
 
 app = FastAPI()
 queue = mp.Queue()
@@ -42,7 +43,9 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await q.get()
 
-            await websocket.send_text(data)
+            await websocket.send_text(transfer_image(data))
+            # Add handshake
+            await utils.save_logs(data)
     except Exception as e:
         print("websocket connection missing", e)
         await service.pause_inference()
