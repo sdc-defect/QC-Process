@@ -17,7 +17,7 @@ class IWorker:
     def __init__(self, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
         self._path = path
         self._size = size
-        self._runtime: Union[ONNXRuntime, None] = None
+        self._runtime: Union[ONNXRuntime, None] = utils.load_onnx(self._path)
         self._img0 = None
         self._timestamp = None
 
