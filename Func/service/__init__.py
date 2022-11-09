@@ -84,7 +84,6 @@ class Listener(threading.Thread):
 
     def run(self) -> None:
         while True:
-            time.sleep(1)
             if self.subscriber is None:
                 continue
             try:
