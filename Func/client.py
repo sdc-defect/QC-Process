@@ -39,6 +39,7 @@ class Client(QtCore.QObject):
         self.client.error.connect(self.error)
 
         self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
+        # self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
         self.client.pong.connect(self.onPong)
         self.client.textMessageReceived.connect(self.handle_message)
 
