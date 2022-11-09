@@ -15,44 +15,36 @@ from utils.iworker import IProcess
 
 class IService:
     def __init__(self, queue: mp.Queue):
-        self._path: Union[str, None] = None
-        self._size: Union[Tuple[int, int]] = (300, 300)
-
         self._process: Union[IProcess, None] = None
         self._queue = queue
         self._flag = mp.Event()
 
-    def check_process_alive(self):
-        if self._process is None:
-            return False
-        return self._process.is_alive()
-
-    def update_onnx_info(self, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
-        self._path = path
-        self._size = size
-
-    def run_process(self):
-        if self._path is None:
+    async def run_process(self, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
+        if path is None:
             raise RuntimeError("Specify ONNX path")
-        if self._size is None:
+        if size is None:
             raise RuntimeError("Specify image size")
-        if self.check_process_alive():
+        if self._process is not None:
             raise RuntimeError("Process is already started")
 
-        self._process = IProcess(self._flag, self._queue, self._path, self._size)
+        self._process = IProcess(self._flag, self._queue, path, size)
         self._process.start()
         self._flag.set()
 
     async def stop_inference(self):
+        self._flag.clear()
         self._process.terminate()
         self._process.join()
 
         self._process = None
 
-    def pause_inference(self):
+    def get_flag(self):
+        return self._flag.is_set()
+
+    async def pause_inference(self):
         self._flag.clear()
 
-    def restart_inference(self):
+    async def restart_inference(self):
         self._flag.set()
 
 
