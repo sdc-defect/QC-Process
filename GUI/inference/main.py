@@ -169,6 +169,8 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.pushButtonControlStart.clicked.connect(self.allStartInference)
         # 전체 이미지 추론 정지 버튼
         self.pushButtonControlStop.clicked.connect(self.allStopInference)
+
+
     
     # 로깅 초기화
     def initLogger(self, logger_name):
@@ -295,6 +297,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
     # 개별 이미지 추론 시작
     def singleStartInference(self):
+        self.threadWebsocket.status_inference()
         pass
 
     # 모든 이미지 추론 시작
@@ -312,11 +315,21 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.threadWebsocket.start()
         self.init_widget()
         self.threadWebsocket.toggle_status()
+        #self.threadWebsocket.restart_inference()
+        self.startInfInit()
 
+    def startInfInit(self):
+        #self.testStart.clicked.connect(self.testStartInference)
+        self.testPause.clicked.connect(self.threadWebsocket.pause_inference)
+        self.testStatus.clicked.connect(self.threadWebsocket.status_inference)
+        self.testRestart.clicked.connect(self.threadWebsocket.restart_inference)
+        
     # 모든 이미지 추론 정지
     def allStopInference(self):
         print("stop")
         self.threadWebsocket.websocketFinish()
+        self.threadWebsocket.stopThread()
+    #쓰레드 종료
     
     # 그래프 플로팅
     def firstAction(self):
@@ -448,7 +461,7 @@ class receiveThread(QThread, form_class):
 
 # 웹소켓 websocket
 def send_api(path, method):
-    API_HOST = "http://127.0.0.1:8000"
+    API_HOST = "http://192.168.0.30:8080"
     url = API_HOST + path
     headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
     body = {
@@ -482,9 +495,9 @@ class Client(QThread, form_class):
         self.client.error.connect(self.error)
 
         # # self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
-        self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
+        self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
         self.client.pong.connect(self.onPong)
-        self.client.textMessageReceived.connect(self.handle_message)
+        # self.client.textMessageReceived.connect(self.handle_message)
         print("client")
         
 
@@ -497,8 +510,8 @@ class Client(QThread, form_class):
             # self.client.close()
             # print("client")
             # time.sleep(1)
-            # print("state:",self.client.state()) # 정상 연결은 3, 연결 안됨은 0, 에러는 2
-            if self.client.state()==0:
+            print("state:",self.client.state()) # 정상 연결은 3, 연결 안됨은 0, 에러는 2
+            if self.client.state() == 0:
                 print("not connected")
 
             if not self._status:
@@ -520,14 +533,11 @@ class Client(QThread, form_class):
     def status(self):
         return self._status
 
-
-        
-
     def __del__(self):
         self.wait()
 
     def do_ping(self):
-        print("client: do_ping")
+        print("client: do_ping") 
         # payload = {
         #     InferenceResult.timestamp: str,
         #     InferenceResult.prob: [float],
@@ -569,7 +579,22 @@ class Client(QThread, form_class):
     def close(self):
         self.client.close()
 
+    def pause_inference(self):
+        response=send_api('/pause','POST')
+        print(response)
 
+    def restart_inference(self):
+        response=send_api('/restart','POST')
+        print(response)
+
+    def status_inference(self):
+        response=send_api('/status','GET')
+        print(response)
+
+    def stopThread(self):
+        self.power = False
+        self.quit()
+        self.wait(3000)
 
 def quit_app():
     print("timer timeout - exiting")
@@ -582,17 +607,16 @@ def send_message():
     client.send_message()
 
 
-
 def main():
     # global client
     global client
-    client = Client()
-    
+    #client = Client()
     #QApplication : 프로그램을 실행시켜주는 클래스
-    app = QApplication(sys.argv) 
-    QTimer.singleShot(100000, quit_app)
+    app = QApplication(sys.argv)
+    QTimer.singleShot(3000, send_message)
+    QTimer.singleShot(500000, quit_app)
     
-    # client = Client()
+    client = Client()
 
 
     #WindowClass의 인스턴스 생성

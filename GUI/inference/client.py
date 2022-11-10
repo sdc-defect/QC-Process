@@ -12,7 +12,7 @@ class Client(QtCore.QObject):
         self.client = QtWebSockets.QWebSocket("", QtWebSockets.QWebSocketProtocol.Version13, None)
         self.client.error.connect(self.error)
 
-        self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
+        self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
         self.client.pong.connect(self.onPong)
 
     def do_ping(self):

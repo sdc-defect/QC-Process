@@ -302,6 +302,58 @@
      <string>파일 열기</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="testStart">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>120</y>
+      <width>81</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Test-start</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="testPause">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>120</y>
+      <width>81</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Test-pause</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="testStatus">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>120</y>
+      <width>81</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Test-status</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="testRestart">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>120</y>
+      <width>81</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Test-restart</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -309,7 +361,7 @@
      <x>0</x>
      <y>0</y>
      <width>1885</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
