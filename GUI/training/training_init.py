@@ -44,9 +44,20 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
 
         self.pushButtonInitNext.clicked.connect(self.clickNextButton)
         
+        # Test 비율 설정 값이 바뀔 때 호출
         self.spinBoxOkRatioTestCount.valueChanged.connect(self.okTestValueChanged)
         self.spinBoxDefRatioTestCount.valueChanged.connect(self.defTestValueChanged)
-    
+        self.spinBoxTotalRatioTestCount.valueChanged.connect(self.totalTestValueChanged)
+
+        # 숨겨놓기
+        self.labelOkRatioTestCount.hide()
+        self.spinBoxOkRatioTestCount.hide()
+        self.labelOkRatioTestTitle.hide()
+
+        self.labelDefRatioTestCount.hide()
+        self.spinBoxDefRatioTestCount.hide()
+        self.labelDefRatioTestTitle.hide()
+
     def test(self):
         print("test")
 
@@ -157,7 +168,11 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
 
         # 트레인 데이터를 넣었을 때 -> 초기 설정
         testFileCount = round(int(self.spinBoxOkRatioTestCount.value())/ 100 * fileCount)
-        self.labelOkRatioTestCount.setText(f'{testFileCount}장')
+        self.labelOkRatioTestCount.setText(f'{testFileCount}장') 
+
+        if self.labelOkTrainListDir.text() != '이미지 dir 위치' or self.labelDefTrainListDir.text() != '이미지 dir 위치':
+            testFileCount = round(int(self.spinBoxTotalRatioTestCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text())))
+            self.labelTotalRatioTestCount.setText(f'{testFileCount}장') 
 
     def clickOpenDefTrainSet(self):
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
@@ -173,6 +188,10 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         testFileCount = round(int(self.spinBoxDefRatioTestCount.value())/ 100 * fileCount)
         self.labelDefRatioTestCount.setText(f'{testFileCount}장')
 
+        if self.labelOkTrainListDir.text() != '이미지 dir 위치' or self.labelDefTrainListDir.text() != '이미지 dir 위치':
+            testFileCount = round(int(self.spinBoxTotalRatioTestCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text())))
+            self.labelTotalRatioTestCount.setText(f'{testFileCount}장') 
+
     # test set 파일 경로 설정
     def clickOpenOkTestSet(self):
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
@@ -182,7 +201,7 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
 
         fileCount = self.countFileNumber(fname)
         self.testFileCount = fileCount
-        self.labelOkTestCount.setText("(" + str(fileCount) + ")")
+        self.labelOkTestCount.setText("(" + str(fileCount) + ")")            
 
     def clickOpenDefTestSet(self):
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
@@ -204,6 +223,11 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         if self.labelDefTrainListDir.text() == '이미지 dir 위치': return
         testFileCount = round(int(self.spinBoxDefRatioTestCount.value())/ 100 * int(self.labelDefTrainCount.text()))
         self.labelDefRatioTestCount.setText(f'{testFileCount}장')
+
+    def totalTestValueChanged(self):
+        if self.labelOkTrainListDir.text() == '이미지 dir 위치' or self.labelDefTrainListDir.text() == '이미지 dir 위치': return
+        testFileCount = round(int(self.spinBoxTotalRatioTestCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text())))
+        self.labelTotalRatioTestCount.setText(f'{testFileCount}장') 
 
     # validation set 파일 경로 설정
     def clickOpenValidationSet(self):
