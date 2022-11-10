@@ -1,8 +1,8 @@
-
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import os
+import glob
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -22,15 +22,20 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
 
     def __init__(self) :
         super().__init__()
-        self.setupUi(self)
+        self.setupUi(self)  
         self.setWindowTitle("Init")
 
         self.initialization()
 
         # 버튼 클릭 시 이벤트 연결
-        self.pushButtonTrainListDir.clicked.connect(self.clickOpenTrainSet)
-        self.pushButtonTestListDir.clicked.connect(self.clickOpenTestSet)
-        self.pushButtonValidationListDir.clicked.connect(self.clickOpenValidationSet)
+        # Train
+        self.pushButtonOkTrainListDir.clicked.connect(self.clickOpenOkTrainSet)
+        self.pushButtonDefTrainListDir.clicked.connect(self.clickOpenDefTrainSet)
+        # Test
+        self.pushButtonOkTestListDir.clicked.connect(self.clickOpenOkTestSet)
+        self.pushButtonDefTestListDir.clicked.connect(self.clickOpenDefTestSet)
+        # Val
+        self.pushButtonOkValidationListDir.clicked.connect(self.clickOpenValidationSet)
         self.pushButtonModelSaveDir.clicked.connect(self.clickOpenModelSaveDir)
 
 
@@ -38,78 +43,167 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         self.checkBoxValidation.clicked.connect(self.changeComboValidation)
 
         self.pushButtonInitNext.clicked.connect(self.clickNextButton)
-
+        
+        self.spinBoxOkRatioTestCount.valueChanged.connect(self.okTestValueChanged)
+        self.spinBoxDefRatioTestCount.valueChanged.connect(self.defTestValueChanged)
+    
     def test(self):
         print("test")
 
     # 초기 체크 안되고 비활성화함
     def initialization(self):
+        # Test 
+        # ok
         self.checkBoxTest.setChecked(False)
+        self.pushButtonOkTestListDir.setEnabled(self.checkBoxTest.isChecked())
+        self.labelOkTestCount.setStyleSheet("Color : gray")
+        self.labelOkTestListDir.setStyleSheet("Color : gray")
+        self.labelOkTestTitle.setStyleSheet("Color : gray")
+        # def
+        self.pushButtonDefTestListDir.setEnabled(self.checkBoxTest.isChecked())
+        self.labelDefTestCount.setStyleSheet("Color : gray")
+        self.labelDefTestListDir.setStyleSheet("Color : gray")
+        self.labelDefTestTitle.setStyleSheet("Color : gray")
+
+        # Val
         self.checkBoxValidation.setChecked(False)
-        self.pushButtonTestListDir.setEnabled(self.checkBoxTest.isChecked())
-        self.pushButtonValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
-        self.labelTestListDir.setStyleSheet("Color : gray")
-        self.labelValidationListDir.setStyleSheet("Color : gray")
-        self.labelTestCount.setStyleSheet("Color : gray")
-        self.labelValidationCount.setStyleSheet("Color : gray")
-        self.labelTestSet.setStyleSheet("Color : gray")
-        self.labelValidationSet.setStyleSheet("Color : gray")
+        # ok
+        self.pushButtonOkValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
+        self.labelOkValidationListDir.setStyleSheet("Color : gray")
+        self.labelOkValidationCount.setStyleSheet("Color : gray")
+        self.labelOkValidationTitle.setStyleSheet("Color : gray")
+
+        # def
+        self.pushButtonDefValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
+        self.labelDefValidationListDir.setStyleSheet("Color : gray")
+        self.labelDefValidationCount.setStyleSheet("Color : gray")
+        self.labelDefValidationTitle.setStyleSheet("Color : gray")
 
     # 체크박스 눌러서 비활성화, 활성화
     def changeComboTest(self):
         print(self.trainSetDir, self.testSetDir, self.validationSetDir)
         if self.checkBoxTest.isChecked():
-            self.pushButtonTestListDir.setEnabled(self.checkBoxTest.isChecked())
-            self.testSetDir = self.labelTestListDir.text()
-            self.testFileCount = int(self.labelTestCount.text()[1:-1])
-            self.labelTestListDir.setStyleSheet("Color : black")
-            self.labelTestCount.setStyleSheet("Color : black")
-            self.labelTestSet.setStyleSheet("Color : black")
+            # 직접 데이터를 주는 영역
+
+            self.spinBoxOkRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())            
+            self.spinBoxDefRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())            
+            self.labelOkRatioTestCount.setStyleSheet("Color : gray")
+            self.labelOkRatioTestTitle.setStyleSheet("Color : gray")
+            self.labelDefRatioTestCount.setStyleSheet("Color : gray")
+            self.labelDefRatioTestTitle.setStyleSheet("Color : gray")
+            # ok
+            self.pushButtonOkTestListDir.setEnabled(self.checkBoxTest.isChecked())
+            self.labelOkTestCount.setStyleSheet("Color : black")
+            self.labelOkTestListDir.setStyleSheet("Color : black")
+            self.labelOkTestTitle.setStyleSheet("Color : black")
+            # def
+            self.pushButtonDefTestListDir.setEnabled(self.checkBoxTest.isChecked())
+            self.labelDefTestCount.setStyleSheet("Color : black")
+            self.labelDefTestListDir.setStyleSheet("Color : black")
+            self.labelDefTestTitle.setStyleSheet("Color : black")
         else:
-            self.pushButtonTestListDir.setEnabled(self.checkBoxTest.isChecked())
-            self.testSetDir = ""
-            self.testFileCount = 0
-            self.labelTestListDir.setStyleSheet("Color : gray")
-            self.labelTestCount.setStyleSheet("Color : gray")
-            self.labelTestSet.setStyleSheet("Color : gray")
+            # 직접 데이터를 주는 영역         
+            self.spinBoxOkRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())            
+            self.spinBoxDefRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())  
+            self.labelOkRatioTestCount.setStyleSheet("Color : black")
+            self.labelOkRatioTestTitle.setStyleSheet("Color : black")
+            self.labelDefRatioTestCount.setStyleSheet("Color : black")
+            self.labelDefRatioTestTitle.setStyleSheet("Color : black")
+            # ok
+            self.pushButtonOkTestListDir.setEnabled(self.checkBoxTest.isChecked())
+            self.labelOkTestCount.setStyleSheet("Color : gray")
+            self.labelOkTestListDir.setStyleSheet("Color : gray")
+            self.labelOkTestTitle.setStyleSheet("Color : gray")
+            # def
+            self.pushButtonDefTestListDir.setEnabled(self.checkBoxTest.isChecked())
+            self.labelDefTestCount.setStyleSheet("Color : gray")
+            self.labelDefTestListDir.setStyleSheet("Color : gray")
+            self.labelDefTestTitle.setStyleSheet("Color : gray")
 
     def changeComboValidation(self):
         if self.checkBoxValidation.isChecked():
-            self.pushButtonValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
-            self.validationSetDir = self.labelValidationListDir.text()
-            self.validationFileCount = int(self.labelValidationCount.text()[1:-1])
-            self.labelValidationListDir.setStyleSheet("Color : black")
-            self.labelValidationCount.setStyleSheet("Color : black")
-            self.labelValidationSet.setStyleSheet("Color : black")
+            # ok
+            self.pushButtonOkValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
+            self.labelOkValidationCount.setStyleSheet("Color : black")
+            self.labelOkValidationListDir.setStyleSheet("Color : black")
+            self.labelOkValidationTitle.setStyleSheet("Color : black")
+            # def
+            self.pushButtonDefValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
+            self.labelDefValidationCount.setStyleSheet("Color : black")
+            self.labelDefValidationListDir.setStyleSheet("Color : black")
+            self.labelDefValidationTitle.setStyleSheet("Color : black")
         else:
-            self.pushButtonValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
-            self.validationSetDir = ""
-            self.validationFileCount = 0
-            self.labelValidationListDir.setStyleSheet("Color : gray")
-            self.labelValidationCount.setStyleSheet("Color : gray")
-            self.labelValidationSet.setStyleSheet("Color : gray")
-
-    
+            # ok       
+            self.pushButtonOkValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
+            self.labelOkValidationCount.setStyleSheet("Color : grey")
+            self.labelOkValidationListDir.setStyleSheet("Color : grey")
+            self.labelOkValidationTitle.setStyleSheet("Color : grey")
+            # def
+            self.pushButtonDefValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
+            self.labelDefValidationCount.setStyleSheet("Color : grey")
+            self.labelDefValidationListDir.setStyleSheet("Color : grey")
+            self.labelDefValidationTitle.setStyleSheet("Color : grey")
+  
     # train set 파일 경로 설정, 파일 개수 출력
-    def clickOpenTrainSet(self):
+    def clickOpenOkTrainSet(self):
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        if fname == '': return
         self.trainSetDir = fname
-        self.labelTrainListDir.setText(fname)
+        self.labelOkTrainListDir.setText(fname)
 
         fileCount = self.countFileNumber(fname)
         self.trainFileCount = fileCount
-        self.labelTrainCount.setText("(" + str(fileCount) + ")")
+        self.labelOkTrainCount.setText(f'{fileCount}')
 
+        # 트레인 데이터를 넣었을 때 -> 초기 설정
+        testFileCount = round(int(self.spinBoxOkRatioTestCount.value())/ 100 * fileCount)
+        self.labelOkRatioTestCount.setText(f'{testFileCount}장')
+
+    def clickOpenDefTrainSet(self):
+        fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        if fname == '': return
+        self.trainSetDir = fname
+        self.labelDefTrainListDir.setText(fname)
+
+        fileCount = self.countFileNumber(fname)
+        self.trainFileCount = fileCount
+        self.labelDefTrainCount.setText(f'{fileCount}')
+
+        # 트레인 데이터를 넣었을 때 -> 초기 설정
+        testFileCount = round(int(self.spinBoxDefRatioTestCount.value())/ 100 * fileCount)
+        self.labelDefRatioTestCount.setText(f'{testFileCount}장')
 
     # test set 파일 경로 설정
-    def clickOpenTestSet(self):
+    def clickOpenOkTestSet(self):
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        if fname == '': return
         self.testSetDir = fname
-        self.labelTestListDir.setText(fname)
+        self.labelOkTestListDir.setText(fname)
 
         fileCount = self.countFileNumber(fname)
         self.testFileCount = fileCount
-        self.labelTestCount.setText("(" + str(fileCount) + ")")
+        self.labelOkTestCount.setText("(" + str(fileCount) + ")")
+
+    def clickOpenDefTestSet(self):
+        fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        if fname == '': return
+        self.testSetDir = fname
+        self.labelDefTestListDir.setText(fname)
+
+        fileCount = self.countFileNumber(fname)
+        self.testFileCount = fileCount
+        self.labelDefTestCount.setText("(" + str(fileCount) + ")")
+
+    # test에 있는 spinbox의 값이 바뀌었을 때 호출
+    def okTestValueChanged(self):
+        if self.labelOkTrainListDir.text() == '이미지 dir 위치': return
+        testFileCount = round(int(self.spinBoxOkRatioTestCount.value())/ 100 * int(self.labelOkTrainCount.text()))
+        self.labelOkRatioTestCount.setText(f'{testFileCount}장')
+
+    def defTestValueChanged(self):
+        if self.labelDefTrainListDir.text() == '이미지 dir 위치': return
+        testFileCount = round(int(self.spinBoxDefRatioTestCount.value())/ 100 * int(self.labelDefTrainCount.text()))
+        self.labelDefRatioTestCount.setText(f'{testFileCount}장')
 
     # validation set 파일 경로 설정
     def clickOpenValidationSet(self):
@@ -121,7 +215,6 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         self.validationFileCount = fileCount
         self.labelValidationCount.setText("(" + str(fileCount) + ")")
         
-
     # 모델 저장할 위치 경로 설정
     def clickOpenModelSaveDir(self):
         print("as")
@@ -130,9 +223,11 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         self.modelSaveDir = fname
         self.labelModelSaveDir.setText(fname)
 
-    # 디렉토리 내부 파일 개수 세기
+    # 디렉토리 내부 이미지 개수 세기
     def countFileNumber(self, dir):
-        fileCount = len(os.listdir(dir))
+        print(dir)
+        fileList = glob.glob(f'{dir}/*[png$|jpg$|jpeg$|tif$]')
+        fileCount = len(fileList)
         return(fileCount)
 
     # 다음 버튼 누르면: 현재 모달 닫고 다음 모달 띄우기
@@ -148,12 +243,6 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         # }
         # print(response)
         self.close()
-
-
-
-
-    
-    
 
     # 데코레이터 못하겠다 프린트하기
     # def printOutput(func):
