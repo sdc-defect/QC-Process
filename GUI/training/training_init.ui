@@ -19,7 +19,7 @@
      <x>80</x>
      <y>50</y>
      <width>791</width>
-     <height>493</height>
+     <height>517</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -241,7 +241,7 @@
       <item>
        <widget class="QLabel" name="labelOkTestCount">
         <property name="text">
-         <string>(0)</string>
+         <string>0</string>
         </property>
        </widget>
       </item>
@@ -273,7 +273,7 @@
       <item>
        <widget class="QLabel" name="labelDefTestCount">
         <property name="text">
-         <string>(0)</string>
+         <string>0</string>
         </property>
        </widget>
       </item>
@@ -301,6 +301,40 @@
      </widget>
     </item>
     <item>
+     <layout class="QHBoxLayout" name="totalValidationSet">
+      <item>
+       <widget class="QLabel" name="labelTotalRatioValidationTitle">
+        <property name="text">
+         <string>Total Validation Set:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="spinBoxTotalRatioValidationCount">
+        <property name="minimum">
+         <number>5</number>
+        </property>
+        <property name="maximum">
+         <number>20</number>
+        </property>
+        <property name="singleStep">
+         <number>5</number>
+        </property>
+        <property name="value">
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelTotalRatioValidationCount">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="validationOk" stretch="0,1,1,1">
       <item>
        <widget class="QLabel" name="labelOkValidationTitle">
@@ -319,7 +353,7 @@
       <item>
        <widget class="QLabel" name="labelOkValidationCount">
         <property name="text">
-         <string>(0)</string>
+         <string>0</string>
         </property>
        </widget>
       </item>
@@ -351,7 +385,7 @@
       <item>
        <widget class="QLabel" name="labelDefValidationCount">
         <property name="text">
-         <string>(0)</string>
+         <string>0</string>
         </property>
        </widget>
       </item>
