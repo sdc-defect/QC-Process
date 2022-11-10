@@ -101,7 +101,6 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
         # 로그 파일 저장용
         logMessage = {
-            "length_test": leng,
             "Timestamp":imgDescription["timestamp"],
             "File name" : imgDescription["filename"] ,
             "Probability_ok":imgDescription["prob"][0] ,
@@ -279,9 +278,9 @@ class InferenceWindowClass(QMainWindow, form_class) :
         for image in imageFileList:
             imageDict[image] = {}
         # 로그 json에 dict 저장
-        file_path = "log.json" # 로그 파일 위치
-        with open(file_path, "w") as json_file:
-            json.dump(imageDict, json_file)
+        # file_path = "log.json" # 로그 파일 위치
+        # with open(file_path, "w") as json_file:
+        #     json.dump(imageDict, json_file)
 
     # 이미지 미리보기
     def showSingleImage(self):
