@@ -9,7 +9,11 @@ from PyQt5.QtCore import QWaitCondition
 from PyQt5.QtCore import QMutex
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
-
+# graph lib
+import pandas as pd
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 import threading
 import time
 import csv
@@ -21,6 +25,16 @@ from training_ratio import TrainingRatioWindowClass
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 form_class = uic.loadUiType("training.ui")[0]
 
+# 그래프 띄워줄 데이터 import
+log_data = pd.read_csv('./_log.csv')
+log_data1=log_data['train_loss']
+log_data2=log_data[ 'train_accuracy']
+log_data3=log_data['train_recall']
+# log_data4=log_data['train_f1']
+log_data5=log_data['val_loss']
+log_data6=log_data['val_accuracy']
+log_data7=log_data['val_recall']
+# log_data8=log_data['val_f1']
 
 #화면을 띄우는데 사용되는 Class 선언
 class trainingWindowClass(QMainWindow, form_class) :
@@ -56,15 +70,20 @@ class trainingWindowClass(QMainWindow, form_class) :
         # 하이퍼파라미터 - 초기값 설정
         self.initHyperParameter()
         
+        self.lblAreaAcc:QLabel
+        self.lblAreaLoss:Qlabel
+        self.lblAreaRecall:Qlabel
+        
+        
         # 쓰레드 선언
         self.th = Thread()
         self.init_widget()
         # 쓰레드 시작
-        # self.th.start()
+        self.th.start()
 
     def init_widget(self):
         # 시그널 슬롯 연결
-        self.pushButtonControlStart.clicked.connect(self.trainingStart)
+        # self.pushButtonControlStart.clicked.connect(self.trainingStart)
         # self.th.change_value.connect(self.progressBar.setValue)
         self.th.change_value.connect(self.resultUpdate)
         self.th.update_log.connect(self.logUpdate)
@@ -73,8 +92,6 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.progressBar.setValue(progress)
 
     def logUpdate(self, logContext):
-        # self.labelLogContent.setText(logContext)
-        # 이어서 뜨게 하고싶은데..
         self.textBrowser.append(logContext + "\n")
 
     def test(self):
@@ -93,12 +110,6 @@ class trainingWindowClass(QMainWindow, form_class) :
         _openFile.triggered.connect(self.editFileDir)
 
         self.initData()
-
-        # self.threadclass = showLog()
-        # self.threadclass.start()
-        
-        # threadClass = showLogProgress(self)
-        # threadClass.start()
 
     # 파일 열기 모달 띄우기
     def editFileDir(self):
@@ -162,8 +173,7 @@ class trainingWindowClass(QMainWindow, form_class) :
 
         # 프로그래스바는 0부터 시작
         self.progressBar.setValue(0)
-
-    
+   
     # epoch
     def changeEpoch(self):
         # 5 단위만 되도록 할 지?
@@ -259,38 +269,24 @@ class trainingWindowClass(QMainWindow, form_class) :
     def changeProgressbar(self, progress):
         self.progressBar.setValue(progress)
 
-    @pyqtSlot()
-    def slot_clicked_button(self):
-        """
-        사용자정의 슬롯
-        쓰레드의 status 상태 변경
-        버튼 문자 변경
-        쓰레드 재시작
-        """
-        self.th.toggle_status()
-        self.pushButtonControlStart.setText({True: "Pause", False: "Resume"}[self.th.status])
-
     # 학습 시작
     @pyqtSlot()
     def trainingStart(self):
-        
-        self.th.start()
-        pass
-        # self.th.toggle_status()
-        # self.progressBar.setValue(15)
-        # self.labelControl_2.setText({True: "Pause", False: "Resume"}[self.th.status])
+        self.th.toggle_status()
+        self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
 
     # 학습 다시시작
     def trainingRestart(self):
         pass
 
-    # 학습 일시정자
+    # 학습 일시정지 - 없애고 시작 버튼으로 통일할 듯
     def trainingPause(self):
         pass
     
     # 학습 정지
     def trainingStop(self):
         pass
+
     # @staticmethod
     # def trainingStop():
     #     # 초기화 (재시작)
@@ -302,69 +298,106 @@ class trainingWindowClass(QMainWindow, form_class) :
     #     print("asdasfa")
     #     print(progress)
     #     # self.labelLog.setText(str(90))
-        
-
-def main():
-    app = QApplication(sys.argv) 
-    myWindow = trainingWindowClass() 
-    myWindow.show()
-    exit(app.exec_())
-
-# class showLog(trainingWindowClass):
-# class showLogProgress(QtCore.QThread):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.parent = parent
-
-        self.logFileDir = "./_log.csv"
-        # self.updateLogLabel()
-        print("asdasfa")
-
-    def run(self): 
-        f = open(self.logFileDir, 'r', encoding='utf-8')
-        self.logCsv = list(csv.reader(f))
-        f.close()
-
-        # print(self.logCsv[0])
-        b=""
-        for i in range(1, len(self.logCsv)):
-            # print(self.logCsv[i][0])
-            a = ""
-            for j in range(len(self.logCsv[i])):
-                a = a + ", " + self.logCsv[i][j]
-                # print(self.logCsv[i])
-            b = b + a + '\n'
-            self.parent.labelLogContent.setText(b)
-
-            nowEpoch = self.logCsv[i][0]
-            self.parent.updateLogLabel(int(nowEpoch))
-            time.sleep(1)
-
-
-    # def showProgress(self, nowEpoch):
-    #     # totalEpoch = int(self.parent.setEpoch)
-    #     totalEpoch = 100
-    #     print((nowEpoch/totalEpoch)*100)
-    #     progressRatio = (nowEpoch/totalEpoch)*100
-    #     # self.parent.progressBar.setValue(12)
-
     
-
-
-    # def __init__(self):
-    #     self.logFileDir = "C:/Users/multicampus/Desktop/3ssafy/reaaaal/GUI/training/_log.csv"
-    #     self.printLogFile()
-
-    # def printLogFile(self):
-    #     f = open(self.logFileDir, 'r', encoding='utf-8')
-    #     logCsv = list(csv.reader(f))
-    #     f.close()
-
-    #     print(logCsv[0])
-    #     logLabel = logCsv[0]
-    #     # print(trainingWindowClass.labelParameter.text())
+    # 그래프 플로팅
+    def firstAction(self):
+        self.layout().removeWidget(self.lblAreaLoss)
+        self.layout().removeWidget(self.lblAreaAcc)
+        self.layout().removeWidget(self.lblAreaRecall)
+        self.lblAreaLoss.setParent(None)
+        self.lblAreaAcc.setParent(None)
+        self.lblAreaRecall.setParent(None)
+        self.plotLoss = WidgetPlotLoss(self.centralwidget)  
+        self.plotAcc = WidgetPlotAcc(self.centralwidget)   
+        self.plotRecall = WidgetPlotRecall(self.centralwidget)      
+            
+        self.gridLayout.addWidget(self.plotLoss)
+        self.gridLayout.addWidget(self.plotAcc)
+        self.gridLayout.addWidget(self.plotRecall)
         
-    #     # trainingWindowClass.labelLogContent.setText(logLabel)
+# 그래프용 Class 선언
+class WidgetPlotLoss(QWidget):
+    def __init__(self, *args, **kwargs):
+        QWidget.__init__(self, *args, **kwargs)
+        self.setLayout(QVBoxLayout())
+        self.canvas = PlotCanvasLoss(self, width=10, height=8)
+        self.layout().addWidget(self.canvas)
+        
+class PlotCanvasLoss(FigureCanvas):
+    def __init__(self, parent=None, width=10, height=8, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+        FigureCanvas.setSizePolicy(self, 
+                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plot()
+        
+    def plot(self):        
+        ax = self.figure.add_subplot(111)
+        ax.plot(log_data1, color='#d62828', marker='o', linestyle='dashed', label='train_loss')
+        ax.plot(log_data5, color='#003049', marker='o', linestyle='solid',label= 'val_loss')
+        ax.grid(True,axis='y',linestyle='--')
+        ax.legend(loc='best')
+        ax.set_title('Loss')
+        self.draw()
+
+class WidgetPlotAcc(QWidget):
+    def __init__(self, *args, **kwargs):
+        QWidget.__init__(self, *args, **kwargs)
+        self.setLayout(QVBoxLayout())
+        self.canvas = PlotCanvasAcc(self, width=10, height=8)
+        self.layout().addWidget(self.canvas)
+        
+class PlotCanvasAcc(FigureCanvas):
+    def __init__(self, parent=None, width=10, height=8, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+        FigureCanvas.setSizePolicy(self, 
+                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plotacc()
+        
+    def plotacc(self):
+        ax = self.figure.add_subplot(111)
+        ax.plot(log_data2, color='#d62828', marker='o', linestyle='dashed', label='train_accuracy')
+        ax.plot(log_data6, color='#003049', marker='o', linestyle='solid',label= 'val_accuracy')
+        ax.grid(True,axis='y',linestyle='--')
+        ax.legend(loc='best')
+        ax.set_title('Accuracy')
+        self.draw()
+        
+class WidgetPlotRecall(QWidget):
+    def __init__(self, *args, **kwargs):
+        QWidget.__init__(self, *args, **kwargs)
+        self.setLayout(QVBoxLayout())
+        self.canvas = PlotCanvasRecall(self, width=10, height=8)
+        self.layout().addWidget(self.canvas)
+        
+class PlotCanvasRecall(FigureCanvas):
+    def __init__(self, parent=None, width=10, height=8, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+        FigureCanvas.setSizePolicy(self, 
+                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plotrecall()
+        
+    def plotrecall(self):
+        ax = self.figure.add_subplot(111)
+        ax.plot(log_data3, color='#d62828', marker='o', linestyle='dashed', label='train_recall')
+        ax.plot(log_data7, color='#003049', marker='o', linestyle='solid', label= 'val_recall')
+        ax.grid(True,axis='y',linestyle='--')
+        ax.legend(loc='best')
+        ax.set_title('Recall')
+        
+        self.draw()
+        
+# 그래프 끝
+
+# 결과 출력 쓰레드
 
 class Thread(QThread, form_class):
     """
@@ -380,7 +413,7 @@ class Thread(QThread, form_class):
         self.cond = QWaitCondition()
         self.mutex = QMutex()
         self.cnt = 0
-        self._status = True
+        self._status = False # True로 바꿔야함
         print("threadProgress")
 
         self.logFileDir = "./_log.csv"
@@ -416,25 +449,15 @@ class Thread(QThread, form_class):
                 addprintContent = logIndex[i] + ": " + logContent[i]
                 printContent = printContent + ", " + addprintContent
             print(printContent)
-            
 
-
-            # print("0list", self.logCsv[0])
-            # print("listContent: ", self.logCsv[self.cnt])
-
-
-            # 프로그래스바
-            # print(self.logCsv[self.cnt][0])
-            # print(trainingWindowClass.setEpoch)
-            # print("percentage ", int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
             self.change_value.emit(int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
             
             self.update_log.emit(printContent)
 
             # print(self.cnt)
 
-            self.mutex.unlock()
             self.msleep(1000)
+            self.mutex.unlock()
 
     def toggle_status(self):
         self._status = not self._status
@@ -444,6 +467,14 @@ class Thread(QThread, form_class):
     @property
     def status(self):
         return self._status
+
+def main():
+    app = QApplication(sys.argv) 
+    myWindow = trainingWindowClass() 
+    myWindow.show()
+    myWindow.firstAction()
+    exit(app.exec_())
+
 if __name__ == "__main__" :
     main()
 
