@@ -46,13 +46,9 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         self.pushButtonInitNext.clicked.connect(self.clickNextButton)
         
         # Test 비율 설정 값이 바뀔 때 호출
-        self.spinBoxOkRatioTestCount.valueChanged.connect(self.okTestValueChanged)
-        self.spinBoxDefRatioTestCount.valueChanged.connect(self.defTestValueChanged)
         self.spinBoxTotalRatioTestCount.valueChanged.connect(self.totalTestValueChanged)
 
         # Validation 비율 설정 값이 바뀔 때 호출
-        # self.spinBoxOkRatioValidationCount.valueChanged.connect(self.okValidationValueChanged)
-        # self.spinBoxDefRatioValidationCount.valueChanged.connect(self.defValidationValueChanged)
         self.spinBoxTotalRatioValidationCount.valueChanged.connect(self.totalValidationValueChanged)
 
     def test(self):
@@ -61,8 +57,8 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
     # 초기 체크 안되고 비활성화함
     def initialization(self):
         # Test 
-        # ok
         self.checkBoxTest.setChecked(False)
+        # ok
         self.pushButtonOkTestListDir.setEnabled(self.checkBoxTest.isChecked())
         self.labelOkTestCount.setStyleSheet("Color : gray")
         self.labelOkTestListDir.setStyleSheet("Color : gray")
@@ -76,51 +72,21 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         # Val
         self.checkBoxValidation.setChecked(False)
         # ok
-        self.pushButtonOkValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
-        self.labelOkValidationListDir.setStyleSheet("Color : gray")
+        self.pushButtonOkValidationListDir.setEnabled(self.checkBoxTest.isChecked())
         self.labelOkValidationCount.setStyleSheet("Color : gray")
+        self.labelOkValidationListDir.setStyleSheet("Color : gray")
         self.labelOkValidationTitle.setStyleSheet("Color : gray")
-
         # def
-        self.pushButtonDefValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
-        self.labelDefValidationListDir.setStyleSheet("Color : gray")
+        self.pushButtonDefValidationListDir.setEnabled(self.checkBoxTest.isChecked())
         self.labelDefValidationCount.setStyleSheet("Color : gray")
-        self.labelDefValidationTitle.setStyleSheet("Color : gray")
-
-        # hide
-        self.labelOkRatioTestCount.hide()
-        self.spinBoxOkRatioTestCount.hide()
-        self.labelOkRatioTestTitle.hide()
-
-        self.labelDefRatioTestCount.hide()
-        self.spinBoxDefRatioTestCount.hide()
-        self.labelDefRatioTestTitle.hide()
-
-        # self.labelTotalRatioTestCount.hide()
-        # self.spinBoxTotalRatioTestCount.hide()
-        # self.labelTotalRatioTestTitle.hide()
-
-        self.pushButtonOkTestListDir.hide()
-        self.labelOkTestCount.hide()
-        self.labelOkTestListDir.hide()
-        self.labelOkTestTitle.hide()
-        self.pushButtonDefTestListDir.hide()
-        self.labelDefTestCount.hide()
-        self.labelDefTestListDir.hide()
-        self.labelDefTestTitle.hide()
+        self.labelDefValidationListDir.setStyleSheet("Color : gray")
+        self.labelDefValidationTitle.setStyleSheet("Color : gray")  
 
     # 체크박스 눌러서 비활성화, 활성화
     def changeComboTest(self):
         print(self.trainSetDir, self.testSetDir, self.validationSetDir)
         if self.checkBoxTest.isChecked():
             # 직접 데이터를 주는 영역
-
-            self.spinBoxOkRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())            
-            self.labelOkRatioTestCount.setStyleSheet("Color : gray")
-            self.labelOkRatioTestTitle.setStyleSheet("Color : gray")
-            self.spinBoxDefRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())            
-            self.labelDefRatioTestCount.setStyleSheet("Color : gray")
-            self.labelDefRatioTestTitle.setStyleSheet("Color : gray")
             self.spinBoxTotalRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())            
             self.labelTotalRatioTestCount.setStyleSheet("Color : gray")
             self.labelTotalRatioTestTitle.setStyleSheet("Color : gray")
@@ -135,30 +101,8 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
             self.labelDefTestListDir.setStyleSheet("Color : black")
             self.labelDefTestTitle.setStyleSheet("Color : black")
             
-
-
-
-            # hide and show
-            self.labelTotalRatioTestCount.hide()
-            self.labelTotalRatioTestTitle.hide()
-            self.spinBoxTotalRatioTestCount.hide()
-
-            self.pushButtonOkTestListDir.show()
-            self.labelOkTestCount.show()
-            self.labelOkTestListDir.show()
-            self.labelOkTestTitle.show()
-            self.pushButtonDefTestListDir.show()
-            self.labelDefTestCount.show()
-            self.labelDefTestListDir.show()
-            self.labelDefTestTitle.show()
         else:
             # 직접 데이터를 주는 영역         
-            self.spinBoxOkRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())            
-            self.labelOkRatioTestCount.setStyleSheet("Color : black")
-            self.labelOkRatioTestTitle.setStyleSheet("Color : black")
-            self.spinBoxDefRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())  
-            self.labelDefRatioTestCount.setStyleSheet("Color : black")
-            self.labelDefRatioTestTitle.setStyleSheet("Color : black")
             self.spinBoxTotalRatioTestCount.setEnabled(not self.checkBoxTest.isChecked())            
             self.labelTotalRatioTestCount.setStyleSheet("Color : black")
             self.labelTotalRatioTestTitle.setStyleSheet("Color : black")
@@ -173,22 +117,12 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
             self.labelDefTestListDir.setStyleSheet("Color : gray")
             self.labelDefTestTitle.setStyleSheet("Color : gray")
 
-            # hide and show
-            self.labelTotalRatioTestCount.show()
-            self.labelTotalRatioTestTitle.show()
-            self.spinBoxTotalRatioTestCount.show()
-
-            self.pushButtonOkTestListDir.hide()
-            self.labelOkTestCount.hide()
-            self.labelOkTestListDir.hide()
-            self.labelOkTestTitle.hide()
-            self.pushButtonDefTestListDir.hide()
-            self.labelDefTestCount.hide()
-            self.labelDefTestListDir.hide()
-            self.labelDefTestTitle.hide()
-
     def changeComboValidation(self):
         if self.checkBoxValidation.isChecked():
+            # select
+            self.spinBoxTotalRatioValidationCount.setEnabled(not self.checkBoxValidation.isChecked())            
+            self.labelTotalRatioValidationCount.setStyleSheet("Color : gray")
+            self.labelTotalRatioValidationTitle.setStyleSheet("Color : gray")
             # ok
             self.pushButtonOkValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
             self.labelOkValidationCount.setStyleSheet("Color : black")
@@ -200,6 +134,10 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
             self.labelDefValidationListDir.setStyleSheet("Color : black")
             self.labelDefValidationTitle.setStyleSheet("Color : black")
         else:
+            # select
+            self.spinBoxTotalRatioValidationCount.setEnabled(not self.checkBoxValidation.isChecked())            
+            self.labelTotalRatioValidationCount.setStyleSheet("Color : black")
+            self.labelTotalRatioValidationTitle.setStyleSheet("Color : black")
             # ok       
             self.pushButtonOkValidationListDir.setEnabled(self.checkBoxValidation.isChecked())
             self.labelOkValidationCount.setStyleSheet("Color : grey")
@@ -222,16 +160,12 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         self.trainFileCount = fileCount
         self.labelOkTrainCount.setText(f'{fileCount}')
 
-        # 트레인 데이터를 넣었을 때 -> 초기 설정
-        testFileCount = round(int(self.spinBoxOkRatioTestCount.value())/ 100 * fileCount)
-        self.labelOkRatioTestCount.setText(f'{testFileCount}장') 
-
         if self.labelOkTrainListDir.text() != '이미지 dir 위치' and self.labelDefTrainListDir.text() != '이미지 dir 위치':
             testFileCount = round(int(self.spinBoxTotalRatioTestCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text())))
-            self.labelTotalRatioTestCount.setText(f'{testFileCount}장')
+            self.labelTotalRatioTestCount.setText(f'{testFileCount}')
 
             validationCount = round(int(self.spinBoxTotalRatioValidationCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text()) - testFileCount))
-            self.labelTotalRatioValidationCount.setText(f'{validationCount}장')
+            self.labelTotalRatioValidationCount.setText(f'{validationCount}')
 
     def clickOpenDefTrainSet(self):
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
@@ -243,16 +177,12 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         self.trainFileCount = fileCount
         self.labelDefTrainCount.setText(f'{fileCount}')
 
-        # 트레인 데이터를 넣었을 때 -> 초기 설정
-        testFileCount = round(int(self.spinBoxDefRatioTestCount.value())/ 100 * fileCount)
-        self.labelDefRatioTestCount.setText(f'{testFileCount}장')
-
         if self.labelOkTrainListDir.text() != '이미지 dir 위치' and self.labelDefTrainListDir.text() != '이미지 dir 위치':
             testFileCount = round(int(self.spinBoxTotalRatioTestCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text())))
-            self.labelTotalRatioTestCount.setText(f'{testFileCount}장')
+            self.labelTotalRatioTestCount.setText(f'{testFileCount}')
 
             validationCount = round(int(self.spinBoxTotalRatioValidationCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text()) - testFileCount))
-            self.labelTotalRatioValidationCount.setText(f'{validationCount}장')
+            self.labelTotalRatioValidationCount.setText(f'{validationCount}')
 
     # test set 파일 경로 설정
     def clickOpenOkTestSet(self):
@@ -263,7 +193,7 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
 
         fileCount = self.countFileNumber(fname)
         self.testFileCount = fileCount
-        self.labelOkTestCount.setText("(" + str(fileCount) + ")")            
+        self.labelOkTestCount.setText(f'{fileCount}' )            
 
     def clickOpenDefTestSet(self):
         fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
@@ -273,26 +203,16 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
 
         fileCount = self.countFileNumber(fname)
         self.testFileCount = fileCount
-        self.labelDefTestCount.setText("(" + str(fileCount) + ")")
+        self.labelDefTestCount.setText(f'{fileCount}')
 
     # test에 있는 spinbox의 값이 바뀌었을 때 호출
-    def okTestValueChanged(self):
-        if self.labelOkTrainListDir.text() == '이미지 dir 위치': return
-        testFileCount = round(int(self.spinBoxOkRatioTestCount.value())/ 100 * int(self.labelOkTrainCount.text()))
-        self.labelOkRatioTestCount.setText(f'{testFileCount}장')
-
-    def defTestValueChanged(self):
-        if self.labelDefTrainListDir.text() == '이미지 dir 위치': return
-        testFileCount = round(int(self.spinBoxDefRatioTestCount.value())/ 100 * int(self.labelDefTrainCount.text()))
-        self.labelDefRatioTestCount.setText(f'{testFileCount}장')
-
     def totalTestValueChanged(self):
         if self.labelOkTrainListDir.text() == '이미지 dir 위치' or self.labelDefTrainListDir.text() == '이미지 dir 위치': return
         testFileCount = round(int(self.spinBoxTotalRatioTestCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text())))
-        self.labelTotalRatioTestCount.setText(f'{testFileCount}장')
+        self.labelTotalRatioTestCount.setText(f'{testFileCount}')
 
         validationCount = round(int(self.spinBoxTotalRatioValidationCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text()) - testFileCount))
-        self.labelTotalRatioValidationCount.setText(f'{validationCount}장')
+        self.labelTotalRatioValidationCount.setText(f'{validationCount}')
   
     # validation set 파일 경로 설정
     def clickOpenOkValidationSet(self):
@@ -324,7 +244,7 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         testFileCount = round(int(self.spinBoxTotalRatioTestCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text())))
 
         validationCount = round(int(self.spinBoxTotalRatioValidationCount.value())/ 100 * (self.countFileNumber(self.labelOkTrainListDir.text()) + self.countFileNumber(self.labelDefTrainListDir.text()) - testFileCount))
-        self.labelTotalRatioValidationCount.setText(f'{validationCount}장')
+        self.labelTotalRatioValidationCount.setText(f'{validationCount}')
 
     # 디렉토리 내부 이미지 개수 세기
     def countFileNumber(self, dir):

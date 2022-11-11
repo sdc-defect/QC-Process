@@ -127,21 +127,21 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.validationFileCount = initFirstModal.validationFileCount
 
         # 두 번째 모달
-        # initSecondModal = TrainingRatioWindowClass(self.trainFileCount, self.testFileCount, self.validationFileCount)
-        # initSecondModal.exec_()
+        initSecondModal = TrainingRatioWindowClass(self.trainFileCount, self.testFileCount, self.validationFileCount)
+        initSecondModal.exec_()
 
-        # self.trainFileCount = initSecondModal.train_cnt
-        # self.testFileCount = initSecondModal.test_cnt
-        # self.validationFileCount = initSecondModal.val_cnt
+        self.trainFileCount = initSecondModal.train_cnt
+        self.testFileCount = initSecondModal.test_cnt
+        self.validationFileCount = initSecondModal.val_cnt
 
-        # self.labelTrainSetDir.setText(self.trainSetDir)
-        # self.labelTestSetDir.setText(self.testSetDir)
-        # self.labelValidationSetDir.setText(self.validationSetDir)
-        # self.labelModelSaveDir.setText(self.modelSaveDir)
+        self.labelTrainSetDir.setText(self.trainSetDir)
+        self.labelTestSetDir.setText(self.testSetDir)
+        self.labelValidationSetDir.setText(self.validationSetDir)
+        self.labelModelSaveDir.setText(self.modelSaveDir)
 
-        # self.labelTrainSetCount.setText("(" + str(self.trainFileCount) + ")")
-        # self.labelTestSetCount.setText("(" + str(self.testFileCount) + ")")
-        # self.labelValidationSetCount.setText("(" + str(self.validationFileCount) + ")")
+        self.labelTrainSetCount.setText("(" + str(self.trainFileCount) + ")")
+        self.labelTestSetCount.setText("(" + str(self.testFileCount) + ")")
+        self.labelValidationSetCount.setText("(" + str(self.validationFileCount) + ")")
         
     # 이벤트 연결
     def initData(self):
@@ -173,8 +173,7 @@ class trainingWindowClass(QMainWindow, form_class) :
 
         # 프로그래스바는 0부터 시작
         self.progressBar.setValue(0)
-
-    
+   
     # epoch
     def changeEpoch(self):
         # 5 단위만 되도록 할 지?

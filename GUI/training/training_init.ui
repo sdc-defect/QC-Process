@@ -121,74 +121,6 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="okTestSet">
-      <item>
-       <widget class="QLabel" name="labelOkRatioTestTitle">
-        <property name="text">
-         <string>Ok Test Set:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="spinBoxOkRatioTestCount">
-        <property name="minimum">
-         <number>5</number>
-        </property>
-        <property name="maximum">
-         <number>20</number>
-        </property>
-        <property name="singleStep">
-         <number>5</number>
-        </property>
-        <property name="value">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="labelOkRatioTestCount">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="defTestSet">
-      <item>
-       <widget class="QLabel" name="labelDefRatioTestTitle">
-        <property name="text">
-         <string>Def Test Set:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="spinBoxDefRatioTestCount">
-        <property name="minimum">
-         <number>5</number>
-        </property>
-        <property name="maximum">
-         <number>20</number>
-        </property>
-        <property name="singleStep">
-         <number>5</number>
-        </property>
-        <property name="value">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="labelDefRatioTestCount">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="totalTestSet">
       <item>
        <widget class="QLabel" name="labelTotalRatioTestTitle">
@@ -437,13 +369,63 @@
       </property>
      </widget>
     </item>
+    <item>
+     <layout class="QHBoxLayout" name="totalRatioPlot">
+      <item>
+       <widget class="QLabel" name="totalRatioPlotTrain_2">
+        <property name="text">
+         <string>Train</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="totalRatioPlotValidation">
+        <property name="text">
+         <string>Validation</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="totalRatioPlotTest">
+        <property name="text">
+         <string>Test</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="totalRatioPlotCount">
+      <item>
+       <widget class="QLabel" name="totalRatioPlotCountTrain">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="totalRatioPlotCountValidation">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="totalRatioPlotCountTest">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QPushButton" name="pushButtonInitNext">
    <property name="geometry">
     <rect>
-     <x>780</x>
-     <y>540</y>
+     <x>770</x>
+     <y>610</y>
      <width>93</width>
      <height>28</height>
     </rect>
