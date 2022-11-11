@@ -47,3 +47,7 @@ class MyCustomModel2(tf.keras.Model):
         for layer in self.sequence:
             x = layer(x)
         return x
+
+test = MyCustomModel2()
+test.build(input_shape=(None, 300, 300, 3))
+test.summary()
