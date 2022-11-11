@@ -39,6 +39,7 @@ class Client(QtCore.QObject):
         self.client.error.connect(self.error)
 
         self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
+        # self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
         self.client.pong.connect(self.onPong)
         self.client.textMessageReceived.connect(self.handle_message)
 
@@ -60,8 +61,10 @@ class Client(QtCore.QObject):
         self.client.sendTextMessage("asd")
         
     def handle_message(self, message):
-        msg = json.loads(message)
-        test = reverse_transfer_image(msg)
+        # message = json.loads(message)
+        print(type(message), len(message))
+        # test = reverse_transfer_image(msg)
+        # print(len(test))
 
     def onPong(self, elapsedTime, payload):
         # payload = InferenceResult(timestamp, prob, label, img, cam, merged)
@@ -97,11 +100,11 @@ def send_message():
 if __name__ == '__main__':
     global client
     app = QApplication(sys.argv)
-    send_api("/start", "POST")
+    # send_api("/start", "POST")
 
-    QTimer.singleShot(2000, ping)
-    QTimer.singleShot(3000, send_message)
-    QTimer.singleShot(10000, quit_app)
+    # QTimer.singleShot(2000, ping)
+    # QTimer.singleShot(3000, send_message)
+    QTimer.singleShot(100000, quit_app)
     
     client = Client(app)
 
