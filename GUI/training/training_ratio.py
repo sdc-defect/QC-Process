@@ -8,14 +8,17 @@ import os
 form_class = uic.loadUiType("training_ratio.ui")[0]
 
 #화면을 띄우는데 사용되는 Class 선언
-class WindowClass(QMainWindow, form_class) :
+class TrainingRatioWindowClass(QDialog, form_class) :
     train_cnt = 900
     test_cnt = 100
     val_cnt = 0
-    def __init__(self) :
+    def __init__(self, trainFileCount, testFileCount, validationFileCount) :
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Title")
+        self.train_cnt = trainFileCount
+        self.test_cnt = testFileCount
+        self.val_cnt = validationFileCount
         
         self.pushButtonCalculateImg:QPushButton
         self.pushButtonSetRatio:QPushButton
@@ -58,12 +61,16 @@ class WindowClass(QMainWindow, form_class) :
         self.labelTrainCnt.setText(str(train_cnt)+"장")
         self.labelValCnt.setText(str(self.val_cnt)+"장")
         self.labelTestCnt.setText(str(self.test_cnt)+"장")
+
+        self.train_cnt = train_cnt
+        # self.test_cnt = self.val_cnt
+        # self.val_cnt = self.val_cnt
         
         # return self.train_cnt, self.test_cnt, self.val_cnt
     
     # 완료 버튼 함수
     def btn_done(self):
-        print("bnt 클릭")
+        self.close()
 
 
 if __name__ == "__main__" :
@@ -71,7 +78,7 @@ if __name__ == "__main__" :
     app = QApplication(sys.argv)
 
     #WindowClass의 인스턴스 생성
-    myWindow = WindowClass()
+    myWindow = TrainingRatioWindowClass()
 
     #프로그램 화면을 보여주는 코드
     myWindow.show()
