@@ -98,7 +98,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="pushButtonAll">
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -111,7 +111,7 @@
     <string>모든 이미지</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="pushButtonOk">
    <property name="geometry">
     <rect>
      <x>210</x>
@@ -124,7 +124,7 @@
     <string>양품 이미지</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
+  <widget class="QPushButton" name="pushButtonDef">
    <property name="geometry">
     <rect>
      <x>340</x>

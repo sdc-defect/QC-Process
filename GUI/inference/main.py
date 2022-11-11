@@ -53,6 +53,14 @@ class InferenceWindowClass(QMainWindow, form_class) :
     inferenceDir = ""
     modelDir = ""
 
+    allFileLst = []
+    okFileLst = []
+    defFileLst = []
+
+    allInferencedFile = {}
+    okInferencedFile = {}
+    defInferencedFile = {}
+
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
@@ -91,25 +99,53 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
         imgDescription = json.loads(logContext.replace("'", "\""))
 
-
-
-
-
         
+
+
         # comma = ", "
-        # logMessage = "Timestamp: " + imgDescription["timestamp"] + comma + "File name: " + imgDescription["filename"] + comma + "Probability_ok: " + imgDescription["prob"][0] + comma + "Probability_def : " + imgDescription["prob"][1] + comma + "Result : " + imgDescription["label"] if imgDescription["label"] is "ok" else "def" + comma + "Image_path: " + "imagePath111" + comma + "CAN_path: " + "canPath111" + comma + "Merged_path: " + "mergedPath111"
+        # logmessage = "Timestamp: " + imgDescription["timestamp"] + comma + "File name: " + imgDescription["filename"] + comma + "Probability_ok: " + imgDescription["prob"][0] + comma + "Probability_def : " + imgDescription["prob"][1] + comma + "Result : " + imgDescription["label"] if imgDescription["label"] is "ok" else "def" + comma + "Image_path: " + "imagePath111" + comma + "CAN_path: " + "canPath111" + comma + "Merged_path: " + "mergedPath111"
+        
+
+        # 이미지 파일 저장 위치 정하기
+        imagePath = self.inferenceDir + '/image/' + imgDescription["filename"] + '.jpg'
+        camPath = self.inferenceDir + '/cam/' + imgDescription["filename"] + '_can.jpg'
+        mergedPath = self.inferenceDir + '/merged/' + imgDescription["filename"] + '_merged.jpg'
 
         # 로그 파일 저장용
         logMessage = {
-            "Timestamp":imgDescription["timestamp"],
-            "File name" : imgDescription["filename"] ,
-            "Probability_ok":imgDescription["prob"][0] ,
-            "Probability_def " :imgDescription["prob"][1],
-            "Result " :imgDescription["label"] if imgDescription["label"] is "ok" else "def" ,
-            "Image_path" : "imagePath111",
-            "CAN_path: ": "canPath111",
-            "Merged_path: ": "mergedPath111"
+            "Timestamp" : imgDescription["timestamp"],
+            "File_name" : imgDescription["filename"] ,
+            "Probability_ok" : str(imgDescription["prob"][0]),
+            "Probability_def" : str(imgDescription["prob"][1]),
+            "Result" : imgDescription["label"] if imgDescription["label"] is "ok" else "def" ,
+            "Image_path" : imagePath,
+            "CAM_path" : camPath,
+            "Merged_path": mergedPath
            }
+
+        self.logUpdate("Timestamp: "+logMessage["Timestamp"]+", File_name: "+logMessage["File_name"]+", Probability_ok: "+logMessage["Probability_ok"]+", Probability_def: "+logMessage["Probability_def"]+", Result: "+logMessage["Result"]+", Image_path: "+logMessage["Image_path"]+", CAM_path: "+logMessage["CAM_path"]+", Merged_path: "+logMessage["Merged_path"]+"\n")
+        
+        # 메인 화면 이미지 리스트에 계속 추가해주기
+        row = self.tableWidgetImageList.rowCount()-1
+        print(logMessage["File_name"])
+        self.tableWidgetImageList.setItem(row, 0, QTableWidgetItem(logMessage["File_name"]))
+        self.tableWidgetImageList.setItem(row, 1, QTableWidgetItem(logMessage["Timestamp"]))
+        self.tableWidgetImageList.setItem(row, 2, QTableWidgetItem(logMessage["Result"]))
+        self.tableWidgetImageList.insertRow(row+1)
+
+        filename = logMessage["File_name"]
+        # ui 프린트용 모든 파일 몰아넣기
+
+        self.allInferencedFile[filename] = logMessage
+        self.allFileLst.append(filename)
+        if imgDescription["label"] == "1": # 양품
+            self.okInferencedFile[filename] = logMessage
+            self.okFileLst.append(filename)
+        else: # 불량
+            self.defInferencedFile[filename] = logMessage
+            self.defFileLst.append(filename)
+
+
         # res = imgDescription["label"] if imgDescription["label"] is "ok" else "def"
 
         # self.formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -119,20 +155,16 @@ class InferenceWindowClass(QMainWindow, form_class) :
         logger = self.initLogger("Inferenced")
         logger.info(logMessage)
 
-        # 이미지 파일 jpg로 변환해서 저장@@@@@@@@@@@@@@
-        # imgFile = imgDescription["img"].encode("utf-8")
-        # im = Image.open(BytesIO(base64.b64decode(imgFile)))
-        # im.save(self.inferenceDir + '/image/' + imgDescription["filename"] + '.jpg')
-        
-        # self.saveImageFile(imgDescription["filename"], "", imgDescription["img"])
-        # self.saveImageFile(imgDescription["filename"], "_can", imgDescription["can"])
-        # self.saveImageFile(imgDescription["filename"], "_merged", imgDescription["merged"])
+        # 이미지 파일 jpg로 변환해서 저장
+        self.saveImageFile(imgDescription["img"], imagePath)
+        self.saveImageFile(imgDescription["cam"], camPath)
+        self.saveImageFile(imgDescription["merged"], mergedPath)
     
     # 이미지 파일 저장하기
-    def saveImageFile(self, filename, imagekind, filestring):
+    def saveImageFile(self, filestring, savePath):
         imgFile = filestring.encode("utf-8")
         im = Image.open(BytesIO(base64.b64decode(imgFile)))
-        im.save(self.inferenceDir + '/image/' + filename + imagekind + '.jpg')
+        im.save(savePath)
 
 
     def logUpdate(self, logContext):
@@ -152,8 +184,9 @@ class InferenceWindowClass(QMainWindow, form_class) :
         _openFile.triggered.connect(self.editFileDir)
 
         # table setting
-        self.tableWidgetImageList.setColumnCount(2)
-        self.tableWidgetImageList.setHorizontalHeaderLabels(['FileName', 'CreatedTime'])
+        self.tableWidgetImageList.setColumnCount(3)
+        self.tableWidgetImageList.setHorizontalHeaderLabels(['File Name', 'Created Time', 'Result'])
+        self.tableWidgetImageList.insertRow(0)
         self.tableWidgetImageList.horizontalHeaderItem(0).setToolTip("코드...")
 
         # 이미지 미리보기
@@ -213,13 +246,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
     # 모달 창 - 모든 이미지 파일 리스트
     def allImagesWindowOpen(self):
-        # 주소 어디에 있는지 정해지면 변경@@@@@@@@@@
-        images = {}
-        images["dir"] = self.inferenceDir
-        images["fileLst"] = os.listdir(self.inferenceDir)
-        # 주소 어디에 있는지 정해지면 변경@@@@@@@@@@
-
-        self.allImages = AllImageWindowClass(images)
+        self.allImages = AllImageWindowClass(self.allInferencedFile, self.allFileLst, self.okInferencedFile, self.okFileLst, self.defInferencedFile, self.defFileLst)
         self.allImages.show()
 
     # 로그 csv 파일 로그창에 출력하기
@@ -248,25 +275,26 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.textBrowserImageFile.setText(self.inferenceDir)
         self.textBrowserModelSaveFile.setText(self.modelDir)
 
-        self.printImageListTable(self.inferenceDir)
+        # self.printImageListTable(self.inferenceDir)
     
     # 이미지 파일 위치 가져오면 바로 띄우기
-    def printImageListTable(self, directory):
+
+    # def printImageListTable(self, directory):
         
-        if directory: # 가져온 파일 안에 있는 파일 이름 가져오기 -> 큐로 보내줘야함..! 시작 버튼 눌렀을때로 옮겨야할듯
-            self.logFileInit(directory) # 로그 파일 생성
+    #     if directory: # 가져온 파일 안에 있는 파일 이름 가져오기 -> 큐로 보내줘야함..! 시작 버튼 눌렀을때로 옮겨야할듯
+    #         self.logFileInit(directory) # 로그 파일 생성
 
-            self.imageList = os.listdir(directory) # -> 순서대로 추론에 보내줄 리스트
+    #         self.imageList = os.listdir(directory) # -> 순서대로 추론에 보내줄 리스트
 
-            images = {}
-            images["dir"] = directory
-            images["fileLst"] = self.imageList
+    #         images = {}
+    #         images["dir"] = directory
+    #         images["fileLst"] = self.imageList
 
 
-        self.tableWidgetImageList.setRowCount(len(images["fileLst"]))
+    #     self.tableWidgetImageList.setRowCount(len(images["fileLst"]))
 
-        for fileIdx in range(len(images["fileLst"])):
-            self.tableWidgetImageList.setItem(fileIdx, 0, QTableWidgetItem(images["fileLst"][fileIdx]))
+    #     for fileIdx in range(len(images["fileLst"])):
+    #         self.tableWidgetImageList.setItem(fileIdx, 0, QTableWidgetItem(images["fileLst"][fileIdx]))
 
 
     # 로그 파일 initialize
@@ -300,11 +328,11 @@ class InferenceWindowClass(QMainWindow, form_class) :
     # 모든 이미지 추론 시작
     @pyqtSlot()
     def allStartInference(self):
-        # 사용자 지정 dir에 image, can, merged 파일 없으면 만듦
+        # 사용자 지정 dir에 image, cam, merged 파일 없으면 만듦
         if "image" not in os.listdir(self.inferenceDir):
             os.mkdir(self.inferenceDir + "/image")
-        if "can" not in os.listdir(self.inferenceDir):
-            os.mkdir(self.inferenceDir + "/can")
+        if "cam" not in os.listdir(self.inferenceDir):
+            os.mkdir(self.inferenceDir + "/cam")
         if "merged" not in os.listdir(self.inferenceDir):
             os.mkdir(self.inferenceDir + "/merged")
 
@@ -312,6 +340,8 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.threadWebsocket.start()
         self.init_widget()
         self.threadWebsocket.toggle_status()
+
+
 
     # 모든 이미지 추론 정지
     def allStopInference(self):
@@ -483,6 +513,7 @@ class Client(QThread, form_class):
 
         # # self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
         self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
+        # self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
         self.client.pong.connect(self.onPong)
         self.client.textMessageReceived.connect(self.handle_message)
         print("client")
@@ -515,6 +546,8 @@ class Client(QThread, form_class):
     def websocketFinish(self):
         self._status = False
         self.client.close()
+
+    
 
     @property
     def status(self):
@@ -571,26 +604,26 @@ class Client(QThread, form_class):
 
 
 
-def quit_app():
-    print("timer timeout - exiting")
-    QCoreApplication.quit()
+# def quit_app():
+#     print("timer timeout - exiting")
+#     QCoreApplication.quit()
 
-def ping():
-    client.do_ping()
+# def ping():
+#     client.do_ping()
 
-def send_message():
-    client.send_message()
+# def send_message():
+#     client.send_message()
 
 
 
 def main():
     # global client
-    global client
-    client = Client()
+    # global client
+    # client = Client()
     
     #QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv) 
-    QTimer.singleShot(100000, quit_app)
+    # QTimer.singleShot(100000, quit_app)
     
     # client = Client()
 
@@ -601,7 +634,7 @@ def main():
     #프로그램 화면을 보여주는 코드
     myWindow.show()
     
-    myWindow.firstAction()
+    # myWindow.firstAction()
 
     #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
