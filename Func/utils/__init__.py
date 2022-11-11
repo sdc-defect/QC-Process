@@ -2,6 +2,7 @@ from typing import Tuple
 
 import os
 
+import cv2
 import numpy as np
 import onnx
 import psutil
@@ -10,7 +11,7 @@ import logging
 import onnxruntime
 import onnx.numpy_helper as numpy_helper
 
-from utils.dto import ONNXRuntime
+from utils.dto import ONNXRuntime, InferenceResult
 
 
 def check_folder(folder):
@@ -53,9 +54,24 @@ def load_onnx(path: str) -> ONNXRuntime:
             return ONNXRuntime(runtime=runtime, dense=dense)
 
 
-def merge_two_imgs(img1: np.ndarray, img2: np.ndarray, per_1: float = 0.5, per_2: float = 0.3) -> np.float64:
+def merge_two_imgs(img1: np.ndarray, img2: np.ndarray, per_1: float = 0.5, per_2: float = 0.3) -> np.ndarray:
     merged = img1 * per_1 + img2 * per_2
     merged -= np.min(merged)
     merged /= np.max(merged)
 
     return merged
+
+
+async def save_logs(data: InferenceResult) -> None:
+    if not isinstance(data, InferenceResult):
+        raise TypeError("Invalid Type")
+    # save images
+    try:
+        folder = 'log/' + data.filename[:10]
+        fname = data.filename[11:]
+        check_folder(folder)
+        cv2.imwrite(f"{folder}/{fname}.jpg", data.img)
+        cv2.imwrite(f"{folder}/{fname}_cam.jpg", data.cam)
+        cv2.imwrite(f"{folder}/{fname}_merged.jpg", data.merged)
+    except Exception as e:
+        print("save InferenceResult Failed - ", e)
