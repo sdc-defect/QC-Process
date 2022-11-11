@@ -97,12 +97,12 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>170</y>
+      <y>140</y>
       <width>281</width>
-      <height>161</height>
+      <height>211</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayoutControl" stretch="1,1,1">
+    <layout class="QVBoxLayout" name="verticalLayoutControl" stretch="1,1,1,1,1">
      <item>
       <widget class="QLabel" name="labelControl">
        <property name="text">
@@ -120,6 +120,32 @@
        </property>
        <property name="text">
         <string>시작</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonControlRestart">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>다시시작</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonControlPause">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>일시정지</string>
        </property>
       </widget>
      </item>
@@ -189,13 +215,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="textBrowserModelSaveFile">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="labelImageFileDir">
          <property name="text">
@@ -203,10 +222,17 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="textBrowserModelSaveFile">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="labelModelSaveFileDir">
          <property name="text">
-          <string>저장 파일 경로</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -309,7 +335,7 @@
      <x>0</x>
      <y>0</y>
      <width>1885</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
