@@ -11,26 +11,33 @@ form_class = uic.loadUiType("all_images.ui")[0]
 
 #화면을 띄우는데 사용되는 Class 선언
 class AllImageWindowClass(QMainWindow, form_class) :
-    def __init__(self, images) :
+    def __init__(self, allInferencedFile, allFileLst, okInferencedFile, okFileLst, defInferencedFile, defFileLst) :
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("All")
+        self.setWindowTitle("Inferenced Image List")
+        self.allInferencedFile = allInferencedFile
+        self.allFileLst = allFileLst
+        self.okInferencedFile = okInferencedFile
+        self.okFileLst = okFileLst
+        self.defInferencedFile = defInferencedFile
+        self.defFileLst = defFileLst
+
+        self.initTabel()
 
         # self.showList(images)
 
-        # global imageSourceDir
-        self.imageSourceDir = images["dir"]
-        # global imageNameLst
-        self.imageNameLst = images["fileLst"]
+        # self.imageSourceDir = allInferencedFile["dir"]
+        # self.imageNameLst = allInferencedFile["fileLst"]
 
         # view와 model 연결
-        self.allImageModel = AllImageModel()
-        self.okImageModel = OkImageModel()
-        self.defImageModel = DefImageModel()
-        # self.imageViewMode = ImageViewModel(self.tableViewImageList, self.allImageModel)
-        print(self.allImageModel)
+        # self.allImageModel = AllImageModel()
+        # self.okImageModel = OkImageModel()
+        # self.defImageModel = DefImageModel()
 
-        self.allList()
+        # self.imageViewMode = ImageViewModel(self.tableViewImageList, self.allImageModel)
+        # print(self.allImageModel)
+
+        self.allList(self.allFileLst, self.allInferencedFile)
         # self.dataInit()
 
         # 리스트에서 이미지 선택할때..
@@ -40,22 +47,56 @@ class AllImageWindowClass(QMainWindow, form_class) :
         # 테이블 클릭 이벤트
         self.tableWidgetAllFile.clicked.connect(self.clickTableAllImages)
 
+        # 버튼 클릭 이벤트
+        self.pushButtonAll.clicked.connect(self.clickPushButtonAll)
+        self.pushButtonOk.clicked.connect(self.clickPushButtonOk)
+        self.pushButtonDef.clicked.connect(self.clickPushButtonDef)
+
     # def dataInit(self):
     #     self.tableViewImageList.setModel(self.allImageModel.model)
+    
+    def clickPushButtonAll(self):
+        self.allList(self.allFileLst, self.allInferencedFile)
+    def clickPushButtonOk(self):
+        self.allList(self.okFileLst, self.okInferencedFile)
+    def clickPushButtonDef(self):
+        self.allList(self.defFileLst, self.defInferencedFile)
+
+
 
     # 초기 테이블 세팅
     def initTabel(self):
-        self.tableWidgetAllFile.setColumnCount(2)
-        self.tableWidgetAllFile.setHorizontalHeaderLabels(['FileName', 'CreatedTime'])
+        self.tableWidgetAllFile.setColumnCount(3)
+        self.tableWidgetAllFile.setHorizontalHeaderLabels(['File Name', 'Created Time', 'Result'])
 
-        pass
 
     # 모든 이미지 파일 리스트 클래스에 데이터 넣기
-    def allList(self):
-        imageList = self.allImageModel.data
-        self.tableWidgetAllFile.setRowCount(len(imageList))
-        for fileIdx in range(len(imageList)):
-            self.tableWidgetAllFile.setItem(fileIdx, 0, QTableWidgetItem(imageList[fileIdx][0]))
+    def allList(self, nameLst, fileDict):
+        # allInferencedFile = self.allInferencedFile
+        self.tableWidgetAllFile.setRowCount(len(nameLst))
+        # for i in range(len(nameLst)):
+        #     name = nameLst[i]
+        # print(nameLst)
+        # print(fileDict)
+
+        # 리스트에 값이 하나도 없으면
+        cnt = 0
+        if len(nameLst):
+            for name in nameLst:
+                # print(name, fileDict[name]["Timestamp"],fileDict[name]["Result"] )
+                self.tableWidgetAllFile.setItem(cnt, 0, QTableWidgetItem(name))
+                self.tableWidgetAllFile.setItem(cnt, 1, QTableWidgetItem(fileDict[name]["Timestamp"]))
+                self.tableWidgetAllFile.setItem(cnt, 2, QTableWidgetItem(fileDict[name]["Result"]))
+                cnt = cnt + 1
+        else:
+            self.tableWidgetAllFile.clear()
+            # print("len: 0")
+
+        # allInferencedFile = self.allInferencedFile
+        # self.tableWidgetAllFile.setRowCount(len(allInferencedFile))
+
+        # for fileIdx in range(len(allInferencedFile)):
+        #     self.tableWidgetAllFile.setItem(fileIdx, 0, QTableWidgetItem(allInferencedFile))
 
         pass
 
@@ -75,26 +116,38 @@ class AllImageWindowClass(QMainWindow, form_class) :
 
     # self.tableWidgetAllFile
 
-
+    def listShow(self, fileLst):
+        pass
 
 
 
     # 이미지, 내용 출력
-    # def showDetail(self, imageIdx):
-    #     global imageSourceDir
-    #     global imageNameLst
+    def showDetail(self, filename):
+        detail = self.allInferencedFile[filename]
 
-    #     imageDir = imageSourceDir + "/"+ imageNameLst[imageIdx]
-    #     print(imageDir)
+        printContent = "File name: " + detail["File_name"] + "\nTime stamp: " + detail["Timestamp"] + "\nProbability_ok: " + detail["Probability_ok"] + "\nProbability_def: " + detail["Probability_def"] + "\nResult: " + detail["Result"] + "\nImage_path: " + detail["Image_path"] + "\nCAM_path: " + detail["CAM_path"] + "\nMerged_path: " + detail["Merged_path"]
 
-    #     pixmap = QPixmap(imageDir)
-    #     self.imageOriginal.setPixmap(pixmap)
+        self.textBrowserSelectedImage.clear()
+        self.textBrowserSelectedImage.append(printContent)
+
+        # global imageSourceDir
+        # global imageNameLst
+
+        imageDir = detail["Image_path"]
+        camDir = detail["CAM_path"]
+        mergedDir = detail["Merged_path"]
+
+        imageDirPixmap = QPixmap(imageDir)
+        camDirPixmap = QPixmap(camDir)
+        self.imageOriginal.setPixmap(imageDirPixmap)
+        self.imageCAM.setPixmap(camDirPixmap)
 
     # 테이블 클릭 이벤트
     def clickTableAllImages(self):
         row = self.tableWidgetAllFile.currentIndex().row()
-        print(row)
-        self.showDetail(row)
+        filename = self.tableWidgetAllFile.item(row, 0).text()
+        # 첫 열 값 넘김
+        self.showDetail(filename)
 
 
 class AllImageModel(list):
