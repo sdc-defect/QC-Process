@@ -8,6 +8,7 @@ import onnxruntime
 @dataclass
 class InferenceResult:
     timestamp: str
+    filename: str
     prob: List[float]
     label: int
     img: np.ndarray

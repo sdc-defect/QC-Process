@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1050</width>
+    <width>906</width>
     <height>659</height>
    </rect>
   </property>
@@ -19,28 +19,51 @@
      <x>80</x>
      <y>50</y>
      <width>791</width>
-     <height>461</height>
+     <height>517</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>8</number>
+    </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <widget class="QLabel" name="labelTrainSetTitle">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>train</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="trainOk" stretch="0,1,1,1">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="labelOkTrainTitle">
         <property name="text">
-         <string>train set</string>
+         <string>ok:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="labelTrainCount">
+       <widget class="QLabel" name="labelOkTrainListDir">
         <property name="text">
-         <string>(0)</string>
+         <string>이미지 dir 위치</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonTrainListDir">
+       <widget class="QLabel" name="labelOkTrainCount">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonOkTrainListDir">
         <property name="text">
          <string>열기</string>
         </property>
@@ -49,14 +72,39 @@
      </layout>
     </item>
     <item>
-     <widget class="QLabel" name="labelTrainListDir">
-      <property name="text">
-       <string>이미지 dir 위치</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="trainDef" stretch="0,1,1,1">
+      <item>
+       <widget class="QLabel" name="labelDefTrainTitle">
+        <property name="text">
+         <string>def:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelDefTrainListDir">
+        <property name="text">
+         <string>이미지 dir 위치</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelDefTrainCount">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonDefTrainListDir">
+        <property name="text">
+         <string>열기</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="Line" name="line">
+     <widget class="Line" name="line_4">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -73,23 +121,64 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="totalTestSet">
       <item>
-       <widget class="QLabel" name="labelTestSet">
+       <widget class="QLabel" name="labelTotalRatioTestTitle">
         <property name="text">
-         <string>test set</string>
+         <string>Total Test Set:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="labelTestCount">
-        <property name="text">
-         <string>(0)</string>
+       <widget class="QSpinBox" name="spinBoxTotalRatioTestCount">
+        <property name="minimum">
+         <number>5</number>
+        </property>
+        <property name="maximum">
+         <number>20</number>
+        </property>
+        <property name="singleStep">
+         <number>5</number>
+        </property>
+        <property name="value">
+         <number>10</number>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonTestListDir">
+       <widget class="QLabel" name="labelTotalRatioTestCount">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="testOk" stretch="0,1,1,1">
+      <item>
+       <widget class="QLabel" name="labelOkTestTitle">
+        <property name="text">
+         <string>ok:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelOkTestListDir">
+        <property name="text">
+         <string>이미지 dir 위치</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelOkTestCount">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonOkTestListDir">
         <property name="text">
          <string>열기</string>
         </property>
@@ -98,14 +187,39 @@
      </layout>
     </item>
     <item>
-     <widget class="QLabel" name="labelTestListDir">
-      <property name="text">
-       <string>이미지 dir 위치</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="testDef" stretch="0,1,1,1">
+      <item>
+       <widget class="QLabel" name="labelDefTestTitle">
+        <property name="text">
+         <string>def:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelDefTestListDir">
+        <property name="text">
+         <string>이미지 dir 위치</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelDefTestCount">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonDefTestListDir">
+        <property name="text">
+         <string>열기</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="Line" name="line_2">
+     <widget class="Line" name="line_5">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -119,23 +233,64 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QHBoxLayout" name="totalValidationSet">
       <item>
-       <widget class="QLabel" name="labelValidationSet">
+       <widget class="QLabel" name="labelTotalRatioValidationTitle">
         <property name="text">
-         <string>validation set</string>
+         <string>Total Validation Set:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="labelValidationCount">
-        <property name="text">
-         <string>(0)</string>
+       <widget class="QSpinBox" name="spinBoxTotalRatioValidationCount">
+        <property name="minimum">
+         <number>5</number>
+        </property>
+        <property name="maximum">
+         <number>20</number>
+        </property>
+        <property name="singleStep">
+         <number>5</number>
+        </property>
+        <property name="value">
+         <number>10</number>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonValidationListDir">
+       <widget class="QLabel" name="labelTotalRatioValidationCount">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="validationOk" stretch="0,1,1,1">
+      <item>
+       <widget class="QLabel" name="labelOkValidationTitle">
+        <property name="text">
+         <string>ok:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelOkValidationListDir">
+        <property name="text">
+         <string>이미지 dir 위치</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelOkValidationCount">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonOkValidationListDir">
         <property name="text">
          <string>열기</string>
         </property>
@@ -144,11 +299,36 @@
      </layout>
     </item>
     <item>
-     <widget class="QLabel" name="labelValidationListDir">
-      <property name="text">
-       <string>이미지 dir 위치</string>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="validationDef" stretch="0,1,1,1">
+      <item>
+       <widget class="QLabel" name="labelDefValidationTitle">
+        <property name="text">
+         <string>def:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelDefValidationListDir">
+        <property name="text">
+         <string>이미지 dir 위치</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelDefValidationCount">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonDefValidationListDir">
+        <property name="text">
+         <string>열기</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="Line" name="line_3">
@@ -158,7 +338,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="saveDir">
       <item>
        <widget class="QLabel" name="labelModelSave">
         <property name="text">
@@ -189,13 +369,63 @@
       </property>
      </widget>
     </item>
+    <item>
+     <layout class="QHBoxLayout" name="totalRatioPlot">
+      <item>
+       <widget class="QLabel" name="totalRatioPlotTrain_2">
+        <property name="text">
+         <string>Train</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="totalRatioPlotValidation">
+        <property name="text">
+         <string>Validation</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="totalRatioPlotTest">
+        <property name="text">
+         <string>Test</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="totalRatioPlotCount">
+      <item>
+       <widget class="QLabel" name="totalRatioPlotCountTrain">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="totalRatioPlotCountValidation">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="totalRatioPlotCountTest">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QPushButton" name="pushButtonInitNext">
    <property name="geometry">
     <rect>
-     <x>780</x>
-     <y>540</y>
+     <x>770</x>
+     <y>610</y>
      <width>93</width>
      <height>28</height>
     </rect>

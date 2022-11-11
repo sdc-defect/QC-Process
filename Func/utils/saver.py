@@ -11,7 +11,7 @@ import utils
 
 
 class Convertor:
-    def __init__(self, onnx_name: str = 'model.onnx', modified_name: str = 'modified.onnx'):
+    def __init__(self, onnx_name: str = 'model.onnx', modified_name: str = 'default.onnx'):
         self._logger = utils.get_logger(__name__)
         self._onnx_name = onnx_name
         self._modified_name = modified_name
@@ -46,7 +46,7 @@ class Convertor:
 
         model.graph.output.append(last_layer)
         checker.check_model(model)
-        save_model(model, os.path.join(folder, "modified.onnx"))
+        save_model(model, os.path.join(folder, "default.onnx"))
 
         self._logger.info(f"Modify ONNX {time.time() - st:.2f}s")
 

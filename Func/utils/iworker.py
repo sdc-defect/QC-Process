@@ -1,12 +1,16 @@
+import re
+from typing import List, Union, Tuple, Dict
+from multiprocessing.synchronize import Event
+
 import time
 import datetime
-from typing import List, Union, Tuple, Dict
 
 import multiprocessing as mp
 import numpy as np
 import cv2
 
 import utils
+from utils.data import transfer_image
 from utils.dto import InferenceResult, ONNXRuntime
 
 
@@ -14,9 +18,9 @@ class IWorker:
     def __init__(self, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
         self._path = path
         self._size = size
-        self._runtime: Union[ONNXRuntime, None] = None
-        self._img0 = None
-        self._timestamp = None
+        self._runtime: Union[ONNXRuntime, None] = utils.load_onnx(self._path)
+        self._img0: Union[np.ndarray, None] = None
+        self._timestamp: Union[datetime.datetime, None] = None
 
     def __getstate__(self) -> Dict:
         return {'path': self._path, 'size': self._size}
@@ -27,7 +31,7 @@ class IWorker:
         self._runtime = utils.load_onnx(self._path)
 
     def _preprocess(self, img: np.ndarray) -> np.ndarray:
-        self._timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self._timestamp = datetime.datetime.now()
         self._img0 = img.copy()
 
         return np.expand_dims(img / 255, axis=0).astype('float32')
@@ -40,15 +44,18 @@ class IWorker:
         return self._postprocess(output)
 
     def _postprocess(self, output: List[np.ndarray]) -> InferenceResult:
+        timestamp = self._timestamp.strftime("%Y-%m-%d_%H:%M:%S:%f")[:-3]
+        filename = re.sub('[-:]', '_', timestamp)
         prob = output[0].squeeze()
         label = int(np.argmax(prob))
         conv_layer = output[1].squeeze()
-        cam = self._get_cam(conv_layer, 1)
+        cam = self._get_cam(conv_layer, 1, True)
         merged = utils.merge_two_imgs(self._img0, cam)
+        merged = cv2.normalize(merged, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
 
-        return InferenceResult(self._timestamp, [float(p) for p in prob], label, self._img0, cam, merged)
+        return InferenceResult(timestamp, filename, [float(p) for p in prob], label, self._img0, cam, merged)
 
-    def _get_cam(self, conv_layer: np.ndarray, target_label: int, is_rgb: bool = False):
+    def _get_cam(self, conv_layer: np.ndarray, target_label: int, is_rgb: bool = False) -> np.ndarray:
         c, h, w = conv_layer.shape
 
         cam = np.matmul(np.expand_dims(self._runtime.dense[:, target_label], axis=0),
@@ -64,62 +71,21 @@ class IWorker:
 
 
 class IProcess(mp.Process):
-    def __init__(self, queue: mp.Queue, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
+    def __init__(self, flag: Event, queue: mp.Queue, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
         super(IProcess, self).__init__()
         self._queue = queue
         self._worker = IWorker(path, size)
+        self._flag = flag
 
     def run(self) -> None:
         while True:
             time.sleep(1)
+
+            if not self._flag.is_set():
+                continue
+
             rimg = np.uint8(np.random.rand(300, 300, 3) * 255)
 
             result = self._worker.inference(rimg)
-            print(result.timestamp)
+
             self._queue.put(result)
-
-
-class IService:
-    def __init__(self):
-        self.queue = mp.Queue()
-        self._path: Union[str, None] = None
-        self._size: Union[Tuple[int, int]] = (300, 300)
-        self._process: Union[IProcess, None] = None
-        self.terminated = []
-
-    def check_process_alive(self):
-        if self._process is None:
-            return False
-        return self._process.is_alive()
-
-    def update_onnx_info(self, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
-        self._path = path
-        self._size = size
-
-    def run_process(self):
-        if self._path is None:
-            raise RuntimeError("Specify ONNX path")
-        if self._size is None:
-            raise RuntimeError("Specify image size")
-        if self.check_process_alive():
-            raise RuntimeError("Process is already started")
-
-        self._process = IProcess(self.queue, self._path, self._size)
-        self._process.start()
-
-    async def stop_inference(self):
-        self._process.terminate()
-        self._process.join()
-
-        self.terminated.append(self._process)
-        self._process = None
-
-
-if __name__ == "__main__":
-    # mp.freeze_support()
-    # mp.set_start_method('spawn')
-    service = IService()
-    service.update_onnx_info("../temp/case2/onnx/modified.onnx")
-    service.run_process()
-    time.sleep(10)
-    service.stop_inference()

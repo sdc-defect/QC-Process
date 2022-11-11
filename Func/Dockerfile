@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install libgl1-mesa-glx -y
+RUN apt-get install libgl1-mesa-glx libglib2.0-0 -y
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
