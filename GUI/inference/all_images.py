@@ -145,7 +145,7 @@ class AllImageWindowClass(QMainWindow, form_class) :
     # 테이블 클릭 이벤트
     def clickTableAllImages(self):
         row = self.tableWidgetAllFile.currentIndex().row()
-        print(row)
+        # print(row)
         filename = self.tableWidgetAllFile.item(row, 0).text()
         # 첫 열 값 넘김
         self.showDetail(filename)

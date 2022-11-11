@@ -77,22 +77,11 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.threadRecieve = receiveThread()
         self.threadRecieve.start()
 
-        # global client
-
-        # client = Client()
         
     def init_widget(self):
         # 시그널 슬롯 연결
-        # self.threadRecieve.receive_inferenced_data.connect(self.saveThreadStart)
-        
-        # self.threadRecieve.update_log.connect(self.logUpdate)
         self.threadWebsocket.recieved_message.connect(self.logSave)
 
-    # @pyqtSlot(dict)
-    # def saveThreadStart(self, saveData):
-    #     self.threadSave = saveThread(saveData)
-    #     self.threadSave.update_log.connect(self.logUpdate)
-    #     self.threadSave.start()
 
     # 웹소켓에서 데이터 받았을 때 실행
     def logSave(self, logContext):
@@ -144,13 +133,6 @@ class InferenceWindowClass(QMainWindow, form_class) :
         else: # 불량
             self.defInferencedFile[filename] = logMessage
             self.defFileLst.append(filename)
-
-
-        # res = imgDescription["label"] if imgDescription["label"] is "ok" else "def"
-
-        # self.formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        # self.logger.warning('Warning log', extra=d)
-        # logger.info(logMessage)
         
         logger = self.initLogger("Inferenced")
         logger.info(logMessage)
@@ -224,44 +206,12 @@ class InferenceWindowClass(QMainWindow, form_class) :
         return self.logger
 
         
-
-    # 추론할 이미지 파일들 디렉토리 주소 가져오기 -> 없애고 이미지 가져오는거만 남겨놓기
-    def imageFileDirButtonClicked(self):
-        fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
-        self.textBrowserImageFile.setText(fname)
-
-        if fname: # 가져온 파일 안에 있는 파일 이름 가져오기 -> 큐로 보내줘야함..! 시작 버튼 눌렀을때로 옮겨야할듯
-            images = {}
-            images["dir"] = fname
-            images["fileLst"] = os.listdir(fname)
-            # print(os.listdir(fname))
-            # for filename in os.listdir(fname):
-            #     # images["fileLst"].append(filename)
-            #     print(filename)
-            #     # with open(os.path.join(fname, filename), 'r') as f: # 파일 내용 읽기
-            #     #     text = f.read()
-            #     #     print(text)
-            # print(images)
     
 
     # 모달 창 - 모든 이미지 파일 리스트
     def allImagesWindowOpen(self):
         self.allImages = AllImageWindowClass(self.allInferencedFile, self.allFileLst, self.okInferencedFile, self.okFileLst, self.defInferencedFile, self.defFileLst)
         self.allImages.show()
-
-    # 로그 csv 파일 로그창에 출력하기
-    def updateLog(self):
-        nowDir = os.path.dirname(os.path.realpath(__file__)) # 현재 디렉토리 주소
-        self.textBrowserLogContent.setText(nowDir) # 를 출력
-
-        f=open(os.path.join(nowDir, '0_log.csv')) # 로그 파일 이름.. 변경해주기
-        inp=f.read()
-        print(len(inp))
-        self.textBrowserLogContent.setText(inp)
-
-        # with open(os.path.join(nowDir, '0_log'), 'r') as f: # 파일 내용 읽기
-        #     text = f.read()
-        #     print(text)
 
 
     # 메뉴에 파일 다시 열기 누르면
@@ -275,40 +225,6 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.textBrowserImageFile.setText(self.inferenceDir)
         self.textBrowserModelSaveFile.setText(self.modelDir)
 
-        # self.printImageListTable(self.inferenceDir)
-    
-    # 이미지 파일 위치 가져오면 바로 띄우기
-
-    # def printImageListTable(self, directory):
-        
-    #     if directory: # 가져온 파일 안에 있는 파일 이름 가져오기 -> 큐로 보내줘야함..! 시작 버튼 눌렀을때로 옮겨야할듯
-    #         self.logFileInit(directory) # 로그 파일 생성
-
-    #         self.imageList = os.listdir(directory) # -> 순서대로 추론에 보내줄 리스트
-
-    #         images = {}
-    #         images["dir"] = directory
-    #         images["fileLst"] = self.imageList
-
-
-    #     self.tableWidgetImageList.setRowCount(len(images["fileLst"]))
-
-    #     for fileIdx in range(len(images["fileLst"])):
-    #         self.tableWidgetImageList.setItem(fileIdx, 0, QTableWidgetItem(images["fileLst"][fileIdx]))
-
-
-    # 로그 파일 initialize
-    def logFileInit(self, directory):
-        # 이미지 파일들 리스트
-        imageFileList = os.listdir(directory)
-        # 이미지 딕셔너리 만듦
-        imageDict = {}
-        for image in imageFileList:
-            imageDict[image] = {}
-        # 로그 json에 dict 저장
-        # file_path = "log.json" # 로그 파일 위치
-        # with open(file_path, "w") as json_file:
-        #     json.dump(imageDict, json_file)
 
     # 이미지 미리보기
     def showSingleImage(self):
@@ -604,30 +520,14 @@ class Client(QThread, form_class):
 
 
 
-# def quit_app():
-#     print("timer timeout - exiting")
-#     QCoreApplication.quit()
-
-# def ping():
-#     client.do_ping()
-
-# def send_message():
-#     client.send_message()
-
 
 
 def main():
-    # global client
-    # global client
-    # client = Client()
     
     #QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv) 
     # QTimer.singleShot(100000, quit_app)
     
-    # client = Client()
-
-
     #WindowClass의 인스턴스 생성
     myWindow = InferenceWindowClass() 
 
