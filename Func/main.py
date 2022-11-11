@@ -1,4 +1,5 @@
 import time
+import websockets
 
 from fastapi import FastAPI, Response, WebSocket
 from starlette.websockets import WebSocketDisconnect
@@ -11,10 +12,9 @@ app = FastAPI()
 service = IService()
 is_connected = True
 
-
-@app.post("/conn", status_code=200)
-async def connection():
-    return {"message": "Successfully Connected"}
+# @app.post("/conn", status_code=200)
+# async def connection():
+#     return {"message": "Successfully Connected"}
 
 
 # 웹소켓 설정
@@ -22,17 +22,21 @@ async def connection():
 async def websocket_endpoint(websocket: WebSocket):
     print(f"client connected : {websocket.client}")
     await websocket.accept()
-    try:
-        await websocket.send_text(f"Welcome client : {websocket.client}")
-        while True:
+    # await websocket.send_text(f"Welcome client : {websocket.client}")
+    while True:
+        try:
             time.sleep(0.1)
             if not service.queue.empty():
+                data = await websocket.receive_text()  # client 메시지 수신대기
+                print(data)
                 result = service.queue.get()
                 data = transfer_image(result)
-                await websocket.send_text(f"Message text was: {data}")
-
-    except WebSocketDisconnect:
-        await websocket.close()
+                await websocket.send_text(data)
+        except WebSocketDisconnect:
+    # except:
+    #     # await websocket.send_text(f"Bye client : {websocket.client}")
+            # await websocket.close()
+            break
 
 
 @app.post("/conn", status_code=200)

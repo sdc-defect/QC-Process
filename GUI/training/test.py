@@ -44,5 +44,13 @@
 # hello()
 
 
-a = "(123)"
-print(a[1:-2])
+# a = "(123)"
+# print(a[1:-2])
+
+class aClass():
+    intA = 1
+class bClass():
+    intB = 2
+    print(aClass.intA)
+
+bClass
