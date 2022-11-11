@@ -173,8 +173,7 @@ class trainingWindowClass(QMainWindow, form_class) :
 
         # 프로그래스바는 0부터 시작
         self.progressBar.setValue(0)
-
-    
+   
     # epoch
     def changeEpoch(self):
         # 5 단위만 되도록 할 지?
