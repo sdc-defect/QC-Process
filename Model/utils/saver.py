@@ -9,8 +9,6 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import onnx
-import onnx.numpy_helper as numpy_helper
 
 import utils
 from utils.trainer import MyTrainer, MyTester
@@ -84,45 +82,3 @@ class Saver:
             with open(os.path.join(self.save_dir, f"best_model.txt"), "w") as note:
                 note.write(f"{epoch} epoch")
             tf.saved_model.save(model, self.save_dir)
-
-
-class Convertor:
-    def __int__(self, model_path: str, onnx_name: str = 'model.onnx', modified_name: str = 'modified.onnx'):
-        self._logger = utils.get_logger(__name__)
-        self._saved_model = model_path
-        self._folder = os.path.join(self._saved_model, "onnx")
-        self._check_folder()
-        self._onnx_name = onnx_name
-        self._modified_name = modified_name
-
-    def _check_folder(self):
-        if not os.path.exists(self._folder):
-            os.mkdir(self._folder)
-
-    def save(self):
-        try:
-            self._saved_model_to_onnx()
-            self._modify_onnx()
-        except Exception as e:
-            self._logger.error(f"Failed to convert saved model to onnx!!! - {e}")
-
-    def _saved_model_to_onnx(self):
-        st = time.time()
-        subprocess.run(args=["python", "-m", "tf2onnx.convert", "--tag", "serve",
-                             "--saved-model", self._saved_model, "--output",
-                             os.path.join(self._folder, self._onnx_name)],
-                       shell=True, encoding='utf-8')
-        self._logger.info(f"Convert Tensorflow Model to ONNX {time.time() - st}")
-
-    def _modify_onnx(self):
-        st = time.time()
-        model = onnx.load(os.path.join(self._folder, "model.onnx"))
-        last_layer = onnx.shape_inference.infer_shapes(model).graph.value_info[-5]
-        dense = numpy_helper.to_array(model.graph.initializer[-3])
-        model.graph.output.append(last_layer)
-
-        onnx.checker.check_model(model)
-        onnx.save_model(model, os.path.join(self._folder, "modified.onnx"))
-        np.save(os.path.join(self._folder, "dense.npy"), dense)
-        self._logger.info(f"Modify ONNX {time.time() - st}")
-
