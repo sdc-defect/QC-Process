@@ -15,15 +15,15 @@ from dataset.read_record import get_dataset, get_dataset_with_fname
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root train/jjh/case1/case1",
+    parser.add_argument("--root train",
                         type=str,
                         help="input root dir",
                         default=".")
-    parser.add_argument("--model train/jjh/case1/case1",
+    parser.add_argument("--model train",
                         type=str,
                         help="input folder name where your saved model file exists",
                         required=True)
-    parser.add_argument("--batch train/jjh/case1/case1",
+    parser.add_argument("--batch train",
                         type=int,
                         help="input batch size",
                         default=8)
