@@ -97,7 +97,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
         # 이미지 파일 저장 위치 정하기
         imagePath = self.inferenceDir + '/image/' + imgDescription["filename"] + '.jpg'
-        camPath = self.inferenceDir + '/cam/' + imgDescription["filename"] + '_can.jpg'
+        camPath = self.inferenceDir + '/cam/' + imgDescription["filename"] + '_cam.jpg'
         mergedPath = self.inferenceDir + '/merged/' + imgDescription["filename"] + '_merged.jpg'
 
         # 로그 파일 저장용
@@ -264,13 +264,32 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.threadWebsocket.start()
         self.init_widget()
         self.threadWebsocket.toggle_status()
+        self.startInfInit()
+    
 
-
+    def startInfInit(self):
+        self.pushButtonControlPause.clicked.connect(self.pauseInference)
+        #self.pushButtonControlStatus.clicked.connect(self.statusInference)
+        self.pushButtonControlRestart.clicked.connect(self.restartInference)
 
     # 모든 이미지 추론 정지
     def allStopInference(self):
         print("stop")
         self.threadWebsocket.websocketFinish()
+        self.threadWebsocket.stopThread()
+
+    def pauseInference(self):
+        #self.threadWebsocket.websocketFinish()
+        self.textBrowserLogContent.append("Inference paused\n")
+        self.threadWebsocket.pause_inference()
+
+    # def statusInference(self):
+    #     self.textBrowserLogContent.append("Inference status checked")
+    #     self.threadWebsocket.status_inference()
+    
+    def restartInference(self):
+        self.textBrowserLogContent.append("Inference restarted\n")
+        self.threadWebsocket.restart_inference()
     
     # 그래프 플로팅
     def firstAction(self):
@@ -433,8 +452,8 @@ class Client(QThread, form_class):
         self.client.error.connect(self.error)
 
         # # self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
-        self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
-        # self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
+        #self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
+        self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
         self.client.pong.connect(self.onPong)
         self.client.textMessageReceived.connect(self.handle_message)
         print("client")
@@ -455,16 +474,6 @@ class Client(QThread, form_class):
 
             if not self._status:
                 self.cond.wait(self.mutex)
-
-            self.mutex.unlock()
-
-    def toggle_status(self):
-        self._status = not self._status
-        if self._status:
-            self.cond.wakeAll()
-    def websocketFinish(self):
-        self._status = False
-        self.client.close()
 
     @property
     def status(self):
@@ -516,6 +525,23 @@ class Client(QThread, form_class):
     def close(self):
         self.client.close()
 
+    def pause_inference(self):
+        response=send_api('/pause','POST')
+        print(response)
+
+    def restart_inference(self):
+        response=send_api('/restart','POST')
+        print(response)
+
+    def status_inference(self):
+        response=send_api('/status','GET')
+        print(response)
+
+    def stopThread(self):
+        print('Thread Stop')
+        self.power = False
+        self.terminate()
+        self.wait(3000)
 
 
 
