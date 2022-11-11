@@ -1,21 +1,28 @@
 from dataclasses import dataclass
 from typing import Union, List
 
-from utils.matrix import Matrix
+import onnxruntime
+import numpy as np
+
+from utils.record import Record, ConfusionMatrix
+
+
+@dataclass
+class ONNXRuntime:
+    runtime: onnxruntime.InferenceSession
+    dense: np.ndarray
 
 
 @dataclass
 class TrainConfig:
     save_path: str
     train_path: List
-
     test_path: Union[List, float]
-
     val_path: Union[List, float]
 
     flip: bool = False
     spin: bool = False
-    swift: bool = False
+    shift: bool = False
     mixup: bool = False
 
     epoch: int = 50
@@ -25,15 +32,22 @@ class TrainConfig:
 
 
 @dataclass
-class TrainResult:
-    epoch: int
-    matrix: Matrix
+class TestConfig:
+    save_path: str
+    test_path: Union[List, float]
 
-    train_loss: float
-    val_loss: float
+
+@dataclass
+class TrainResult:
+    confusionmatrix: ConfusionMatrix
+    loss: float = 0.523234
+    header: str = "train/val/test"
+    epoch: str = "1/50"
+    batch: str = "3/20"
 
 
 @dataclass
 class TestResult:
-    matrix: Matrix
-    test_loss: float
+    record: Record
+
+

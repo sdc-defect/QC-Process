@@ -1,3 +1,2 @@
-from glob import glob
-
-print(glob(None))
+split = '5/50'.split('/')
+print(split[1])
