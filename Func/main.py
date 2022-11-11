@@ -1,78 +1,95 @@
-import time
-import websockets
+import asyncio
+import multiprocessing as mp
 
-from fastapi import FastAPI, Response, WebSocket
-from starlette.websockets import WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, UploadFile
 
+import utils
+from service import IService, Listener
 from utils.data import transfer_image
-from utils.iworker import IService
-
 
 app = FastAPI()
-service = IService()
-is_connected = True
-
-# @app.post("/conn", status_code=200)
-# async def connection():
-#     return {"message": "Successfully Connected"}
+queue = mp.Queue()
+service = IService(queue)
+listener = Listener(queue)
 
 
-# 웹소켓 설정
+@app.on_event("startup")
+async def startup_event():
+    await listener.start_listening()
+    await service.run_process("./model/default.onnx")
+    listener.start()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await listener.stop_listening()
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    print(f"client connected : {websocket.client}")
+    if listener.get_flag():
+        raise HTTPException(status_code=400, detail="Websocket is already connected")
+
     await websocket.accept()
-    # await websocket.send_text(f"Welcome client : {websocket.client}")
-    while True:
-        try:
-            time.sleep(0.1)
-            if not service.queue.empty():
-                data = await websocket.receive_text()  # client 메시지 수신대기
-                print(data)
-                result = service.queue.get()
-                data = transfer_image(result)
-                await websocket.send_text(data)
-        except WebSocketDisconnect:
-    # except:
-    #     # await websocket.send_text(f"Bye client : {websocket.client}")
-            # await websocket.close()
-            break
+    listener.set_flag(True)
+    q: asyncio.Queue = asyncio.Queue()
 
+    await listener.subscribe(q=q)
+    await service.restart_inference()
 
-@app.post("/conn", status_code=200)
-async def connection():
-    if is_connected:
-        return {"message": "Successfully Connected"}
-    else:
-        return {"message": "Connection Failed"}
+    print(f"client connected : {websocket.client}")
 
+    try:
+        while True:
+            data = await q.get()
 
-@app.post("/start", status_code=200)
-async def start_isystem(response: Response):
-    check = service.check_process_alive()
-    if check:
-        response.status_code = 409
-        return {"message": "Already Started"}
-    else:
-        service.update_onnx_info("./data/modified.onnx")
-        service.run_process()
-        return {"message": "Successfully Started"}
-
-
-@app.post("/stop", status_code=200)
-async def stop_isystem(response: Response):
-    check = service.check_process_alive()
-    if not check:
-        response.status_code = 409
-        return {"message": "Already Stopped"}
-    else:
-        await service.stop_inference()
-        return {"message": "Successfully Stopped"}
+            await websocket.send_text(transfer_image(data))
+            # Add handshake
+            await utils.save_logs(data)
+    except Exception as e:
+        print("websocket connection missing", e)
+        await service.pause_inference()
+        listener.set_flag(False)
 
 
 @app.post("/pause", status_code=200)
 async def pause_isystem():
+    if not service.get_flag():
+        raise HTTPException(status_code=500, detail="ISystem is not started")
+    await service.pause_inference()
     return {"message": "Successfully Paused"}
+
+
+@app.post("/restart", status_code=200)
+async def restart_isystem():
+    if service.get_flag():
+        raise HTTPException(status_code=500, detail="ISystem is already started")
+    await service.restart_inference()
+    return {"message": "Successfully Restarted"}
+
+
+@app.put("/update", status_code=200)
+async def stop_isystem(file: UploadFile):
+    fname = f"model/{file.filename}"
+    f = file.file.read()
+    with open(fname, "wb+") as ff:
+        ff.write(f)
+
+    if listener.get_flag():
+        raise HTTPException(status_code=400, detail="Websocket is already connected")
+
+    await service.stop_inference()
+    await service.run_process(fname)
+
+    return {"message": "Successfully Updated"}
+
+
+@app.get("/status", status_code=200)
+def get_status():
+    if listener.get_flag():
+        return {"message": "Inference started"}
+    else:
+        return {"message": "Available to connect"}
 
 
 # 개발/디버깅용으로 사용할 앱 구동 함수
