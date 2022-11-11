@@ -403,7 +403,7 @@ class receiveThread(QThread, form_class):
 
             self.update_log.emit(logPrintStr)
             
-            time.sleep(1)
+            # time.sleep(1)
             
             self.mutex.unlock()
     
@@ -452,8 +452,8 @@ class Client(QThread, form_class):
         self.client.error.connect(self.error)
 
         # # self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
-        #self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
-        self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
+        self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
+        # self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
         self.client.pong.connect(self.onPong)
         self.client.textMessageReceived.connect(self.handle_message)
         print("client")
@@ -474,6 +474,15 @@ class Client(QThread, form_class):
 
             if not self._status:
                 self.cond.wait(self.mutex)
+            self.mutex.unlock()
+
+    def toggle_status(self):
+        self._status = not self._status
+        if self._status:
+            self.cond.wakeAll()
+    def websocketFinish(self):
+        self._status = False
+        self.client.close()
 
     @property
     def status(self):
