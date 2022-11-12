@@ -20,6 +20,10 @@ import csv
 
 from training_init import TrainingInitWindowClass
 from training_ratio import TrainingRatioWindowClass
+from utils.dto import TrainConfig
+from utils.trainer import Manager
+
+import json
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -38,6 +42,9 @@ log_data7=log_data['val_recall']
 
 #화면을 띄우는데 사용되는 Class 선언
 class trainingWindowClass(QMainWindow, form_class) :
+    # set config data
+    isSetFile = False
+    config = TrainConfig(save_path=None, train_path=None, test_path=None, val_path=None)
 
     setAugmentation = True
     setFlip = True
@@ -79,7 +86,7 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.th = Thread()
         self.init_widget()
         # 쓰레드 시작
-        self.th.start()
+        # self.th.start()
 
     def init_widget(self):
         # 시그널 슬롯 연결
@@ -113,36 +120,16 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     # 파일 열기 모달 띄우기
     def editFileDir(self):
-        # 첫 번째 모달
         initFirstModal = TrainingInitWindowClass()
         initFirstModal.exec_()
 
-        self.trainSetDir = initFirstModal.trainSetDir
-        self.testSetDir = initFirstModal.testSetDir
-        self.validationSetDir = initFirstModal.validationSetDir
-        self.modelSaveDir = initFirstModal.modelSaveDir
-
-        self.trainFileCount = initFirstModal.trainFileCount
-        self.testFileCount = initFirstModal.testFileCount
-        self.validationFileCount = initFirstModal.validationFileCount
-
-        # 두 번째 모달
-        initSecondModal = TrainingRatioWindowClass(self.trainFileCount, self.testFileCount, self.validationFileCount)
-        initSecondModal.exec_()
-
-        self.trainFileCount = initSecondModal.train_cnt
-        self.testFileCount = initSecondModal.test_cnt
-        self.validationFileCount = initSecondModal.val_cnt
-
-        self.labelTrainSetDir.setText(self.trainSetDir)
-        self.labelTestSetDir.setText(self.testSetDir)
-        self.labelValidationSetDir.setText(self.validationSetDir)
-        self.labelModelSaveDir.setText(self.modelSaveDir)
-
-        self.labelTrainSetCount.setText("(" + str(self.trainFileCount) + ")")
-        self.labelTestSetCount.setText("(" + str(self.testFileCount) + ")")
-        self.labelValidationSetCount.setText("(" + str(self.validationFileCount) + ")")
-        
+        if initFirstModal.fileSetdata != {}:
+            self.config.save_path = initFirstModal.fileSetdata['save_path']
+            self.config.train_path = initFirstModal.fileSetdata['train_path']
+            self.config.test_path = initFirstModal.fileSetdata['test_path']
+            self.config.val_path = initFirstModal.fileSetdata['val_path']
+            self.isSetFile = True
+     
     # 이벤트 연결
     def initData(self):
 
@@ -272,9 +259,55 @@ class trainingWindowClass(QMainWindow, form_class) :
     # 학습 시작
     @pyqtSlot()
     def trainingStart(self):
-        self.th.toggle_status()
-        self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
+        # 어그멘테이션 설정
+        if self.setAugmentation:
+            self.config.flip = self.checkBoxFlip.isChecked()
+            self.config.spin = self.checkBoxSpin.isChecked()
+            self.config.shift = self.checkBoxSwift.isChecked()
+            self.config.mixup = self.checkBoxMixup.isChecked()
+        else:
+            self.config.flip = False
+            self.config.spin = False
+            self.config.shift = False
+            self.config.mixup = False
 
+        # 하이퍼 파라미터 설정
+        self.config.epoch = int(self.spinBoxEpoch.text())
+        self.config.lr = float(self.labelLearningRate.text())
+
+        if self.comboBoxBatchSize.currentText() == "사용자 지정":
+            self.config.batch_size = int(self.lineEditBatchSize.text())
+        else:
+            self.config.batch_size = int(self.comboBoxBatchSize.currentText())
+
+        if self.comboBoxDecayStep.currentText() == "사용자 지정":
+            self.config.decay = int(self.lineEditDecayStep.text())
+        else:
+            self.config.decay = int(self.comboBoxDecayStep.currentText())
+
+        print(self.config)
+        # .json 파일 만들기
+        config = json.loads(str(self.config))
+        print(config)
+        # self.th.toggle_status()
+        # self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
+        
+        # 시작 버튼 누르면 시작
+        # if self.isSetFile:
+
+        #     Manager().build_trainer(self.config)
+        #     Manager().start(is_train=True)
+
+        #     while True:
+        #         if Manager().queue.empty():
+        #             continue
+        #         data = Manager().queue.get()
+
+        #         # train, validation 종료
+        #         if data == None: break
+        #         print(data)
+
+        return
     # 학습 다시시작
     def trainingRestart(self):
         pass
@@ -305,6 +338,7 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.layout().removeWidget(self.lblAreaAcc)
         self.layout().removeWidget(self.lblAreaRecall)
         self.lblAreaLoss.setParent(None)
+
         self.lblAreaAcc.setParent(None)
         self.lblAreaRecall.setParent(None)
         self.plotLoss = WidgetPlotLoss(self.centralwidget)  
@@ -407,7 +441,6 @@ class Thread(QThread, form_class):
     # 사용자 정의 시그널 선언
     change_value = pyqtSignal(int)
     update_log = pyqtSignal(str)
-
     def __init__(self):
         QThread.__init__(self)
         self.cond = QWaitCondition()
@@ -423,41 +456,38 @@ class Thread(QThread, form_class):
 
     def run(self):
         # 큐로 받을때 한 번만 실행하라고 while 없애면 될 듯?
-        while True:
-            self.mutex.lock()
+        self.mut68ex.lock()
 
-            if not self._status:
-                self.cond.wait(self.mutex)
+        if not self._status:
+            self.cond.wait(self.mutex)
 
-            if 100 == self.cnt:
-                self.cnt = 0
-            self.cnt += 1
-            # self.change_value.emit(self.cnt)
-            self.msleep(100)  # ※주의 QThread에서 제공하는 sleep을 사용
+        if 100 == self.cnt:
+            self.cnt = 0
+        self.cnt += 1
+        # self.change_value.emit(self.cnt)
+        self.msleep(100)  # ※주의 QThread에서 제공하는 sleep을 사용
 
-            # 파일에서 한 줄 씩 읽어와서 진행상황 출력
-            f = open(self.logFileDir, 'r', encoding='utf-8')
-            self.logCsv = list(csv.reader(f))
-            f.close()
+        # 파일에서 한 줄 씩 읽어와서 진행상황 출력
+        f = open(self.logFileDir, 'r', encoding='utf-8')
+        self.logCsv = list(csv.reader(f))
+        f.close()
 
-            logIndex = self.logCsv[0]
-            logContent = self.logCsv[self.cnt]
-            logIndexCount = len(logIndex)
+        logIndex = self.logCsv[0]
+        logContent = self.logCsv[self.cnt]
+        logIndexCount = len(logIndex)
 
-            printContent = "Result" + str(self.cnt)
-            for i in range(logIndexCount):
-                addprintContent = logIndex[i] + ": " + logContent[i]
-                printContent = printContent + ", " + addprintContent
-            print(printContent)
+        printContent = "Result" + str(self.cnt)
+        for i in range(logIndexCount):
+            addprintContent = logIndex[i] + ": " + logContent[i]
+            printContent = printContent + ", " + addprintContent
+        self.change_value.emit(int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
+        
+        self.update_log.emit(printContent)
 
-            self.change_value.emit(int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
-            
-            self.update_log.emit(printContent)
+        # print(self.cnt)
 
-            # print(self.cnt)
-
-            self.msleep(1000)
-            self.mutex.unlock()
+        self.msleep(1000)
+        self.mutex.unlock()        
 
     def toggle_status(self):
         self._status = not self._status

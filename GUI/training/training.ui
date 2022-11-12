@@ -20,10 +20,10 @@
       <x>30</x>
       <y>10</y>
       <width>901</width>
-      <height>131</height>
+      <height>139</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayoutFileDir" stretch="1,1,1,1,1">
+    <layout class="QVBoxLayout" name="fileLocation" stretch="1,1,0,1,1,1">
      <item>
       <widget class="QLabel" name="labelFileDir">
        <property name="styleSheet">
@@ -35,7 +35,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,5,1,1">
+      <layout class="QHBoxLayout" name="trainOk" stretch="1,5,1,1">
        <item>
         <widget class="QLabel" name="labelImageFileLabel">
          <property name="text">
@@ -59,6 +59,38 @@
        </item>
        <item>
         <widget class="QLabel" name="labelTrainSetCount">
+         <property name="text">
+          <string>(0)</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="trainOk_2" stretch="1,5,1,1">
+       <item>
+        <widget class="QLabel" name="labelImageFileLabel_4">
+         <property name="text">
+          <string>Train</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelTrainSetDir_2">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelTrainSetCountString_2">
+         <property name="text">
+          <string>개수</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelTrainSetCount_2">
          <property name="text">
           <string>(0)</string>
          </property>
@@ -168,7 +200,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>160</y>
+      <y>180</y>
       <width>1801</width>
       <height>411</height>
      </rect>
@@ -222,7 +254,7 @@
     <property name="geometry">
      <rect>
       <x>760</x>
-      <y>600</y>
+      <y>620</y>
       <width>1071</width>
       <height>251</height>
      </rect>
@@ -255,7 +287,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>880</y>
+      <y>900</y>
       <width>1841</width>
       <height>23</height>
      </rect>
@@ -268,7 +300,7 @@
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>600</y>
+      <y>620</y>
       <width>151</width>
       <height>251</height>
      </rect>
@@ -339,7 +371,7 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>600</y>
+      <y>620</y>
       <width>341</width>
       <height>251</height>
      </rect>
@@ -541,7 +573,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>620</y>
+      <y>640</y>
       <width>121</width>
       <height>19</height>
      </rect>
@@ -554,7 +586,7 @@
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>660</y>
+      <y>680</y>
       <width>91</width>
       <height>181</height>
      </rect>
@@ -577,7 +609,7 @@
      <item>
       <widget class="QCheckBox" name="checkBoxSwift">
        <property name="text">
-        <string>Swift</string>
+        <string>Shift</string>
        </property>
       </widget>
      </item>
@@ -597,7 +629,7 @@
      <x>0</x>
      <y>0</y>
      <width>1916</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

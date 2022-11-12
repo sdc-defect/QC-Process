@@ -379,16 +379,16 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="totalRatioPlotValidation">
+       <widget class="QLabel" name="totalRatioPlotTest">
         <property name="text">
-         <string>Validation</string>
+         <string>Test</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="totalRatioPlotTest">
+       <widget class="QLabel" name="totalRatioPlotValidation">
         <property name="text">
-         <string>Test</string>
+         <string>Validation</string>
         </property>
        </widget>
       </item>
@@ -404,14 +404,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="totalRatioPlotCountValidation">
+       <widget class="QLabel" name="totalRatioPlotCountTest">
         <property name="text">
          <string>0</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="totalRatioPlotCountTest">
+       <widget class="QLabel" name="totalRatioPlotCountValidation">
         <property name="text">
          <string>0</string>
         </property>
@@ -431,7 +431,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>다음</string>
+    <string>완료</string>
    </property>
   </widget>
  </widget>
