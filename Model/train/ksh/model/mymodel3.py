@@ -23,7 +23,9 @@ class MyModel(tf.keras.Model):
         x = self.headModel3(x)
         
         return self.outputs(x)
-
+test = MyModel()
+test.build(input_shape=(None, 300, 300, 3))
+test.summary()
 
 class MyModel2(tf.keras.Model):
     def __init__(self):
