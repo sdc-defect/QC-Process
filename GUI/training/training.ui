@@ -110,7 +110,7 @@
        <item>
         <widget class="QLabel" name="labelTestRatioDir">
          <property name="text">
-          <string>10%</string>
+          <string>%</string>
          </property>
         </widget>
        </item>
@@ -621,16 +621,16 @@
      <item>
       <layout class="QHBoxLayout" name="ValidationRatio" stretch="1,5,1">
        <item>
-        <widget class="QLabel" name="labelValidaitonRatioTitle">
+        <widget class="QLabel" name="labelValidationRatioTitle">
          <property name="text">
           <string>비율 :</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelValidaitonRatioDir">
+        <widget class="QLabel" name="labelValidationRatioDir">
          <property name="text">
-          <string>10%</string>
+          <string>%</string>
          </property>
         </widget>
        </item>

@@ -21,8 +21,15 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
     validationFileCount = 0
 
     fileSetdata = {
-
     }
+    trainOkCount = 0
+    trainDefCount = 0
+    testOkCount = 0
+    testDefCount = 0
+    testTotalCount = 0
+    validationOkCount = 0
+    validationDefCount = 0
+    validationTotalCount = 0
 
     def __init__(self) :
         super().__init__()
@@ -350,21 +357,31 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
     def clickNextButton(self):
         # File save path
         self.fileSetdata['save_path'] = self.labelModelSaveDir.text()
-        
         # Train path 
         self.fileSetdata['train_path'] = [self.labelOkTrainListDir.text(), self.labelDefTrainListDir.text()]
+        self.trainOkCount = self.labelOkTrainCount.text()
+        self.trainDefCount = self.labelOkTrainCount.text()
 
         # Test path
         if self.checkBoxTest.isChecked():
             self.fileSetdata['test_path'] = [self.labelOkTestListDir.text(), self.labelDefTestListDir.text()]
+            self.fileSetdata['test_per'] = None
+            self.testOkCount = self.labelOkTestCount.text()
+            self.testDefCount = self.labelOkTestCount.text()
         else:
+            self.fileSetdata['test_path'] = None
             self.fileSetdata['test_per'] = float(self.spinBoxTotalRatioTestCount.text()) / 100
-        
-        # Test path
-        if self.checkBoxTest.isChecked():
+            self.testTotalCount = self.totalRatioPlotCountTest.text()
+        # Val path
+        if self.checkBoxValidation.isChecked():
             self.fileSetdata['val_path'] = [self.labelOkValidationListDir.text(), self.labelDefValidationListDir.text()]
+            self.fileSetdata['val_per'] = None
+            self.validationOkCount = self.labelOkValidationCount.text()
+            self.validationDefCount = self.labelOkValidationCount.text()
         else:
             self.fileSetdata['val_per'] = float(self.spinBoxTotalRatioValidationCount.text()) / 100
+            self.fileSetdata['val_path'] = None
+            self.validationTotalCount = self.totalRatioPlotCountValidation.text()
         
         self.close()
 
