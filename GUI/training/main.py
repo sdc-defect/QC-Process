@@ -286,9 +286,16 @@ class trainingWindowClass(QMainWindow, form_class) :
             self.config.decay = int(self.comboBoxDecayStep.currentText())
 
         print(self.config)
+        conf_dic = self.config.__dict__
+        print(conf_dic)
+        conf = json.dumps(self.config.__dict__)
         # .json 파일 만들기
-        config = json.loads(str(self.config))
-        print(config)
+        with open('config.json', 'w') as f:
+            json.dump(conf_dic, f)
+
+        # config = json.loads(str(self.config))
+        # print(config)
+
         # self.th.toggle_status()
         # self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
         
