@@ -16,13 +16,9 @@ class ONNXRuntime:
 @dataclass
 class TrainConfig:
     save_path: str
-    train_path: List[str]
-
-    test_path: Union[List[str], None]
-    test_per: Union[float, None]
-
-    val_path: Union[List[str], None]
-    val_per: Union[float, None]
+    train_path: List
+    test_path: Union[List, float]
+    val_path: Union[List, float]
 
     flip: bool = False
     spin: bool = False
