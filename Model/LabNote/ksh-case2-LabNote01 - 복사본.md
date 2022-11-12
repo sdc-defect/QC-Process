@@ -15,8 +15,8 @@
 |           loss function            |                   CategoricalCrossentropy                    |
 |             best model             |                                                              |
 |             Train Loss             |                            0.0278                            |
-|             Test Loss              |                            0.0159                            |
+|             Test Loss              |                            0.1163                            |
 | Train accuracy / recall / F1-Score |                       1.0 / 1.0 / 1.0                        |
-| Test accuracy / recall / F1-Score  |                   0.9923 / 0.9863 / 0.9931                   |
+| Test accuracy / recall / F1-Score  |                   0.9692 / 0.9726 / 0.9726                   |
 |        val2_cnt (total 50)         |                              48                              |
 |        must_cnt (total 10)         |                           10 / 10                            |
