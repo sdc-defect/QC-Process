@@ -577,7 +577,7 @@
      <item>
       <widget class="QCheckBox" name="checkBoxSwift">
        <property name="text">
-        <string>Swift</string>
+        <string>Shift</string>
        </property>
       </widget>
      </item>
@@ -597,7 +597,7 @@
      <x>0</x>
      <y>0</y>
      <width>1916</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
