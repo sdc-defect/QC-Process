@@ -42,7 +42,7 @@ class TrainResult:
     confusionmatrix: ConfusionMatrix
     loss: float = 0.523234
     header: str = "train/val/test"
-    epoch: str = "1/50"
+    epoch: Union[str, None] = "1/50"
     batch: str = "3/20"
 
 
