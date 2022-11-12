@@ -41,10 +41,11 @@ log_data7=log_data['val_recall']
 # log_data8=log_data['val_f1']
 
 #화면을 띄우는데 사용되는 Class 선언
-class trainingWindowClass(QMainWindow, form_class) :
+class trainingWindowClass(QMainWindow, form_class) :    
     # set config data
     isSetFile = False
-    config = TrainConfig(save_path=None, train_path=None, test_path=None, val_path=None)
+    config = TrainConfig(save_path=None, train_path=None, test_path=None,val_path=None)
+    # config = TrainConfig(save_path=None, train_path=None, test_path=None, test_per=None, val_path=None, val_per=None)
 
     setAugmentation = True
     setFlip = True
@@ -127,9 +128,14 @@ class trainingWindowClass(QMainWindow, form_class) :
             self.config.save_path = initFirstModal.fileSetdata['save_path']
             self.config.train_path = initFirstModal.fileSetdata['train_path']
             self.config.test_path = initFirstModal.fileSetdata['test_path']
+            # self.config.test_per = initFirstModal.fileSetdata['test_per']
             self.config.val_path = initFirstModal.fileSetdata['val_path']
+            # self.config.val_per = initFirstModal.fileSetdata['val_per']
             self.isSetFile = True
-     
+            
+            if self.config.test_per == None:
+                pass
+
     # 이벤트 연결
     def initData(self):
 
