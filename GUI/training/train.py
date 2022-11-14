@@ -91,6 +91,7 @@ if __name__ == "__main__":
                       'recall': recorder.train.get_recall(), 'precision': recorder.train.get_precision(),
                       'f1': recorder.train.get_f1_score()}
             train_logger.info(json.dumps(result, cls=utils.MyEncoder))
+            # print(json.dumps(result, cls=utils.MyEncoder))
 
         # Validate
         for b, (img, label) in enumerate(utils.batch(val_dataset, config.batch_size)):
@@ -101,6 +102,7 @@ if __name__ == "__main__":
                       'recall': recorder.val.get_recall(), 'precision': recorder.val.get_precision(),
                       'f1': recorder.val.get_f1_score()}
             val_logger.info(json.dumps(result, cls=utils.MyEncoder))
+            # print(json.dumps(result, cls=utils.MyEncoder))
 
         # Save
         if recorder.check_best_score():
