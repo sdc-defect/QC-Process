@@ -1,1 +1,1 @@
-2 fold, 1 epoch
+47 epoch
