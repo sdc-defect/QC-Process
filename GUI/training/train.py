@@ -69,10 +69,10 @@ if __name__ == "__main__":
             for gpu in gpus:
                 tf.config.experimental.set_memory_growth(gpu, True)
             logical_gpus = tf.config.list_logical_devices('GPU')
-            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+            # print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
             logger.info(f'config - {len(gpus)}, Physical GPUs, {len(logical_gpus)}, Logical GPUs')
         except RuntimeError as e:
-            print(e)
+            # print(e)
             logger.error(f'config - {e}')
 
     model = MyModel()
@@ -106,6 +106,7 @@ if __name__ == "__main__":
                                                 ('precision', result['precision']),
                                                 ('f1', result['f1'])])
             train_logger.info(json.dumps(result, cls=utils.MyEncoder))
+            # print(json.dumps(result, cls=utils.MyEncoder))
 
         # Validate
         progbar_val = Progbar(val_batch_size, width=50,
@@ -124,10 +125,11 @@ if __name__ == "__main__":
                                                 ('precision', result['precision']),
                                                 ('f1', result['f1'])])
             val_logger.info(json.dumps(result, cls=utils.MyEncoder))
+            # print(json.dumps(result, cls=utils.MyEncoder))
 
         # Save
         if recorder.check_best_score():
-            print("New Best Model!!! model will be saved in", os.path.abspath(os.path.join(save_path, "model.onnx")))
+            # print("New Best Model!!! model will be saved in", os.path.abspath(os.path.join(save_path, "model.onnx")))
             utils.model_to_onnx(model, os.path.join(save_path, "model.onnx"))
 
     # Test
@@ -141,5 +143,5 @@ if __name__ == "__main__":
               'recall': recorder.test.get_recall(), 'precision': recorder.test.get_precision(),
               'f1': recorder.test.get_f1_score()}
     result_str = json.dumps(result, cls=utils.MyEncoder)
-    print(f"Test Result - {result_str}")
+    # print(f"Test Result - {result_str}")
     logger.info(f'test - {json.dumps(result, cls=utils.MyEncoder)}')

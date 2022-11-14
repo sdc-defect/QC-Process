@@ -1,1 +1,0 @@
-{"save_path": "E:/SDC/GUI/training/save", "train_path": ["E:/SDC/GUI/training/temp/def", "E:/SDC/GUI/training/temp/ok"], "test_path": null, "test_per": null, "val_path": null, "val_per": null, "flip": true, "spin": true, "shift": true, "mixup": true, "epoch": 50, "batch_size": 16, "lr": 0.0001, "decay": 1000}
