@@ -45,7 +45,6 @@ def get_logger(save_path: str, name: str):
     file_handler = logging.FileHandler(os.path.join(save_path, f'{name}.log'))
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
-    # logger.handlers.pop(0)
 
     return logger
 
