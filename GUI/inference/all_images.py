@@ -139,8 +139,10 @@ class AllImageWindowClass(QMainWindow, form_class) :
 
         imageDirPixmap = QPixmap(imageDir)
         camDirPixmap = QPixmap(camDir)
+        mergedDirPixmap = QPixmap(mergedDir)
         self.imageOriginal.setPixmap(imageDirPixmap)
         self.imageCAM.setPixmap(camDirPixmap)
+        self.imageMerged.setPixmap(mergedDirPixmap)
 
     # 테이블 클릭 이벤트
     def clickTableAllImages(self):
