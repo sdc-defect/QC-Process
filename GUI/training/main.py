@@ -308,7 +308,7 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     # 학습 시작
     @pyqtSlot()
-    def trainingStart(self):
+    def trainingStart(self):        
         # 어그멘테이션 설정
         if self.setAugmentation:
             self.config.flip = self.checkBoxFlip.isChecked()
@@ -338,7 +338,21 @@ class trainingWindowClass(QMainWindow, form_class) :
         if self.isSetFile:
             try:
                 # Augmentation, hyper parameter unable
+                # Augmentation
+                self.checkBoxAugmentation.setEnabled(False)
+                self.checkBoxFlip.setEnabled(False)
+                self.checkBoxMixup.setEnabled(False)
+                self.checkBoxSpin.setEnabled(False)
+                self.checkBoxSwift.setEnabled(False)
 
+                # hyper parameter
+                self.spinBoxEpoch.setEnabled(False)
+                self.horizontalSliderLearningRate.setEnabled(False)
+                self.labelLearningRate.setEnabled(False)
+                self.comboBoxBatchSize.setEnabled(False)
+                self.lineEditBatchSize.setEnabled(False)
+                self.comboBoxDecayStep.setEnabled(False)
+                self.lineEditDecayStep.setEnabled(False)
 
                 # QProcess 시작
                 save_path = self.config.process()
@@ -422,6 +436,24 @@ class trainingWindowClass(QMainWindow, form_class) :
     # 학습 정지
     def trainingStop(self):
         self.p.kill()
+
+        # Augmentation
+        self.checkBoxAugmentation.setEnabled(True)
+        self.checkBoxFlip.setEnabled(True)
+        self.checkBoxMixup.setEnabled(True)
+        self.checkBoxSpin.setEnabled(True)
+        self.checkBoxSwift.setEnabled(True)
+
+        # hyper parameter
+        self.spinBoxEpoch.setEnabled(True)
+        self.horizontalSliderLearningRate.setEnabled(True)
+        self.labelLearningRate.setEnabled(True)
+        self.comboBoxBatchSize.setEnabled(True)
+        self.comboBoxDecayStep.setEnabled(True)
+        if self.comboBoxBatchSize.currentText() == '사용자 지정':
+            self.lineEditBatchSize.setEnabled(True)
+        if self.comboBoxDecayStep.currentText() == '사용자 지정':
+            self.lineEditDecayStep.setEnabled(True)
     
     # 그래프 플로팅
     def firstAction(self):
