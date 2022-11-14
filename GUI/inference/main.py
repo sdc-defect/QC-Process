@@ -335,7 +335,12 @@ class InferenceWindowClass(QMainWindow, form_class) :
     def editModelDir(self):
         # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
         fname = QFileDialog.getOpenFileName(self, '', 'Open file')
-        
+        f = open(fname[0], 'rb')
+        tmp_index=fname[0].rfind('/')+1
+        tmp_name=fname[0][tmp_index:]
+        print(tmp_name)
+        files = {"file": (tmp_name, f, "multipart/form-data")}
+        send_api('/update','PUT',files)
         if fname:
             self.modelDir = fname[0]
             self.textBrowserModelFile.setText(fname[0])
@@ -607,9 +612,9 @@ class receiveThread(QThread, form_class):
         return self._status
 
 # 웹소켓 websocket
-def send_api(path, method):
+def send_api(path, method,modelFile=None):
     # API_HOST = "http://k7b306.p.ssafy.io:8080"
-    API_HOST = "http://192.168.0.30:8080"
+    API_HOST = "http://192.168.0.4:8080"
     url = API_HOST + path
     print(url)
     headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
@@ -619,10 +624,13 @@ def send_api(path, method):
     }
     
     try:
-        if method == 'GET':
-            response = requests.get(url, headers=headers)
-        elif method == 'POST':
-            response = requests.post(url, headers=headers, data=json.dumps(body, ensure_ascii=False, indent="\t"),verify=False)
+        if path =='/update':
+            response=requests.post(url, files=modelFile)
+        else:
+            if method == 'GET':
+                response = requests.get(url, headers=headers)
+            elif method == 'POST':
+                response = requests.post(url, headers=headers, data=json.dumps(body, ensure_ascii=False, indent="\t"),verify=False)
         print("response status %r" % response.status_code)
         print("response text %r" % response.text)
     except Exception as ex:
@@ -645,7 +653,7 @@ class Client(QThread, form_class):
 
         # # self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
         # self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
-        self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
+        self.client.open(QUrl("ws://192.168.0.4:8080/ws"))
         self.client.pong.connect(self.onPong)
         self.client.textMessageReceived.connect(self.handle_message)
         print("client")
