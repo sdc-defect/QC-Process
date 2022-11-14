@@ -185,10 +185,10 @@
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="2">
-      <widget class="QLabel" name="label_3">
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>table - recall precision</string>
+        <string>table - acc</string>
        </property>
       </widget>
      </item>
@@ -199,31 +199,40 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="label_2">
+     <item row="2" column="2">
+      <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>table - acc</string>
+        <string>table - recall precision</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0" rowspan="2">
+     <item row="3" column="0">
       <widget class="QLabel" name="lblAreaLoss">
        <property name="text">
-        <string/>
+        <string>graph : loss</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" rowspan="2">
+     <item row="3" column="1">
       <widget class="QLabel" name="lblAreaAcc">
        <property name="text">
-        <string/>
+        <string>graph : acc</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
-     <item row="0" column="2" rowspan="2">
+     <item row="3" column="2">
       <widget class="QLabel" name="lblAreaRecall">
        <property name="text">
-        <string/>
+        <string>graph : recall</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -727,7 +736,7 @@
      <x>0</x>
      <y>0</y>
      <width>1916</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
