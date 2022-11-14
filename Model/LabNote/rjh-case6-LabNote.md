@@ -1,4 +1,4 @@
-<h1 id="title">rjh-EB0-LabNote</h1>
+<h1 id="title">rjh-case6-LabNote</h1>
 <table style="border: 2px; text-align:center;">
 <tr style="font-weight: bold;, font-size: 30px;">
 <td> 제목 </td>
@@ -6,7 +6,7 @@
 </tr>
 <tr>
 <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-<td> <img id="model" src="image/rjh-EB0-model.png"/> </td>
+<td> <img id="model" src="image/rjh-case6-model.png"/> </td>
 </tr>
 <tr>
 <td> optimizer </td>
@@ -45,23 +45,23 @@
 </tr>
 <tr>
 <td> Train Loss </td>
-<td id="train-loss">0.021495415</td>
+<td id="train-loss">0.08021891</td>
 </tr>
 <tr>
 <td> Test Loss </td>
-<td id="test-loss">0.0011</td>
+<td id="test-loss">0.0478</td>
 </tr>
 <tr>
 <td> Train accuracy / recall / F1-Score </td>
-<td id="train-score">1.0000 / 1.0000 / 1.0000</td>
+<td id="train-score">0.9987 / 0.9980 / 0.9989</td>
 </tr>
 <tr>
 <td> Test accuracy / recall / F1-Score </td>
-<td id="test-score">1.0000 / 1.0000 / 1.0000</td>
+<td id="test-score">0.9769 / 0.9589 / 0.9790</td>
 </tr>
 <tr>
 <td> val2_cnt (total 50) </td>
-<td id="val2-cnt">50</td>
+<td id="val2-cnt">48</td>
 </tr>
 <tr>
 <td> must_cnt (total 10) </td>
