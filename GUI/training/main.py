@@ -23,7 +23,6 @@ import csv
 from training_init import TrainingInitWindowClass
 from training_ratio import TrainingRatioWindowClass
 from utils.dto import TrainConfig
-from utils.trainer import Manager
 
 import json
 
@@ -43,10 +42,12 @@ log_data7=log_data['val_recall']
 # log_data8=log_data['val_f1']
 
 #화면을 띄우는데 사용되는 Class 선언
+
+
 class trainingWindowClass(QMainWindow, form_class) :
     # set config data
     isSetFile = False
-    config = TrainConfig(save_path=None, train_path=None, test_path=None, val_path=None)
+    config = TrainConfig(save_path='.', train_path= ['.', '.'], test_path=None, test_per=None, val_path=None, val_per=None)
 
     setAugmentation = True
     setFlip = True
@@ -315,17 +316,15 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.p.readyReadStandardError.connect(self.handle_stderr)
         self.p.stateChanged.connect(self.handle_state)
         self.p.finished.connect(self.process_finished)  # Clean up once complete.
-        self.message(self.p.start("python", ['train/utils/dummy_script.py', '--json', 'config']))
+        self.message(self.p.start("python", ['train.py', '--json', 'config']))
 
     def handle_stderr(self):
-        print(self.p.readyReadStandardOutput())
         data = self.p.readAllStandardError()
         stderr = bytes(data).decode("utf8")
         # Extract progress if it is in the data.
         self.message(stderr)
 
     def handle_stdout(self):
-        print(QProcess.StandardOutput)
         data = self.p.readAllStandardOutput()
         stdout = bytes(data).decode("utf8")
         self.message(stdout)
