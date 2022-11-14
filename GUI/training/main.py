@@ -47,7 +47,8 @@ log_data7=log_data['val_recall']
 class trainingWindowClass(QMainWindow, form_class) :
     # set config data
     isSetFile = False
-    config = TrainConfig(save_path='.', train_path= ['.', '.'], test_path=None, test_per=None, val_path=None, val_per=None)
+    config = TrainConfig(save_path=None, train_path=None, test_path=None, test_per=None, val_path=None, val_per=None)
+
 
     setAugmentation = True
     setFlip = True
@@ -87,16 +88,37 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.text = QPlainTextEdit()
         
         # 쓰레드 선언
-        self.th = Thread()
-        self.init_widget()
+        # self.th = Thread()
+        # self.init_widget()
         # 쓰레드 시작
         # self.th.start()
 
+        # 초기화
+        self.initialization()
+        
         # qProcess
         self.btn = QPushButton("Execute")
         self.btn.pressed.connect(self.start_process)
         self.text = QPlainTextEdit()
         self.text.setReadOnly(True)
+
+    def initialization(self):
+        # Test
+        self.labelTestOkCount.hide()    
+        self.labelTestOkDir.hide()    
+        self.labelTestOkTitle.hide()
+        self.labelTestDefCount.hide()    
+        self.labelTestDefDir.hide()    
+        self.labelTestDefTitle.hide()
+
+        # Validation
+        self.labelValidationOkCount.hide()    
+        self.labelValidationOkDir.hide()    
+        self.labelValidationOkTitle.hide()
+        self.labelValidationDefCount.hide()    
+        self.labelValidationDefDir.hide()    
+        self.labelValidationDefTitle.hide()
+
 
     def init_widget(self):
         # 시그널 슬롯 연결
@@ -137,9 +159,85 @@ class trainingWindowClass(QMainWindow, form_class) :
             self.config.save_path = initFirstModal.fileSetdata['save_path']
             self.config.train_path = initFirstModal.fileSetdata['train_path']
             self.config.test_path = initFirstModal.fileSetdata['test_path']
+            self.config.test_per = initFirstModal.fileSetdata['test_per']
             self.config.val_path = initFirstModal.fileSetdata['val_path']
+            self.config.val_per = initFirstModal.fileSetdata['val_per']
             self.isSetFile = True
-     
+
+            # main.ui에 플롯되는 내용
+            # Train
+            self.labelTrainOkDir.setText(initFirstModal.fileSetdata['train_path'][0])
+            self.labelTrainDefDir.setText(initFirstModal.fileSetdata['train_path'][1])
+            self.labelTrainOkCount.setText(initFirstModal.trainOkCount)
+            self.labelTrainDefCount.setText(initFirstModal.trainDefCount)
+
+            # Test
+            if self.config.test_path == None:
+                self.labelTestOkCount.hide()    
+                self.labelTestOkDir.hide()    
+                self.labelTestOkTitle.hide()
+                self.labelTestDefCount.hide()    
+                self.labelTestDefDir.hide()    
+                self.labelTestDefTitle.hide()
+
+                self.labelTestRatioCount.show()    
+                self.labelTestRatioDir.show()    
+                self.labelTestRatioTitle.show()
+
+                self.labelTestRatioDir.setText(str(int(initFirstModal.fileSetdata['test_per'] * 100)) + '%')
+                self.labelTestRatioCount.setText(initFirstModal.testTotalCount)
+            else:
+                self.labelTestOkCount.show()    
+                self.labelTestOkDir.show()    
+                self.labelTestOkTitle.show()
+                self.labelTestDefCount.show()    
+                self.labelTestDefDir.show()    
+                self.labelTestDefTitle.show()
+
+                self.labelTestRatioCount.hide()    
+                self.labelTestRatioDir.hide()    
+                self.labelTestRatioTitle.hide()
+
+                self.labelTestOkDir.setText(initFirstModal.fileSetdata['test_path'][0])
+                self.labelTestDefDir.setText(initFirstModal.fileSetdata['test_path'][1])
+                self.labelTestOkCount.setText(initFirstModal.testOkCount)
+                self.labelTestDefCount.setText(initFirstModal.testDefCount)
+
+            # Validation
+            if self.config.val_path == None:
+                self.labelValidationOkCount.hide()    
+                self.labelValidationOkDir.hide()    
+                self.labelValidationOkTitle.hide()
+                self.labelValidationDefCount.hide()    
+                self.labelValidationDefDir.hide()    
+                self.labelValidationDefTitle.hide()
+
+                self.labelValidationRatioCount.show()    
+                self.labelValidationRatioDir.show()    
+                self.labelValidationRatioTitle.show()
+
+                self.labelValidationRatioDir.setText(str(int(initFirstModal.fileSetdata['val_per'] * 100)) + '%')
+                self.labelValidationRatioCount.setText(initFirstModal.validationTotalCount)
+            else:
+                self.labelValidationOkCount.show()    
+                self.labelValidationOkDir.show()    
+                self.labelValidationOkTitle.show()
+                self.labelValidationDefCount.show()    
+                self.labelValidationDefDir.show()    
+                self.labelValidationDefTitle.show()
+
+                self.labelValidationRatioCount.hide()    
+                self.labelValidationRatioDir.hide()    
+                self.labelValidationRatioTitle.hide()
+
+                self.labelValidationOkDir.setText(initFirstModal.fileSetdata['val_path'][0])
+                self.labelValidationDefDir.setText(initFirstModal.fileSetdata['val_path'][1])
+                self.labelValidationOkCount.setText(initFirstModal.validationOkCount)
+                self.labelValidationDefCount.setText(initFirstModal.validationDefCount)
+
+            # Save Directiory
+            self.labelSaveDir.setText(initFirstModal.fileSetdata['save_path'])
+
     # 이벤트 연결
     def initData(self):
 
@@ -302,7 +400,6 @@ class trainingWindowClass(QMainWindow, form_class) :
             json.dump(conf_dic, f)
 
         # qProcess
-        self.textBrowser.append('1')
         self.start_process()
 
     def message(self, s):
