@@ -44,7 +44,6 @@ log_data7=log_data['val_recall']
 
 #화면을 띄우는데 사용되는 Class 선언
 
-
 class trainingWindowClass(QMainWindow, form_class) :
     # set config data
     isSetFile = False
@@ -95,7 +94,7 @@ class trainingWindowClass(QMainWindow, form_class) :
         # self.th.start()
 
         # 초기화
-        self.initialization()
+        # self.initialization()
         
         # qProcess
         self.btn = QPushButton("Execute")
@@ -103,22 +102,28 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.text = QPlainTextEdit()
         self.text.setReadOnly(True)
 
-    def initialization(self):
-        # Test
-        self.labelTestOkCount.hide()    
-        self.labelTestOkDir.hide()    
-        self.labelTestOkTitle.hide()
-        self.labelTestDefCount.hide()    
-        self.labelTestDefDir.hide()    
-        self.labelTestDefTitle.hide()
+        # log clear
+        self.pushClearButton.clicked.connect(self.clickClearButton)
 
-        # Validation
-        self.labelValidationOkCount.hide()    
-        self.labelValidationOkDir.hide()    
-        self.labelValidationOkTitle.hide()
-        self.labelValidationDefCount.hide()    
-        self.labelValidationDefDir.hide()    
-        self.labelValidationDefTitle.hide()
+    def clickClearButton(self):
+        self.textBrowser.clear()
+
+    # def initialization(self):
+    #     # Test
+    #     self.labelTestOkCount.hide()    
+    #     self.labelTestOkDir.hide()    
+    #     self.labelTestOkTitle.hide()
+    #     self.labelTestDefCount.hide()    
+    #     self.labelTestDefDir.hide()    
+    #     self.labelTestDefTitle.hide()
+
+    #     # Validation
+    #     self.labelValidationOkCount.hide()    
+    #     self.labelValidationOkDir.hide()    
+    #     self.labelValidationOkTitle.hide()
+    #     self.labelValidationDefCount.hide()    
+    #     self.labelValidationDefDir.hide()    
+    #     self.labelValidationDefTitle.hide()
 
 
     def init_widget(self):
@@ -263,8 +268,6 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.labelLearningRate.setText(str(self.setLearningRate))
 
         self.pushButtonControlStart.clicked.connect(self.trainingStart)
-        self.pushButtonControlRestart.clicked.connect(self.trainingRestart)
-        self.pushButtonControlPause.clicked.connect(self.trainingPause)
         self.pushButtonControlStop.clicked.connect(self.trainingStop)
 
         # 프로그래스바는 0부터 시작
@@ -406,6 +409,7 @@ class trainingWindowClass(QMainWindow, form_class) :
             # qProcess
             self.start_process(json_file)
         except Exception as e:
+            # 오류 메시지 출력하기
             print(e)
 
     def message(self, s):
