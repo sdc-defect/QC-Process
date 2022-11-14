@@ -374,6 +374,51 @@ border-color: #000000;</string>
      <string>이미지 위치</string>
     </property>
    </widget>
+   <widget class="QTextBrowser" name="textBrowserFileDir">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>480</y>
+      <width>301</width>
+      <height>61</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalWidget_5" native="true">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>20</y>
+      <width>871</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="labelModelFileDir">
+       <property name="styleSheet">
+        <string notr="true">font-size: 19px;</string>
+       </property>
+       <property name="text">
+        <string>모델 파일</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="textBrowserModelFile">
+       <property name="styleSheet">
+        <string notr="true">font-size: 17px;</string>
+       </property>
+       <property name="text">
+        <string>모델 파일을 설정해주세요.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
