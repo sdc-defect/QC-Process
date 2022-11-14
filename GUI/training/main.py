@@ -1,28 +1,19 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 import os
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QThread
-from PyQt5.QtCore import QWaitCondition
-from PyQt5.QtCore import QMutex
-from PyQt5.QtCore import pyqtSignal
+
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QProcess
 
 # graph lib
 import pandas as pd
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-import threading
-import time
-import csv
 
 import utils
 from training_init import TrainingInitWindowClass
-from training_ratio import TrainingRatioWindowClass
 from utils.dto import TrainConfig
 
 import json
@@ -68,76 +59,27 @@ class trainingWindowClass(QMainWindow, form_class) :
     validationFileCount = 0
 
     def __init__(self) :
-        # threading.Thread.__init__(self)
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Training")
-
         self.initUI()
 
-        # 하이퍼파라미터 - 초기값 설정
-
-        self.initHyperParameter()
-        
         self.lblAreaAcc:QLabel
-        self.lblAreaLoss:Qlabel
-        self.lblAreaRecall:Qlabel
+        self.lblAreaLoss:QLabel
+        self.lblAreaRecall:QLabel
         self.text = QPlainTextEdit()
-        
-        # 쓰레드 선언
-        # self.th = Thread()
-        # self.init_widget()
-        # 쓰레드 시작
-        # self.th.start()
 
-        # 초기화
-        # self.initialization()
-        
-        # qProcess
-        self.btn = QPushButton("Execute")
-        self.btn.pressed.connect(self.start_process)
-        self.text = QPlainTextEdit()
-        self.text.setReadOnly(True)
+        # 하이퍼파라미터 - 초기값 설정
+        self.initHyperParameter()
 
         # log clear
         self.pushClearButton.clicked.connect(self.clickClearButton)
 
+        # 학습 종료
+        self.pushButtonControlStop.clicked.connect(self.trainingStop)
+
     def clickClearButton(self):
         self.textBrowser.clear()
-
-    # def initialization(self):
-    #     # Test
-    #     self.labelTestOkCount.hide()    
-    #     self.labelTestOkDir.hide()    
-    #     self.labelTestOkTitle.hide()
-    #     self.labelTestDefCount.hide()    
-    #     self.labelTestDefDir.hide()    
-    #     self.labelTestDefTitle.hide()
-
-    #     # Validation
-    #     self.labelValidationOkCount.hide()    
-    #     self.labelValidationOkDir.hide()    
-    #     self.labelValidationOkTitle.hide()
-    #     self.labelValidationDefCount.hide()    
-    #     self.labelValidationDefDir.hide()    
-    #     self.labelValidationDefTitle.hide()
-
-
-    def init_widget(self):
-        # 시그널 슬롯 연결
-        # self.pushButtonControlStart.clicked.connect(self.trainingStart)
-        # self.th.change_value.connect(self.progressBar.setValue)
-        self.th.change_value.connect(self.resultUpdate)
-        self.th.update_log.connect(self.logUpdate)
-
-    def resultUpdate(self, progress):
-        self.progressBar.setValue(progress)
-
-    def logUpdate(self, logContext):
-        self.textBrowser.append(logContext + "\n")
-
-    def test(self):
-        print(self.setEpoch, self.setBatchSize, self.setLearningRate, self.setDecayStep)
 
     # 초기화
     def initUI(self):
@@ -171,35 +113,35 @@ class trainingWindowClass(QMainWindow, form_class) :
             # Train
             self.labelTrainOkDir.setText(initFirstModal.fileSetdata['train_path'][0])
             self.labelTrainDefDir.setText(initFirstModal.fileSetdata['train_path'][1])
-            self.labelTrainOkCount.setText(initFirstModal.trainOkCount)
-            self.labelTrainDefCount.setText(initFirstModal.trainDefCount)
+            self.labelTrainOkCount.setText(str(initFirstModal.trainOkCount))
+            self.labelTrainDefCount.setText(str(initFirstModal.trainDefCount))
 
             # Test
             if self.config.test_path == None:
-                self.labelTestOkCount.hide()    
-                self.labelTestOkDir.hide()    
-                self.labelTestOkTitle.hide()
-                self.labelTestDefCount.hide()    
-                self.labelTestDefDir.hide()    
-                self.labelTestDefTitle.hide()
+                self.labelTestOkCount.setStyleSheet("Color : gray")    
+                self.labelTestOkDir.setStyleSheet("Color : gray")    
+                self.labelTestOkTitle.setStyleSheet("Color : gray")
+                self.labelTestDefCount.setStyleSheet("Color : gray")    
+                self.labelTestDefDir.setStyleSheet("Color : gray")    
+                self.labelTestDefTitle.setStyleSheet("Color : gray")
 
-                self.labelTestRatioCount.show()    
-                self.labelTestRatioDir.show()    
-                self.labelTestRatioTitle.show()
+                self.labelTestRatioCount.setStyleSheet("Color : black")    
+                self.labelTestRatioDir.setStyleSheet("Color : black")    
+                self.labelTestRatioTitle.setStyleSheet("Color : black")
 
                 self.labelTestRatioDir.setText(str(int(initFirstModal.fileSetdata['test_per'] * 100)) + '%')
                 self.labelTestRatioCount.setText(initFirstModal.testTotalCount)
             else:
-                self.labelTestOkCount.show()    
-                self.labelTestOkDir.show()    
-                self.labelTestOkTitle.show()
-                self.labelTestDefCount.show()    
-                self.labelTestDefDir.show()    
-                self.labelTestDefTitle.show()
+                self.labelTestOkCount.setStyleSheet("Color : black")    
+                self.labelTestOkDir.setStyleSheet("Color : black")    
+                self.labelTestOkTitle.setStyleSheet("Color : black")
+                self.labelTestDefCount.setStyleSheet("Color : black")    
+                self.labelTestDefDir.setStyleSheet("Color : black")    
+                self.labelTestDefTitle.setStyleSheet("Color : black")
 
-                self.labelTestRatioCount.hide()    
-                self.labelTestRatioDir.hide()    
-                self.labelTestRatioTitle.hide()
+                self.labelTestRatioCount.setStyleSheet("Color : gray")    
+                self.labelTestRatioDir.setStyleSheet("Color : gray")    
+                self.labelTestRatioTitle.setStyleSheet("Color : gray")
 
                 self.labelTestOkDir.setText(initFirstModal.fileSetdata['test_path'][0])
                 self.labelTestDefDir.setText(initFirstModal.fileSetdata['test_path'][1])
@@ -208,30 +150,30 @@ class trainingWindowClass(QMainWindow, form_class) :
 
             # Validation
             if self.config.val_path == None:
-                self.labelValidationOkCount.hide()    
-                self.labelValidationOkDir.hide()    
-                self.labelValidationOkTitle.hide()
-                self.labelValidationDefCount.hide()    
-                self.labelValidationDefDir.hide()    
-                self.labelValidationDefTitle.hide()
+                self.labelValidationOkCount.setStyleSheet("Color : gray")    
+                self.labelValidationOkDir.setStyleSheet("Color : gray")    
+                self.labelValidationOkTitle.setStyleSheet("Color : gray")
+                self.labelValidationDefCount.setStyleSheet("Color : gray")    
+                self.labelValidationDefDir.setStyleSheet("Color : gray")    
+                self.labelValidationDefTitle.setStyleSheet("Color : gray")
 
-                self.labelValidationRatioCount.show()    
-                self.labelValidationRatioDir.show()    
-                self.labelValidationRatioTitle.show()
+                self.labelValidationRatioCount.setStyleSheet("Color : black")    
+                self.labelValidationRatioDir.setStyleSheet("Color : black")    
+                self.labelValidationRatioTitle.setStyleSheet("Color : black")
 
                 self.labelValidationRatioDir.setText(str(int(initFirstModal.fileSetdata['val_per'] * 100)) + '%')
                 self.labelValidationRatioCount.setText(initFirstModal.validationTotalCount)
             else:
-                self.labelValidationOkCount.show()    
-                self.labelValidationOkDir.show()    
-                self.labelValidationOkTitle.show()
-                self.labelValidationDefCount.show()    
-                self.labelValidationDefDir.show()    
-                self.labelValidationDefTitle.show()
+                self.labelValidationOkCount.setStyleSheet("Color : black")    
+                self.labelValidationOkDir.setStyleSheet("Color : black")    
+                self.labelValidationOkTitle.setStyleSheet("Color : black")
+                self.labelValidationDefCount.setStyleSheet("Color : black")    
+                self.labelValidationDefDir.setStyleSheet("Color : black")    
+                self.labelValidationDefTitle.setStyleSheet("Color : black")
 
-                self.labelValidationRatioCount.hide()    
-                self.labelValidationRatioDir.hide()    
-                self.labelValidationRatioTitle.hide()
+                self.labelValidationRatioCount.setStyleSheet("Color : gray")    
+                self.labelValidationRatioDir.setStyleSheet("Color : gray")    
+                self.labelValidationRatioTitle.setStyleSheet("Color : gray")
 
                 self.labelValidationOkDir.setText(initFirstModal.fileSetdata['val_path'][0])
                 self.labelValidationDefDir.setText(initFirstModal.fileSetdata['val_path'][1])
@@ -243,7 +185,6 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     # 이벤트 연결
     def initData(self):
-
         # 어그멘테이션
         self.checkBoxAugmentation.stateChanged.connect(self.switchAugmentation)
         self.checkBoxFlip.stateChanged.connect(self.switchFlip)
@@ -272,7 +213,7 @@ class trainingWindowClass(QMainWindow, form_class) :
    
     # epoch
     def changeEpoch(self):
-        # 5 단위만 되도록 할 지?
+
         epoch = self.spinBoxEpoch.value()
         if epoch%5 != 0: # 5의 배수 아니면 절삭
             epoch = epoch - epoch%5
@@ -394,20 +335,26 @@ class trainingWindowClass(QMainWindow, form_class) :
         else:
             self.config.decay = int(self.comboBoxDecayStep.currentText())
 
-        try:
-            save_path = self.config.process()
-            utils.make_folder(save_path)
+        if self.isSetFile:
+            try:
+                # Augmentation, hyper parameter unable
 
-            # .json 파일 만들기
-            json_file = os.path.join(save_path, 'config.json')
-            with open(json_file, 'w') as f:
-                json.dump(self.config.__dict__, f)
 
-            # qProcess
-            self.start_process(json_file)
-        except Exception as e:
-            # 오류 메시지 출력하기
-            print(e)
+                # QProcess 시작
+                save_path = self.config.process()
+                utils.make_folder(save_path)
+
+                # .json 파일 만들기
+                json_file = os.path.join(save_path, 'config.json')
+                with open(json_file, 'w') as f:
+                    json.dump(self.config.__dict__, f)
+                    print("dumped", json_file)
+
+                # qProcess
+                self.start_process(json_file)
+            except Exception as e:
+                # 오류 메시지 출력하기
+                print(e)
 
     def message(self, s):
         self.textBrowser.append(s)
@@ -471,30 +418,10 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.message("Process finished.")
         self.firstAction()
         self.p = None
-        
-    # 학습 다시시작
-    def trainingRestart(self):
-        pass
-
-    # 학습 일시정지 - 없애고 시작 버튼으로 통일할 듯
-    def trainingPause(self):
-        pass
-    
+            
     # 학습 정지
     def trainingStop(self):
-        pass
-
-    # @staticmethod
-    # def trainingStop():
-    #     # 초기화 (재시작)
-    #     trainingWindowClass.singleton = trainingWindowClass()
-    # singleton: 'trainingWindowClass' = None
-
-    # def updateLogLabel(self, progress):
-    #     self.labelLog.setText("logText")
-    #     print("asdasfa")
-    #     print(progress)
-    #     # self.labelLog.setText(str(90))
+        self.p.kill()
     
     # 그래프 플로팅
     def firstAction(self):
@@ -595,100 +522,11 @@ class PlotCanvasRecall(FigureCanvas):
         
 # 그래프 끝
 
-# 결과 출력 쓰레드
-
-class Thread(QThread, form_class):
-    """
-    단순히 0부터 100까지 카운트만 하는 쓰레드
-    값이 변경되면 그 값을 change_value 시그널에 값을 emit 한다.
-    """
-    # 사용자 정의 시그널 선언
-    change_value = pyqtSignal(int)
-    update_log = pyqtSignal(str)
-    def __init__(self):
-        QThread.__init__(self)
-        self.cond = QWaitCondition()
-        self.mutex = QMutex()
-        self.cnt = 0
-        self._status = False # True로 바꿔야함
-        print("threadProgress")
-
-        self.logFileDir = "./_log.csv"
-
-    def __del__(self):
-        self.wait()
-
-    def run(self):
-        # 큐로 받을때 한 번만 실행하라고 while 없애면 될 듯?
-        self.mut68ex.lock()
-
-        if not self._status:
-            self.cond.wait(self.mutex)
-
-        if 100 == self.cnt:
-            self.cnt = 0
-        self.cnt += 1
-        # self.change_value.emit(self.cnt)
-        self.msleep(100)  # ※주의 QThread에서 제공하는 sleep을 사용
-
-        # 파일에서 한 줄 씩 읽어와서 진행상황 출력
-        f = open(self.logFileDir, 'r', encoding='utf-8')
-        self.logCsv = list(csv.reader(f))
-        f.close()
-
-        logIndex = self.logCsv[0]
-        logContent = self.logCsv[self.cnt]
-        logIndexCount = len(logIndex)
-
-        printContent = "Result" + str(self.cnt)
-        for i in range(logIndexCount):
-            addprintContent = logIndex[i] + ": " + logContent[i]
-            printContent = printContent + ", " + addprintContent
-        self.change_value.emit(int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
-        
-        self.update_log.emit(printContent)
-
-        # print(self.cnt)
-
-        self.msleep(1000)
-        self.mutex.unlock()        
-
-    def toggle_status(self):
-        self._status = not self._status
-        if self._status:
-            self.cond.wakeAll()
-
-    @property
-    def status(self):
-        return self._status
-
 def main():
     app = QApplication(sys.argv) 
     myWindow = trainingWindowClass() 
     myWindow.show()
-    # myWindow.firstAction()
     exit(app.exec_())
 
 if __name__ == "__main__" :
     main()
-
-    # threadMain = threading.Thread(target=main)
-    # # threadMain.setDaemon(True)
-    # # threadLog = threading.Thread(target=showLog)
-
-    # threadMain.start()
-    # # showLogProgress()
-
-    # threadLog.start()
-
-    # #QApplication : 프로그램을 실행시켜주는 클래스
-    # app = QApplication(sys.argv) 
-
-    # #WindowClass의 인스턴스 생성
-    # myWindow = trainingWindowClass() 
-
-    # #프로그램 화면을 보여주는 코드
-    # myWindow.show()
-
-    # #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
-    # app.exec_()
