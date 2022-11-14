@@ -1,11 +1,11 @@
 import math
 import multiprocessing as mp
 import os.path
+import threading
 import time
 from threading import Thread
 from typing import Union, Tuple
 
-import numpy as np
 import tensorflow as tf
 from keras.optimizers.schedules.learning_rate_schedule import CosineDecayRestarts
 from keras.optimizers.optimizer_v2.adam import Adam
@@ -57,8 +57,9 @@ class Trainer:
 class Manager(metaclass=Singleton):
     def __init__(self):
         self.queue = mp.Queue()
-        self._thread: Union[Thread, None] = None
         self._trainer: Union[Trainer, None] = None
+        self._thread: Union[Thread, None] = None
+        self._flag: threading.Event = threading.Event()
 
     def build_trainer(self, config: TrainConfig) -> None:
         del self._trainer
@@ -79,13 +80,24 @@ class Manager(metaclass=Singleton):
             raise RuntimeError("Process already started")
 
         if is_train:
-            self._thread = Thread(target=train_process, args=(self._trainer,), daemon=True)
+            self._thread = mp.Process(target=train_process, args=(self._trainer, self._flag), daemon=True)
         else:
-            self._thread = Thread(target=test_process, args=(self._trainer,), daemon=True)
+            self._thread = mp.Process(target=test_process, args=(self._trainer, self._flag), daemon=True)
+
+        self._flag.clear()
         self._thread.start()
 
+    def stop(self) -> None:
+        if not self.check():
+            raise RuntimeError("Process doesn't started")
 
-def train_process(trainer: Trainer) -> None:
+        self._flag.set()
+        self._thread.join(timeout=60)
+        if self.check():
+            raise RuntimeError("Error raised while stopping training thread")
+
+
+def train_process(trainer: Trainer, flag: threading.Event) -> None:
     queue = trainer.queue
     train_dataset, val_dataset = trainer.train_dataset, trainer.val_dataset
     model, loss_func, optimizer = trainer.model, trainer.loss_func, trainer.optimizer
@@ -100,6 +112,8 @@ def train_process(trainer: Trainer) -> None:
 
         # Train
         for b, (img, label) in enumerate(batch(train_dataset, batch_size)):
+            if flag.is_set():
+                return
             loss, prob = train(img, label, model, loss_func, optimizer)
             recorder.train.record(loss, prob, label)
             queue.put(TrainResult(confusionmatrix=recorder.train.get_confusion_matrix(), loss=float(loss.numpy()),
@@ -107,6 +121,8 @@ def train_process(trainer: Trainer) -> None:
 
         # Validate
         for b, (img, label) in enumerate(batch(val_dataset, batch_size)):
+            if flag.is_set():
+                return
             loss, prob = test(img, label, model, loss_func)
             recorder.val.record(loss, prob, label)
             queue.put(TrainResult(confusionmatrix=recorder.val.get_confusion_matrix(), loss=float(loss.numpy()),
@@ -116,8 +132,10 @@ def train_process(trainer: Trainer) -> None:
         if recorder.check_best_score():
             model_to_onnx(model, os.path.join(trainer.config.save_path, "model.onnx"))
 
+    queue.put(None)
 
-def test_process(trainer: Trainer) -> None:
+
+def test_process(trainer: Trainer, flag: threading.Event) -> None:
     queue = trainer.queue
     test_dataset = trainer.test_dataset
     runtime = load_onnx(os.path.join(trainer.config.save_path, "model.onnx"))
@@ -126,12 +144,17 @@ def test_process(trainer: Trainer) -> None:
     recorder = trainer.recorder
 
     # Test
+    test_batch_size = math.ceil(len(test_dataset) / batch_size)
     for b, (img, label) in enumerate(batch(test_dataset, batch_size)):
+        if flag.is_set():
+            return
         prob = runtime.runtime.run(None, {'input_1': img.numpy()})[0]
         loss = loss_func(label, prob)
         recorder.test.record(loss, prob, label)
+        queue.put(TrainResult(confusionmatrix=recorder.val.get_confusion_matrix(), loss=float(loss.numpy()),
+                              header="test", epoch=None, batch=f"{b + 1}/{test_batch_size}"))
 
-    queue.put("hi")
+    queue.put(None)
 
 
 if __name__ == "__main__":
@@ -148,3 +171,5 @@ if __name__ == "__main__":
             continue
         data: TrainResult = Manager().queue.get()
         print(data)
+        Manager().stop()
+        break

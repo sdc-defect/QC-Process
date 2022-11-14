@@ -18,12 +18,12 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>10</y>
+      <y>0</y>
       <width>901</width>
-      <height>131</height>
+      <height>185</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayoutFileDir" stretch="1,1,1,1,1">
+    <layout class="QVBoxLayout" name="trainSaveFileLocation" stretch="1,0,1,0,0,0,0,0">
      <item>
       <widget class="QLabel" name="labelFileDir">
        <property name="styleSheet">
@@ -35,128 +35,139 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,5,1,1">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Train</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="trainOk" stretch="1,5,1">
        <item>
-        <widget class="QLabel" name="labelImageFileLabel">
+        <widget class="QLabel" name="labelTrainOkTitle">
          <property name="text">
-          <string>Train</string>
+          <string>Ok</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelTrainSetDir">
+        <widget class="QLabel" name="labelTrainOkDir">
          <property name="text">
-          <string>TextLabel</string>
+          <string>이미지 데이터 경로를 추가해주세요</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelTrainSetCountString">
+        <widget class="QLabel" name="labelTrainOkCount">
          <property name="text">
-          <string>개수</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelTrainSetCount">
-         <property name="text">
-          <string>(0)</string>
+          <string>0</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,5,1,1">
+      <layout class="QHBoxLayout" name="trainDef" stretch="1,5,1">
        <item>
-        <widget class="QLabel" name="labelImageFileLabel_3">
+        <widget class="QLabel" name="labelTrainDefTitle">
          <property name="text">
-          <string>Test</string>
+          <string>Def</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelTestSetDir">
+        <widget class="QLabel" name="labelTrainDefDir">
          <property name="text">
-          <string>TextLabel</string>
+          <string>이미지 데이터 경로를 추가해주세요</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelTestSetCountString">
+        <widget class="QLabel" name="labelTrainDefCount">
          <property name="text">
-          <string>개수</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelTestSetCount">
-         <property name="text">
-          <string>(0)</string>
+          <string>0</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,5,1,1">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Test</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="TestRatio" stretch="1,5,1">
        <item>
-        <widget class="QLabel" name="labelImageFileLabel_5">
+        <widget class="QLabel" name="labelTestRatioTitle">
          <property name="text">
-          <string>Validation</string>
+          <string>비율 :</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelValidationSetDir">
+        <widget class="QLabel" name="labelTestRatioDir">
          <property name="text">
-          <string>TextLabel</string>
+          <string>%</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelValidationSetCountString">
+        <widget class="QLabel" name="labelTestRatioCount">
          <property name="text">
-          <string>개수</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelValidationSetCount">
-         <property name="text">
-          <string>(0)</string>
+          <string>0</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,5,1,1">
+      <layout class="QHBoxLayout" name="TestDef" stretch="1,5,1">
        <item>
-        <widget class="QLabel" name="labelImageFileLabel_2">
+        <widget class="QLabel" name="labelTestDefTitle">
          <property name="text">
-          <string>model save</string>
+          <string>Def</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelModelSaveDir">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_10">
+        <widget class="QLabel" name="labelTestDefDir">
          <property name="text">
           <string/>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_11">
+        <widget class="QLabel" name="labelTestDefCount">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="TestOk" stretch="1,5,1">
+       <item>
+        <widget class="QLabel" name="labelTestOkTitle">
+         <property name="text">
+          <string>Ok</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelTestOkDir">
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelTestOkCount">
+         <property name="text">
+          <string>0</string>
          </property>
         </widget>
        </item>
@@ -168,7 +179,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>160</y>
+      <y>220</y>
       <width>1801</width>
       <height>411</height>
      </rect>
@@ -222,14 +233,14 @@
     <property name="geometry">
      <rect>
       <x>760</x>
-      <y>600</y>
+      <y>660</y>
       <width>1071</width>
       <height>251</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayoutLog" stretch="1,5">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
        <item>
         <widget class="QLabel" name="labelLog">
          <property name="text">
@@ -255,7 +266,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>880</y>
+      <y>940</y>
       <width>1841</width>
       <height>23</height>
      </rect>
@@ -268,7 +279,7 @@
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>600</y>
+      <y>660</y>
       <width>151</width>
       <height>251</height>
      </rect>
@@ -339,7 +350,7 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>600</y>
+      <y>660</y>
       <width>341</width>
       <height>251</height>
      </rect>
@@ -541,7 +552,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>620</y>
+      <y>680</y>
       <width>121</width>
       <height>19</height>
      </rect>
@@ -554,7 +565,7 @@
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>660</y>
+      <y>720</y>
       <width>91</width>
       <height>181</height>
      </rect>
@@ -577,7 +588,7 @@
      <item>
       <widget class="QCheckBox" name="checkBoxSwift">
        <property name="text">
-        <string>Swift</string>
+        <string>Shift</string>
        </property>
       </widget>
      </item>
@@ -590,6 +601,125 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_6">
+    <property name="geometry">
+     <rect>
+      <x>940</x>
+      <y>0</y>
+      <width>901</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="testValidationFileLocation" stretch="0,0,0,0,0">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Validation</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="ValidationRatio" stretch="1,5,1">
+       <item>
+        <widget class="QLabel" name="labelValidationRatioTitle">
+         <property name="text">
+          <string>비율 :</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelValidationRatioDir">
+         <property name="text">
+          <string>%</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelValidationRatioCount">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="ValidationOk" stretch="1,5,1">
+       <item>
+        <widget class="QLabel" name="labelValidationOkTitle">
+         <property name="text">
+          <string>Ok</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelValidationOkDir">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelValidationOkCount">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="ValidationDef" stretch="1,5,1">
+       <item>
+        <widget class="QLabel" name="labelValidationDefTitle">
+         <property name="text">
+          <string>Def</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelValidationDefDir">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelValidationDefCount">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="saveRoute" stretch="1,5,1">
+       <item>
+        <widget class="QLabel" name="labelSave">
+         <property name="text">
+          <string>model save</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelSaveDir">
+         <property name="text">
+          <string>경로</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -597,7 +727,7 @@
      <x>0</x>
      <y>0</y>
      <width>1916</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
