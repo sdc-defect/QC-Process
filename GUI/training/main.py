@@ -32,15 +32,12 @@ import json
 form_class = uic.loadUiType("training.ui")[0]
 
 # 그래프 띄워줄 데이터 import
-log_data = pd.read_csv('./_log.csv')
-log_data1=log_data['train_loss']
-log_data2=log_data[ 'train_accuracy']
-log_data3=log_data['train_recall']
-# log_data4=log_data['train_f1']
-log_data5=log_data['val_loss']
-log_data6=log_data['val_accuracy']
-log_data7=log_data['val_recall']
-# log_data8=log_data['val_f1']
+log_data1=[]
+log_data2=[]
+log_data3=[]
+log_data5=[]
+log_data6=[]
+log_data7=[]
 
 #화면을 띄우는데 사용되는 Class 선언
 
@@ -410,6 +407,24 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     def message(self, s):
         self.textBrowser.append(s)
+        s = s.rstrip()
+        if s[-1] == '}':
+            
+            tmp = s.split('-')
+            isTrain = tmp[3].rstrip().lstrip()
+            result_dict = tmp[5].rstrip().lstrip()
+            
+            if isTrain == 'train':
+                result_dict = eval(result_dict)
+                log_data1.append(result_dict['loss'])
+                log_data2.append(result_dict['accuracy'])
+                log_data3.append(result_dict['recall'])
+            
+            elif isTrain == 'val':
+                result_dict = eval(result_dict)
+                log_data5.append(result_dict['loss'])
+                log_data6.append(result_dict['accuracy'])
+                log_data7.append(result_dict['recall'])
         return
 
     def start_process(self, json_file):
@@ -429,7 +444,14 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     def handle_stdout(self):
         data = self.p.readAllStandardOutput()
+        print(data)
         stdout = bytes(data).decode("utf8")
+        print(type(stdout), len(stdout), str(stdout))
+        if stdout[0] == '{' and stdout[-1] == '}':
+            print(TrainConfig)
+            data = json.loads(stdout)
+            print('=============== data:')
+            print(data)
         self.message(stdout)
 
     def handle_state(self, state):
@@ -443,6 +465,7 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     def process_finished(self):
         self.message("Process finished.")
+        self.firstAction()
         self.p = None
         
     # 학습 다시시작
@@ -639,7 +662,7 @@ def main():
     app = QApplication(sys.argv) 
     myWindow = trainingWindowClass() 
     myWindow.show()
-    myWindow.firstAction()
+    # myWindow.firstAction()
     exit(app.exec_())
 
 if __name__ == "__main__" :
