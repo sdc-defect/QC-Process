@@ -302,8 +302,12 @@ class InferenceWindowClass(QMainWindow, form_class) :
         # self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=25)
 
     def closeEvent(self, event):
-        self.pauseInference()
-        self.threadWebsocket.stopThread()
+        try:
+            self.pauseInference()
+            self.threadWebsocket.stopThread()
+        except AttributeError:
+            pass
+
         
 # 그래프용 Class 선언
 class WidgetPlotLine(QWidget):
@@ -422,7 +426,7 @@ class receiveThread(QThread, form_class):
 
 # 웹소켓 websocket
 def send_api(path, method):
-    API_HOST = "http://192.168.0.4:8080"
+    API_HOST = "http://192.168.0.30:8080"
     url = API_HOST + path
     print(url)
     headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
@@ -458,7 +462,7 @@ class Client(QThread, form_class):
 
         # # self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
         # self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
-        self.client.open(QUrl("ws://192.168.0.4:8080/ws"))
+        self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
         self.client.pong.connect(self.onPong)
         self.client.textMessageReceived.connect(self.handle_message)
         print("client")
