@@ -51,7 +51,7 @@ form_class = uic.loadUiType("inference.ui")[0]
 #화면을 띄우는데 사용되는 Class 선언
 class InferenceWindowClass(QMainWindow, form_class) :
     inferenceDir = ""
-    # modelDir = ""
+    modelDir = ""
     singleInferenceDir = ""
 
     allFileLst = []
@@ -165,14 +165,17 @@ class InferenceWindowClass(QMainWindow, form_class) :
     # 초기화
     def initUI(self):
         _openFile = QtWidgets.QAction("다른 파일 열기", self)
+        _openModel = QtWidgets.QAction("모델 열기", self)
         
         # Menu Bar Settings
         menu = self.menuBar()
         _file = menu.addMenu("파일")
         _file.addAction(_openFile)
+        _file.addAction(_openModel)
 
         # Connect Actions
         _openFile.triggered.connect(self.editFileDir)
+        _openModel.triggered.connect(self.editModelDir)
 
         # table setting
         # self.tableWidgetImageList.setColumnCount(3)
@@ -267,10 +270,22 @@ class InferenceWindowClass(QMainWindow, form_class) :
             self.inferenceDir = fname
             self.textBrowserImageFile.setText(fname)
 
+            self.textBrowserFileDir.clear()
+            # self.textBrowserFileDir.append("<")
+
         # initModal = InferenceInitModal()
         # initModal.exec_()
         # self.inferenceDir = initModal.inferenceDir
         # self.textBrowserImageFile.setText(self.inferenceDir)
+
+    # 메뉴에 모델 열기 누르면
+    def editModelDir(self):
+        # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
+        fname = QFileDialog.getOpenFileName(self, '', 'Open file')
+        
+        if fname:
+            self.modelDir = fname[0]
+            self.textBrowserModelFile.setText(fname[0])
 
 
     # 로그 파일 initialize
@@ -322,6 +337,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.init_widget()
         self.threadWebsocket.toggle_status()
         self.startInfInit()
+        self.textBrowserLogContent.append("Inference started\n")
     
 
     def startInfInit(self):
@@ -332,6 +348,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
     # 모든 이미지 추론 정지
     def allStopInference(self):
         print("stop")
+        self.textBrowserLogContent.append("Inference stoped\n")
         self.threadWebsocket.websocketFinish()
         self.threadWebsocket.stopThread()
 
@@ -475,7 +492,7 @@ class receiveThread(QThread, form_class):
 
 # 웹소켓 websocket
 def send_api(path, method):
-    API_HOST = "http://127.0.0.1:8000"
+    API_HOST = "http://k7b306.p.ssafy.io:8080"
     url = API_HOST + path
     headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
     body = {
