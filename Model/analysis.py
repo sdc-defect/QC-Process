@@ -13,7 +13,8 @@ def log_to_md(user, case):
     title = f"{user}-{case}-LabNote"
 
     # config
-    config = yaml.load(open(os.path.join(path, f'{case}.yaml'), 'r'), yaml.FullLoader)
+    file_yaml = open(os.path.join(path, f'{case}.yaml'), 'r')
+    config = yaml.load(file_yaml, yaml.FullLoader)
 
     # model summary
     module = importlib.import_module(f"train.{user}.{config['module']}")
@@ -24,12 +25,14 @@ def log_to_md(user, case):
     print()
 
     # train log
-    file = pd.read_csv(os.path.join(path, "train_log.csv"))
-    best = int(open(os.path.join(path, "best_model.txt"), "r").readline().split(' ')[0])
-    row = file[file['epoch'] == best].values[0]
+    file_train = pd.read_csv(os.path.join(path, "train_log.csv"))
+    file_best = open(os.path.join(path, "best_model.txt"), "r")
+    best = int(file_best.readline().split(' ')[0])
+    row = file_train[file_train['epoch'] == best].values[0]
 
     # test log
-    test_log = json.load(open(os.path.join(path, 'test_log.json'), 'r'))
+    file_test = open(os.path.join(path, 'test_log.json'), 'r')
+    test_log = json.load(file_test)
 
     with open("LabNote/template.md", "r", encoding='utf-8') as f:
         md = markdown.markdown(f.read())
@@ -50,12 +53,15 @@ def log_to_md(user, case):
 
         with open(f"LabNote/{title}.md", "w", encoding='utf-8') as sf:
             sf.write(str(soup))
-        open(f"LabNote/image/{user}-{case}-model.png", 'w')
+        file_img = open(f"LabNote/image/{user}-{case}-model.png", 'w')
+        file_img.close()
+
+    file_yaml.close()
+    file_train.close()
+    file_best.close()
+    file_test.close()
 
 
 if __name__ == "__main__":
     for c in ['case1', 'case2', 'case4', 'case5', 'case6', 'case7', 'EB0', 'EB1', 'EB2']:
         log_to_md('rjh', c)
-        # break
-
-
