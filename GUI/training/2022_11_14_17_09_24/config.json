@@ -1,0 +1,1 @@
+{"save_path": "", "train_path": ["C:\\Users\\multicampus\\Desktop\\SDCTrain\\dummyOk", "C:\\Users\\multicampus\\Desktop\\SDCTrain\\dummyDef"], "test_path": null, "test_per": 0.1, "val_path": null, "val_per": 0.1, "flip": true, "spin": true, "shift": true, "mixup": true, "epoch": 50, "batch_size": 16, "lr": 0.0001, "decay": 1000}
