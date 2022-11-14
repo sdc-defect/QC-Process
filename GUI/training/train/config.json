@@ -1,5 +1,5 @@
 {
-  "save_path": ".",
+  "save_path": "save",
   "train_path": [
     "temp/def",
     "temp/ok"
@@ -8,10 +8,10 @@
   "test_per": 0.5,
   "val_path": null,
   "val_per": 0.1,
-  "flip": false,
-  "spin": false,
-  "shift": false,
-  "mixup": false,
+  "flip": true,
+  "spin": true,
+  "shift": true,
+  "mixup": true,
   "epoch": 1,
   "batch_size": 16,
   "lr": 0.001,

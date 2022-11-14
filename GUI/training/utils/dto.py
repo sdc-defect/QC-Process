@@ -4,8 +4,6 @@ from typing import Union, List
 import onnxruntime
 import numpy as np
 
-from utils.record import Record, ConfusionMatrix
-
 
 @dataclass
 class ONNXRuntime:
@@ -29,25 +27,3 @@ class TrainConfig:
     batch_size: int = 16
     lr: float = 0.001
     decay: int = 1000
-
-
-@dataclass
-class TestConfig:
-    save_path: str
-    test_path: Union[List, float]
-
-
-@dataclass
-class TrainResult:
-    confusionmatrix: ConfusionMatrix
-    loss: float = 0.523234
-    header: str = "train/val/test"
-    epoch: Union[str, None] = "1/50"
-    batch: str = "3/20"
-
-
-@dataclass
-class TestResult:
-    record: Record
-
-
