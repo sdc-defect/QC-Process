@@ -66,7 +66,7 @@ def load_config_json(path: str):
     name, ext = os.path.splitext(path)
     if len(ext) == 0:
         ext = '.json'
-    elif ext is not 'json':
+    elif ext != '.json':
         raise TypeError("config file must be json")
     return TrainConfig(**json.load(open(name + ext, 'r')))
 
