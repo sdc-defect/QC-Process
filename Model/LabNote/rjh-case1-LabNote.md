@@ -1,4 +1,4 @@
-<h1 id="title">rjh-EB0-LabNote</h1>
+<h1 id="title">rjh-case1-LabNote</h1>
 <table style="border: 2px; text-align:center;">
 <tr style="font-weight: bold;, font-size: 30px;">
 <td> 제목 </td>
@@ -6,7 +6,7 @@
 </tr>
 <tr>
 <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-<td> <img id="model" src="image/rjh-EB0-model.png"/> </td>
+<td> <img id="model" src="image/rjh-case1-model.png"/> </td>
 </tr>
 <tr>
 <td> optimizer </td>
@@ -18,15 +18,15 @@
 </tr>
 <tr>
 <td> init learning rate </td>
-<td id="init-lr">0.0005</td>
+<td id="init-lr">0.001</td>
 </tr>
 <tr>
 <td> decay steps </td>
-<td id="decay-steps">1200</td>
+<td id="decay-steps">1000</td>
 </tr>
 <tr>
 <td> batch size </td>
-<td id="batch-size">16</td>
+<td id="batch-size">8</td>
 </tr>
 <tr>
 <td> epoch </td>
@@ -45,19 +45,19 @@
 </tr>
 <tr>
 <td> Train Loss </td>
-<td id="train-loss">0.021495415</td>
+<td id="train-loss">0.10357667</td>
 </tr>
 <tr>
 <td> Test Loss </td>
-<td id="test-loss">0.0011</td>
+<td id="test-loss">1.4977</td>
 </tr>
 <tr>
 <td> Train accuracy / recall / F1-Score </td>
-<td id="train-score">1.0000 / 1.0000 / 1.0000</td>
+<td id="train-score">0.9792 / 0.9843 / 0.9824</td>
 </tr>
 <tr>
 <td> Test accuracy / recall / F1-Score </td>
-<td id="test-score">1.0000 / 1.0000 / 1.0000</td>
+<td id="test-score">0.5615 / 1.0000 / 0.7192</td>
 </tr>
 <tr>
 <td> val2_cnt (total 50) </td>
