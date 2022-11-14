@@ -213,6 +213,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
         # 전체 이미지 추론 시작 버튼
         self.pushButtonControlStart.clicked.connect(self.allStartInference)
         # 전체 이미지 추론 정지 버튼
+    
         self.pushButtonControlStop.clicked.connect(self.allStopInference)
     
     # 로그창 초기화
@@ -374,6 +375,13 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.gridLayoutGraph.addWidget(self.plotLine)
         # self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=25)
 
+    def closeEvent(self, event):
+        try:
+            self.pauseInference()
+            self.threadWebsocket.stopThread()
+        except AttributeError:
+            pass
+
         
 # 그래프용 Class 선언
 class WidgetPlotLine(QWidget):
@@ -492,8 +500,10 @@ class receiveThread(QThread, form_class):
 
 # 웹소켓 websocket
 def send_api(path, method):
-    API_HOST = "http://k7b306.p.ssafy.io:8080"
+    # API_HOST = "http://k7b306.p.ssafy.io:8080"
+    API_HOST = "http://192.168.0.30:8080"
     url = API_HOST + path
+    print(url)
     headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
     body = {
         "key1": "value1",
@@ -504,7 +514,7 @@ def send_api(path, method):
         if method == 'GET':
             response = requests.get(url, headers=headers)
         elif method == 'POST':
-            response = requests.post(url, headers=headers, data=json.dumps(body, ensure_ascii=False, indent="\t"))
+            response = requests.post(url, headers=headers, data=json.dumps(body, ensure_ascii=False, indent="\t"),verify=False)
         print("response status %r" % response.status_code)
         print("response text %r" % response.text)
     except Exception as ex:
@@ -526,8 +536,8 @@ class Client(QThread, form_class):
         self.client.error.connect(self.error)
 
         # # self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
-        self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
-        # self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
+        # self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
+        self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
         self.client.pong.connect(self.onPong)
         self.client.textMessageReceived.connect(self.handle_message)
         print("client")

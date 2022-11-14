@@ -20,6 +20,10 @@ import csv
 
 from training_init import TrainingInitWindowClass
 from training_ratio import TrainingRatioWindowClass
+from utils.dto import TrainConfig
+from utils.trainer import Manager
+
+import json
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -37,7 +41,11 @@ log_data7=log_data['val_recall']
 # log_data8=log_data['val_f1']
 
 #화면을 띄우는데 사용되는 Class 선언
-class trainingWindowClass(QMainWindow, form_class) :
+class trainingWindowClass(QMainWindow, form_class) :    
+    # set config data
+    isSetFile = False
+    # config = TrainConfig(save_path=None, train_path=None, test_path=None,val_path=None)
+    config = TrainConfig(save_path=None, train_path=None, test_path=None, test_per=None, val_path=None, val_per=None)
 
     setAugmentation = True
     setFlip = True
@@ -66,7 +74,7 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.setWindowTitle("Training")
 
         self.initUI()
-
+        self.initialization()
         # 하이퍼파라미터 - 초기값 설정
         self.initHyperParameter()
         
@@ -79,7 +87,24 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.th = Thread()
         self.init_widget()
         # 쓰레드 시작
-        self.th.start()
+        # self.th.start()
+
+    def initialization(self):
+        # Test
+        self.labelTestOkCount.hide()    
+        self.labelTestOkDir.hide()    
+        self.labelTestOkTitle.hide()
+        self.labelTestDefCount.hide()    
+        self.labelTestDefDir.hide()    
+        self.labelTestDefTitle.hide()
+
+        # Validation
+        self.labelValidationOkCount.hide()    
+        self.labelValidationOkDir.hide()    
+        self.labelValidationOkTitle.hide()
+        self.labelValidationDefCount.hide()    
+        self.labelValidationDefDir.hide()    
+        self.labelValidationDefTitle.hide()
 
     def init_widget(self):
         # 시그널 슬롯 연결
@@ -113,36 +138,97 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     # 파일 열기 모달 띄우기
     def editFileDir(self):
-        # 첫 번째 모달
         initFirstModal = TrainingInitWindowClass()
         initFirstModal.exec_()
 
-        self.trainSetDir = initFirstModal.trainSetDir
-        self.testSetDir = initFirstModal.testSetDir
-        self.validationSetDir = initFirstModal.validationSetDir
-        self.modelSaveDir = initFirstModal.modelSaveDir
+        if initFirstModal.fileSetdata != {}:
+            self.config.save_path = initFirstModal.fileSetdata['save_path']
+            self.config.train_path = initFirstModal.fileSetdata['train_path']
+            self.config.test_path = initFirstModal.fileSetdata['test_path']
+            self.config.test_per = initFirstModal.fileSetdata['test_per']
+            self.config.val_path = initFirstModal.fileSetdata['val_path']
+            self.config.val_per = initFirstModal.fileSetdata['val_per']
+            self.isSetFile = True
+            
+            # main.ui에 플롯되는 내용
+            # Train
+            self.labelTrainOkDir.setText(initFirstModal.fileSetdata['train_path'][0])
+            self.labelTrainDefDir.setText(initFirstModal.fileSetdata['train_path'][1])
+            self.labelTrainOkCount.setText(initFirstModal.trainOkCount)
+            self.labelTrainDefCount.setText(initFirstModal.trainDefCount)
 
-        self.trainFileCount = initFirstModal.trainFileCount
-        self.testFileCount = initFirstModal.testFileCount
-        self.validationFileCount = initFirstModal.validationFileCount
+            # Test
+            if self.config.test_path == None:
+                self.labelTestOkCount.hide()    
+                self.labelTestOkDir.hide()    
+                self.labelTestOkTitle.hide()
+                self.labelTestDefCount.hide()    
+                self.labelTestDefDir.hide()    
+                self.labelTestDefTitle.hide()
 
-        # 두 번째 모달
-        initSecondModal = TrainingRatioWindowClass(self.trainFileCount, self.testFileCount, self.validationFileCount)
-        initSecondModal.exec_()
+                self.labelTestRatioCount.show()    
+                self.labelTestRatioDir.show()    
+                self.labelTestRatioTitle.show()
 
-        self.trainFileCount = initSecondModal.train_cnt
-        self.testFileCount = initSecondModal.test_cnt
-        self.validationFileCount = initSecondModal.val_cnt
+                self.labelTestRatioDir.setText(str(int(initFirstModal.fileSetdata['test_per'] * 100)) + '%')
+                self.labelTestRatioCount.setText(initFirstModal.testTotalCount)
+            else:
+                self.labelTestOkCount.show()    
+                self.labelTestOkDir.show()    
+                self.labelTestOkTitle.show()
+                self.labelTestDefCount.show()    
+                self.labelTestDefDir.show()    
+                self.labelTestDefTitle.show()
 
-        self.labelTrainSetDir.setText(self.trainSetDir)
-        self.labelTestSetDir.setText(self.testSetDir)
-        self.labelValidationSetDir.setText(self.validationSetDir)
-        self.labelModelSaveDir.setText(self.modelSaveDir)
+                self.labelTestRatioCount.hide()    
+                self.labelTestRatioDir.hide()    
+                self.labelTestRatioTitle.hide()
 
-        self.labelTrainSetCount.setText("(" + str(self.trainFileCount) + ")")
-        self.labelTestSetCount.setText("(" + str(self.testFileCount) + ")")
-        self.labelValidationSetCount.setText("(" + str(self.validationFileCount) + ")")
-        
+                self.labelTestOkDir.setText(initFirstModal.fileSetdata['test_path'][0])
+                self.labelTestDefDir.setText(initFirstModal.fileSetdata['test_path'][1])
+                self.labelTestOkCount.setText(initFirstModal.testOkCount)
+                self.labelTestDefCount.setText(initFirstModal.testDefCount)
+
+            # Validation
+            if self.config.val_path == None:
+                print('None')
+                self.labelValidationOkCount.hide()    
+                self.labelValidationOkDir.hide()    
+                self.labelValidationOkTitle.hide()
+                self.labelValidationDefCount.hide()    
+                self.labelValidationDefDir.hide()    
+                self.labelValidationDefTitle.hide()
+
+                self.labelValidationRatioCount.show()    
+                self.labelValidationRatioDir.show()    
+                self.labelValidationRatioTitle.show()
+
+                self.labelValidationRatioDir.setText(str(int(initFirstModal.fileSetdata['val_per'] * 100)) + '%')
+                self.labelValidationRatioCount.setText(initFirstModal.validationTotalCount)
+            else:
+                print('ㅇㅇ?')
+                self.labelValidationOkCount.show()    
+                self.labelValidationOkDir.show()    
+                self.labelValidationOkTitle.show()
+                self.labelValidationDefCount.show()    
+                self.labelValidationDefDir.show()    
+                self.labelValidationDefTitle.show()
+
+                self.labelValidationRatioCount.hide()    
+                self.labelValidationRatioDir.hide()    
+                self.labelValidationRatioTitle.hide()
+
+                self.labelValidationOkDir.setText(initFirstModal.fileSetdata['val_path'][0])
+                self.labelValidationDefDir.setText(initFirstModal.fileSetdata['val_path'][1])
+                self.labelValidationOkCount.setText(initFirstModal.validationOkCount)
+                self.labelValidationDefCount.setText(initFirstModal.validationDefCount)
+
+            # Save Directiory
+            self.labelSaveDir.setText(initFirstModal.fileSetdata['save_path'])
+
+            # if self.config.test_per == None:
+                # pass
+
     # 이벤트 연결
     def initData(self):
 
@@ -272,9 +358,63 @@ class trainingWindowClass(QMainWindow, form_class) :
     # 학습 시작
     @pyqtSlot()
     def trainingStart(self):
-        self.th.toggle_status()
-        self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
+        # 어그멘테이션 설정
+        if self.setAugmentation:
+            self.config.flip = self.checkBoxFlip.isChecked()
+            self.config.spin = self.checkBoxSpin.isChecked()
+            self.config.shift = self.checkBoxSwift.isChecked()
+            self.config.mixup = self.checkBoxMixup.isChecked()
+        else:
+            self.config.flip = False
+            self.config.spin = False
+            self.config.shift = False
+            self.config.mixup = False
 
+        # 하이퍼 파라미터 설정
+        self.config.epoch = int(self.spinBoxEpoch.text())
+        self.config.lr = float(self.labelLearningRate.text())
+
+        if self.comboBoxBatchSize.currentText() == "사용자 지정":
+            self.config.batch_size = int(self.lineEditBatchSize.text())
+        else:
+            self.config.batch_size = int(self.comboBoxBatchSize.currentText())
+
+        if self.comboBoxDecayStep.currentText() == "사용자 지정":
+            self.config.decay = int(self.lineEditDecayStep.text())
+        else:
+            self.config.decay = int(self.comboBoxDecayStep.currentText())
+
+        if self.isSetFile:
+            conf_dic = self.config.__dict__
+            print(conf_dic)
+            conf = json.dumps(self.config.__dict__)
+
+            # .json 파일 만들기
+            with open('config.json', 'w') as f:
+                json.dump(conf_dic, f)
+
+        # config = json.loads(str(self.config))
+        # print(config)
+
+        # self.th.toggle_status()
+        # self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
+        
+        # 시작 버튼 누르면 시작
+        # if self.isSetFile:
+
+        #     Manager().build_trainer(self.config)
+        #     Manager().start(is_train=True)
+
+        #     while True:
+        #         if Manager().queue.empty():
+        #             continue
+        #         data = Manager().queue.get()
+
+        #         # train, validation 종료
+        #         if data == None: break
+        #         print(data)
+
+        return
     # 학습 다시시작
     def trainingRestart(self):
         pass
@@ -305,6 +445,7 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.layout().removeWidget(self.lblAreaAcc)
         self.layout().removeWidget(self.lblAreaRecall)
         self.lblAreaLoss.setParent(None)
+
         self.lblAreaAcc.setParent(None)
         self.lblAreaRecall.setParent(None)
         self.plotLoss = WidgetPlotLoss(self.centralwidget)  
@@ -407,7 +548,6 @@ class Thread(QThread, form_class):
     # 사용자 정의 시그널 선언
     change_value = pyqtSignal(int)
     update_log = pyqtSignal(str)
-
     def __init__(self):
         QThread.__init__(self)
         self.cond = QWaitCondition()
@@ -423,41 +563,38 @@ class Thread(QThread, form_class):
 
     def run(self):
         # 큐로 받을때 한 번만 실행하라고 while 없애면 될 듯?
-        while True:
-            self.mutex.lock()
+        self.mut68ex.lock()
 
-            if not self._status:
-                self.cond.wait(self.mutex)
+        if not self._status:
+            self.cond.wait(self.mutex)
 
-            if 100 == self.cnt:
-                self.cnt = 0
-            self.cnt += 1
-            # self.change_value.emit(self.cnt)
-            self.msleep(100)  # ※주의 QThread에서 제공하는 sleep을 사용
+        if 100 == self.cnt:
+            self.cnt = 0
+        self.cnt += 1
+        # self.change_value.emit(self.cnt)
+        self.msleep(100)  # ※주의 QThread에서 제공하는 sleep을 사용
 
-            # 파일에서 한 줄 씩 읽어와서 진행상황 출력
-            f = open(self.logFileDir, 'r', encoding='utf-8')
-            self.logCsv = list(csv.reader(f))
-            f.close()
+        # 파일에서 한 줄 씩 읽어와서 진행상황 출력
+        f = open(self.logFileDir, 'r', encoding='utf-8')
+        self.logCsv = list(csv.reader(f))
+        f.close()
 
-            logIndex = self.logCsv[0]
-            logContent = self.logCsv[self.cnt]
-            logIndexCount = len(logIndex)
+        logIndex = self.logCsv[0]
+        logContent = self.logCsv[self.cnt]
+        logIndexCount = len(logIndex)
 
-            printContent = "Result" + str(self.cnt)
-            for i in range(logIndexCount):
-                addprintContent = logIndex[i] + ": " + logContent[i]
-                printContent = printContent + ", " + addprintContent
-            print(printContent)
+        printContent = "Result" + str(self.cnt)
+        for i in range(logIndexCount):
+            addprintContent = logIndex[i] + ": " + logContent[i]
+            printContent = printContent + ", " + addprintContent
+        self.change_value.emit(int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
+        
+        self.update_log.emit(printContent)
 
-            self.change_value.emit(int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
-            
-            self.update_log.emit(printContent)
+        # print(self.cnt)
 
-            # print(self.cnt)
-
-            self.msleep(1000)
-            self.mutex.unlock()
+        self.msleep(1000)
+        self.mutex.unlock()        
 
     def toggle_status(self):
         self._status = not self._status
