@@ -20,6 +20,7 @@ import threading
 import time
 import csv
 
+import utils
 from training_init import TrainingInitWindowClass
 from training_ratio import TrainingRatioWindowClass
 from utils.dto import TrainConfig
@@ -393,27 +394,32 @@ class trainingWindowClass(QMainWindow, form_class) :
         else:
             self.config.decay = int(self.comboBoxDecayStep.currentText())
 
-        conf_dic = self.config.__dict__
-        conf = json.dumps(self.config.__dict__)
-        # .json 파일 만들기
-        with open('config.json', 'w') as f:
-            json.dump(conf_dic, f)
+        try:
+            save_path = self.config.process()
+            utils.make_folder(save_path)
 
-        # qProcess
-        self.start_process()
+            # .json 파일 만들기
+            json_file = os.path.join(save_path, 'config.json')
+            with open(json_file, 'w') as f:
+                json.dump(self.config.__dict__, f)
+
+            # qProcess
+            self.start_process(json_file)
+        except Exception as e:
+            print(e)
 
     def message(self, s):
         self.textBrowser.append(s)
         return
 
-    def start_process(self):
+    def start_process(self, json_file):
         self.message("Executing process")
         self.p = QProcess()  # Keep a reference to the QProcess (e.g. on self) while it's running.
         self.p.readyReadStandardOutput.connect(self.handle_stdout)
         self.p.readyReadStandardError.connect(self.handle_stderr)
         self.p.stateChanged.connect(self.handle_state)
         self.p.finished.connect(self.process_finished)  # Clean up once complete.
-        self.message(self.p.start("python", ['train.py', '--json', 'config']))
+        self.message(self.p.start("python", ['train.py', '--json', json_file]))
 
     def handle_stderr(self):
         data = self.p.readAllStandardError()

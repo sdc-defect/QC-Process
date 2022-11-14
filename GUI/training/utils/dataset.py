@@ -27,11 +27,11 @@ def merge_dataset_path(path: List, img_size: Union[Tuple[int, int], int] = (300,
     paths = []
     labels = []
 
-    paths0 = glob(path[0] + "/*")
+    paths0 = glob(path[0] + "/*[png$|jpg$|jpeg$|tif$]")
     paths.extend(paths0)
     labels.extend([(1., 0.) for _ in range(len(paths0))])
 
-    paths1 = glob(path[1] + "/*")
+    paths1 = glob(path[1] + "/*[png$|jpg$|jpeg$|tif$]")
     paths.extend(paths1)
     labels.extend([(0., 1.) for _ in range(len(paths1))])
 
