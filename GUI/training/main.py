@@ -9,6 +9,8 @@ from PyQt5.QtCore import QWaitCondition
 from PyQt5.QtCore import QMutex
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QProcess
+
 # graph lib
 import pandas as pd
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -41,11 +43,10 @@ log_data7=log_data['val_recall']
 # log_data8=log_data['val_f1']
 
 #화면을 띄우는데 사용되는 Class 선언
-class trainingWindowClass(QMainWindow, form_class) :    
+class trainingWindowClass(QMainWindow, form_class) :
     # set config data
     isSetFile = False
-    # config = TrainConfig(save_path=None, train_path=None, test_path=None,val_path=None)
-    config = TrainConfig(save_path=None, train_path=None, test_path=None, test_per=None, val_path=None, val_per=None)
+    config = TrainConfig(save_path=None, train_path=None, test_path=None, val_path=None)
 
     setAugmentation = True
     setFlip = True
@@ -74,14 +75,15 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.setWindowTitle("Training")
 
         self.initUI()
-        self.initialization()
+
         # 하이퍼파라미터 - 초기값 설정
+
         self.initHyperParameter()
         
         self.lblAreaAcc:QLabel
         self.lblAreaLoss:Qlabel
         self.lblAreaRecall:Qlabel
-        
+        self.text = QPlainTextEdit()
         
         # 쓰레드 선언
         self.th = Thread()
@@ -89,22 +91,11 @@ class trainingWindowClass(QMainWindow, form_class) :
         # 쓰레드 시작
         # self.th.start()
 
-    def initialization(self):
-        # Test
-        self.labelTestOkCount.hide()    
-        self.labelTestOkDir.hide()    
-        self.labelTestOkTitle.hide()
-        self.labelTestDefCount.hide()    
-        self.labelTestDefDir.hide()    
-        self.labelTestDefTitle.hide()
-
-        # Validation
-        self.labelValidationOkCount.hide()    
-        self.labelValidationOkDir.hide()    
-        self.labelValidationOkTitle.hide()
-        self.labelValidationDefCount.hide()    
-        self.labelValidationDefDir.hide()    
-        self.labelValidationDefTitle.hide()
+        # qProcess
+        self.btn = QPushButton("Execute")
+        self.btn.pressed.connect(self.start_process)
+        self.text = QPlainTextEdit()
+        self.text.setReadOnly(True)
 
     def init_widget(self):
         # 시그널 슬롯 연결
@@ -145,90 +136,9 @@ class trainingWindowClass(QMainWindow, form_class) :
             self.config.save_path = initFirstModal.fileSetdata['save_path']
             self.config.train_path = initFirstModal.fileSetdata['train_path']
             self.config.test_path = initFirstModal.fileSetdata['test_path']
-            self.config.test_per = initFirstModal.fileSetdata['test_per']
             self.config.val_path = initFirstModal.fileSetdata['val_path']
-            self.config.val_per = initFirstModal.fileSetdata['val_per']
             self.isSetFile = True
-            
-            # main.ui에 플롯되는 내용
-            # Train
-            self.labelTrainOkDir.setText(initFirstModal.fileSetdata['train_path'][0])
-            self.labelTrainDefDir.setText(initFirstModal.fileSetdata['train_path'][1])
-            self.labelTrainOkCount.setText(initFirstModal.trainOkCount)
-            self.labelTrainDefCount.setText(initFirstModal.trainDefCount)
-
-            # Test
-            if self.config.test_path == None:
-                self.labelTestOkCount.hide()    
-                self.labelTestOkDir.hide()    
-                self.labelTestOkTitle.hide()
-                self.labelTestDefCount.hide()    
-                self.labelTestDefDir.hide()    
-                self.labelTestDefTitle.hide()
-
-                self.labelTestRatioCount.show()    
-                self.labelTestRatioDir.show()    
-                self.labelTestRatioTitle.show()
-
-                self.labelTestRatioDir.setText(str(int(initFirstModal.fileSetdata['test_per'] * 100)) + '%')
-                self.labelTestRatioCount.setText(initFirstModal.testTotalCount)
-            else:
-                self.labelTestOkCount.show()    
-                self.labelTestOkDir.show()    
-                self.labelTestOkTitle.show()
-                self.labelTestDefCount.show()    
-                self.labelTestDefDir.show()    
-                self.labelTestDefTitle.show()
-
-                self.labelTestRatioCount.hide()    
-                self.labelTestRatioDir.hide()    
-                self.labelTestRatioTitle.hide()
-
-                self.labelTestOkDir.setText(initFirstModal.fileSetdata['test_path'][0])
-                self.labelTestDefDir.setText(initFirstModal.fileSetdata['test_path'][1])
-                self.labelTestOkCount.setText(initFirstModal.testOkCount)
-                self.labelTestDefCount.setText(initFirstModal.testDefCount)
-
-            # Validation
-            if self.config.val_path == None:
-                print('None')
-                self.labelValidationOkCount.hide()    
-                self.labelValidationOkDir.hide()    
-                self.labelValidationOkTitle.hide()
-                self.labelValidationDefCount.hide()    
-                self.labelValidationDefDir.hide()    
-                self.labelValidationDefTitle.hide()
-
-                self.labelValidationRatioCount.show()    
-                self.labelValidationRatioDir.show()    
-                self.labelValidationRatioTitle.show()
-
-                self.labelValidationRatioDir.setText(str(int(initFirstModal.fileSetdata['val_per'] * 100)) + '%')
-                self.labelValidationRatioCount.setText(initFirstModal.validationTotalCount)
-            else:
-                print('ㅇㅇ?')
-                self.labelValidationOkCount.show()    
-                self.labelValidationOkDir.show()    
-                self.labelValidationOkTitle.show()
-                self.labelValidationDefCount.show()    
-                self.labelValidationDefDir.show()    
-                self.labelValidationDefTitle.show()
-
-                self.labelValidationRatioCount.hide()    
-                self.labelValidationRatioDir.hide()    
-                self.labelValidationRatioTitle.hide()
-
-                self.labelValidationOkDir.setText(initFirstModal.fileSetdata['val_path'][0])
-                self.labelValidationDefDir.setText(initFirstModal.fileSetdata['val_path'][1])
-                self.labelValidationOkCount.setText(initFirstModal.validationOkCount)
-                self.labelValidationDefCount.setText(initFirstModal.validationDefCount)
-
-            # Save Directiory
-            self.labelSaveDir.setText(initFirstModal.fileSetdata['save_path'])
-
-            # if self.config.test_per == None:
-                # pass
-
+     
     # 이벤트 연결
     def initData(self):
 
@@ -384,37 +294,55 @@ class trainingWindowClass(QMainWindow, form_class) :
         else:
             self.config.decay = int(self.comboBoxDecayStep.currentText())
 
-        if self.isSetFile:
-            conf_dic = self.config.__dict__
-            print(conf_dic)
-            conf = json.dumps(self.config.__dict__)
+        conf_dic = self.config.__dict__
+        conf = json.dumps(self.config.__dict__)
+        # .json 파일 만들기
+        with open('config.json', 'w') as f:
+            json.dump(conf_dic, f)
 
-            # .json 파일 만들기
-            with open('config.json', 'w') as f:
-                json.dump(conf_dic, f)
+        # qProcess
+        self.textBrowser.append('1')
+        self.start_process()
 
-        # config = json.loads(str(self.config))
-        # print(config)
-
-        # self.th.toggle_status()
-        # self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
-        
-        # 시작 버튼 누르면 시작
-        # if self.isSetFile:
-
-        #     Manager().build_trainer(self.config)
-        #     Manager().start(is_train=True)
-
-        #     while True:
-        #         if Manager().queue.empty():
-        #             continue
-        #         data = Manager().queue.get()
-
-        #         # train, validation 종료
-        #         if data == None: break
-        #         print(data)
-
+    def message(self, s):
+        self.textBrowser.append(s)
         return
+
+    def start_process(self):
+        self.message("Executing process")
+        self.p = QProcess()  # Keep a reference to the QProcess (e.g. on self) while it's running.
+        self.p.readyReadStandardOutput.connect(self.handle_stdout)
+        self.p.readyReadStandardError.connect(self.handle_stderr)
+        self.p.stateChanged.connect(self.handle_state)
+        self.p.finished.connect(self.process_finished)  # Clean up once complete.
+        self.message(self.p.start("python", ['train/utils/dummy_script.py', '--json', 'config']))
+
+    def handle_stderr(self):
+        print(self.p.readyReadStandardOutput())
+        data = self.p.readAllStandardError()
+        stderr = bytes(data).decode("utf8")
+        # Extract progress if it is in the data.
+        self.message(stderr)
+
+    def handle_stdout(self):
+        print(QProcess.StandardOutput)
+        data = self.p.readAllStandardOutput()
+        stdout = bytes(data).decode("utf8")
+        self.message(stdout)
+
+    def handle_state(self, state):
+        states = {
+            QProcess.NotRunning: 'Not running',
+            QProcess.Starting: 'Starting',
+            QProcess.Running: 'Running',
+        }
+        state_name = states[state]
+        self.message(f"State changed: {state_name}")
+
+    def process_finished(self):
+        self.message("Process finished.")
+        self.p = None
+        
     # 학습 다시시작
     def trainingRestart(self):
         pass
