@@ -8,6 +8,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
 # graph lib
 import pandas as pd
+from pandas import Series
 import numpy as np
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import *
@@ -15,10 +16,12 @@ from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import *
+from PyQt5.QtCore import pyqtSlot
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.animation as animation
 from matplotlib.figure import Figure
+import random
 
 # 출력 thread
 import json
@@ -62,6 +65,11 @@ class InferenceWindowClass(QMainWindow, form_class) :
     okInferencedFile = {}
     defInferencedFile = {}
 
+    yy = 0
+    total = 0
+    old_ts = 0
+    a = 0
+
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
@@ -70,9 +78,52 @@ class InferenceWindowClass(QMainWindow, form_class) :
         # self.initLogger()
         
         # 그래프
-        # self.axes = fig.add_subplot(211, xlim=(0, 50), ylim=(0, 1024))
-        # self.axes2 = fig.add_subplot(212, xlim=(0, 50), ylim=(0, 600))
-        # self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen) # 모든 이미지 리스트 창 열기
+        self.canvas = PlotCanvasLine(self, width=10, height=8)
+        self.gridLayoutGraph.addWidget(self.canvas)
+        self.x = np.arange(60)
+        self.y = np.ones(60, dtype=np.float64)*np.nan
+        self.line, = self.canvas.axes.plot(self.x, self.y, animated=True, color='red', lw=2)
+        self.pushButtonControlStart.clicked.connect(self.on_start)
+        self.pushButtonControlStop.clicked.connect(self.on_stop)
+        # self.on_start()
+            # window size
+        # self.setMinimumSize(800, 800)
+        self.series = QBarSeries()
+        
+        
+            # chart object
+        chart = QChart()
+            # chart.legend().hide()
+        chart.addSeries(self.series)
+        chart.layout().setContentsMargins(0, 0, 0, 0)
+
+            # self.resize(800, 600)
+
+        chart.setTitle('수율')
+        chart.setAnimationOptions(QChart.SeriesAnimations)
+
+        dt = QDateTime.currentDateTime()
+        self.ts = dt.toString('mm')
+
+        months = (self.ts)
+
+        axisX = QBarCategoryAxis()
+        axisX.append('시간')
+
+        axisY = QValueAxis()
+        axisY.setRange(0, 500)
+
+        chart.addAxis(axisX, Qt.AlignBottom)
+        chart.addAxis(axisY, Qt.AlignLeft)
+        self.series.attachAxis(axisX)
+        self.series.attachAxis(axisY)
+        chart.legend().setVisible(True)
+        chart.legend().setAlignment(Qt.AlignBottom)
+
+        self.chartView = QChartView(chart)
+        
+        self.gridLayoutGraph.addWidget(self.chartView)
+        
 
         # 쓰레드 선언
         self.threadRecieve = receiveThread()
@@ -114,6 +165,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
            }
 
         self.logUpdate("Timestamp: "+logMessage["Timestamp"]+", File_name: "+logMessage["File_name"]+", Probability_ok: "+logMessage["Probability_ok"]+", Probability_def: "+logMessage["Probability_def"]+", Result: "+logMessage["Result"]+", Image_path: "+logMessage["Image_path"]+", CAM_path: "+logMessage["CAM_path"]+", Merged_path: "+logMessage["Merged_path"]+"\n")
+        self.get_data(logMessage)
         
         # 메인 화면 이미지 리스트에 계속 추가해주기
         # row = self.tableWidgetImageList.rowCount()-1
@@ -366,14 +418,6 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.textBrowserLogContent.append("Inference restarted\n")
         self.threadWebsocket.restart_inference()
     
-    # 그래프 플로팅
-    def firstAction(self):
-        self.layout().removeWidget(self.lblAreaLine)
-        self.lblAreaLine.setParent(None)
-        self.plotLine = WidgetPlotLine(self.centralwidget)
-            
-        self.gridLayoutGraph.addWidget(self.plotLine)
-        # self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=25)
 
     def closeEvent(self, event):
         try:
@@ -381,55 +425,119 @@ class InferenceWindowClass(QMainWindow, form_class) :
             self.threadWebsocket.stopThread()
         except AttributeError:
             pass
-
         
-# 그래프용 Class 선언
-class WidgetPlotLine(QWidget):
-    def __init__(self, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
-        self.setLayout(QVBoxLayout())
-        self.canvas = PlotCanvasLine(self, width=10, height=8)
-        self.layout().addWidget(self.canvas)
         
-class PlotCanvasLine(FigureCanvas):
-    def __init__(self, parent=None, width=10, height=8, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        FigureCanvas.__init__(self, fig)
-        self.axes = fig.add_subplot(211, xlim=(0, 50), ylim=(0, 1024))
-        self.axes2 = fig.add_subplot(212, xlim=(0, 50), ylim=(0, 600))
-        self.setParent(parent)
-        FigureCanvas.setSizePolicy(self, 
-                QSizePolicy.Expanding, QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
-        self.plot()
+    def get_data(self, log):
+        if type(log) == dict:
+            if log['Result'] == 'def':
+                self.yy += 1
+            self.total += 1
+            dt = QDateTime.currentDateTime()
+            ts = dt.toString('mm')
+            # print(log)
+        if ts != self.old_ts:
+            self.old_ts = ts
         
-    def plot(self):        
-        self.x = np.arange(50)
-        self.y = np.ones(50, dtype=np.float64)*np.nan
-        self.line, = self.axes.plot(self.x, self.y, animated=True, lw=2)
-
-        self.x2 = np.arange(50)
-        self.y2 = np.ones(50, dtype=np.float64)*np.nan
-        self.line2, = self.axes2.plot(self.x2, self.y2, animated=True,color='red', lw=2)
-
+    
     def update_line(self, i):
-        y = random.randint(0,1024)
+        y = self.yy / self.total if self.yy != 0 else 0
         old_y = self.line.get_ydata()
         new_y = np.r_[old_y[1:], y]
-        # time.sleep(10)
         self.line.set_ydata(new_y)
-        
-        # self.line.set_ydata(y)
-        print(self.y)
+    
+        # print(self.y)
         return [self.line]
 
     def update_line2(self, i):
+        pass
         y2 = random.randint(0,510)
         old_y2 = self.line2.get_ydata()
         new_y2 = np.r_[old_y2[1:], y2]
         self.line2.set_ydata(new_y2)
         return [self.line2]
-        # self.line.set_ydata(y)
+    
+    def on_start(self):
+        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=25)
+
+    
+    def on_stop(self):
+        self.ani._stop()
+    
+    def get_result(self, cur_result):
+        
+        dt = QDateTime.currentDateTime()
+        # self.statusBar().showMessage(dt.toString('mm'))
+        self.ticks[dt] = cur_result
+
+        # # check whether minute changed
+        # #if dt.time().minute() != self.minute_cur.time().minute():
+
+        ts = dt.toString('mm')
+        print(ts, cur_result, type(cur_result))
+        
+        if len(self.series.barSets())>0:
+            self.a=self.series.barSets()[-1]
+            print(self.series.take(self.a))
+        if self.a!=0:
+            cur_result=cur_result+int(self.a[0])
+        new_set = QBarSet(f'{ts}')
+        if self.a!=0 and new_set.label()!=a.label():
+            self.series.append(self.a)
+            # new_set[0]= 0
+            cur_result = 0
+        new_set << cur_result
+        self.series.append(new_set)
+        self.chartView.update()
+        print('sum=',new_set[0], type(new_set[0]))
+        print('count=',self.series.count())
+    
+    def firstAction(self):
+        self.layout().removeWidget(self.lblAreaLine)
+        # self.layout().removeWidget(self.lblAreaBar)
+        self.lblAreaLine.setParent(None)
+        # self.lblAreaBar.setParent(None)
+        self.plotLine = WidgetPlotLine(self.centralwidget)  
+        # self.plotBar = WidgetPlotBar(self.centralwidget)   
+            
+        self.gridLayoutGraph.addWidget(self.plotLine)
+        # self.gridLayoutGraph.addWidget(self.plotBar)
+
+
+# 그래프용 class
+class WidgetPlotLine(QWidget):
+    def __init__(self, *args, **kwargs):
+        QWidget.__init__(self, *args, **kwargs)
+        
+        # self.setLayout(QVBoxLayout())
+        # self.canvas = PlotCanvasLine(self, width=10, height=8)
+        
+        
+        # self.x = np.arange(50)
+        # self.y = np.ones(50, dtype=np.float64)*np.nan
+        # self.line, = self.canvas.axes.plot(self.x, self.y, animated=True, lw=2)
+        # self.x2 = np.arange(50)
+        # self.y2 = np.ones(50, dtype=np.float64)*np.nan
+        # self.line2, = self.canvas.axes2.plot(self.x2, self.y2, animated=True,color='red', lw=2)
+        
+class PlotCanvasLine(FigureCanvas):
+    def __init__(self, parent=None, width=8, height=8, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        
+        self.axes = fig.add_subplot(xlim=(0, 60), ylim=(0, 1))
+        self.axes.spines['top'].set_visible(False)
+        self.axes.spines['bottom'].set_position('center')
+        self.axes.set_label('')
+        
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+        FigureCanvas.setSizePolicy(self, 
+                QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+
+    
+    def plotLine(self):
+        pass
+
 
 
 class receiveThread(QThread, form_class):
@@ -651,7 +759,7 @@ def main():
     #프로그램 화면을 보여주는 코드
     myWindow.show()
     
-    # myWindow.firstAction()
+    myWindow.firstAction()
 
     #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
