@@ -1,19 +1,8 @@
-from typing import List, Dict, Union
-
-import numpy as np
-from dataclasses import dataclass
-
 import tensorflow as tf
 from keras.metrics import TruePositives, TrueNegatives, FalsePositives, FalseNegatives
 from keras.metrics import Mean
 
-
-@dataclass
-class ConfusionMatrix:
-    tp: int
-    tn: int
-    fp: int
-    fn: int
+from utils.dto import ConfusionMatrix
 
 
 class Record:
@@ -104,7 +93,8 @@ class MyRecorder:
     def check_best_score(self) -> bool:
         score = self.val.get_accuracy()
         loss = self.val.get_mean_loss()
-        if score >= self._best_score and loss >= self._best_loss:
+
+        if score >= self._best_score and loss <= self._best_loss:
             self._best_score = score
             self._best_loss = loss
             return True
