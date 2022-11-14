@@ -682,7 +682,7 @@
      <rect>
       <x>320</x>
       <y>740</y>
-      <width>191</width>
+      <width>181</width>
       <height>27</height>
      </rect>
     </property>
@@ -768,9 +768,9 @@
    <widget class="QLabel" name="labelLearningRate">
     <property name="geometry">
      <rect>
-      <x>533</x>
+      <x>523</x>
       <y>740</y>
-      <width>41</width>
+      <width>51</width>
       <height>20</height>
      </rect>
     </property>
