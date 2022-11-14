@@ -354,6 +354,9 @@ class trainingWindowClass(QMainWindow, form_class) :
                 self.comboBoxDecayStep.setEnabled(False)
                 self.lineEditDecayStep.setEnabled(False)
 
+                # start button
+                self.pushButtonControlStart.setEnabled(False)
+
                 # QProcess 시작
                 save_path = self.config.process()
                 utils.make_folder(save_path)
@@ -454,6 +457,9 @@ class trainingWindowClass(QMainWindow, form_class) :
             self.lineEditBatchSize.setEnabled(True)
         if self.comboBoxDecayStep.currentText() == '사용자 지정':
             self.lineEditDecayStep.setEnabled(True)
+
+        # start button
+        self.pushButtonControlStart.setEnabled(True)
     
     # 그래프 플로팅
     def firstAction(self):
