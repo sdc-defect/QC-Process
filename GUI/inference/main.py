@@ -51,7 +51,8 @@ form_class = uic.loadUiType("inference.ui")[0]
 #화면을 띄우는데 사용되는 Class 선언
 class InferenceWindowClass(QMainWindow, form_class) :
     inferenceDir = ""
-    modelDir = ""
+    # modelDir = ""
+    singleInferenceDir = ""
 
     allFileLst = []
     okFileLst = []
@@ -109,18 +110,26 @@ class InferenceWindowClass(QMainWindow, form_class) :
             "Result" : imgDescription["label"] if imgDescription["label"] is "ok" else "def" ,
             "Image_path" : imagePath,
             "CAM_path" : camPath,
-            "Merged_path": mergedPath
+            "Merged_path" : mergedPath
            }
 
         self.logUpdate("Timestamp: "+logMessage["Timestamp"]+", File_name: "+logMessage["File_name"]+", Probability_ok: "+logMessage["Probability_ok"]+", Probability_def: "+logMessage["Probability_def"]+", Result: "+logMessage["Result"]+", Image_path: "+logMessage["Image_path"]+", CAM_path: "+logMessage["CAM_path"]+", Merged_path: "+logMessage["Merged_path"]+"\n")
         
         # 메인 화면 이미지 리스트에 계속 추가해주기
-        row = self.tableWidgetImageList.rowCount()-1
-        print(logMessage["File_name"])
-        self.tableWidgetImageList.setItem(row, 0, QTableWidgetItem(logMessage["File_name"]))
-        self.tableWidgetImageList.setItem(row, 1, QTableWidgetItem(logMessage["Timestamp"]))
-        self.tableWidgetImageList.setItem(row, 2, QTableWidgetItem(logMessage["Result"]))
-        self.tableWidgetImageList.insertRow(row+1)
+        # row = self.tableWidgetImageList.rowCount()-1
+        # print(logMessage["File_name"])
+        # self.tableWidgetImageList.setItem(row, 0, QTableWidgetItem(logMessage["File_name"]))
+        # self.tableWidgetImageList.setItem(row, 1, QTableWidgetItem(logMessage["Timestamp"]))
+        # self.tableWidgetImageList.setItem(row, 2, QTableWidgetItem(logMessage["Result"]))
+        # self.tableWidgetImageList.insertRow(row+1)
+
+        row = self.tableWidgetLog.rowCount()-1
+        self.tableWidgetLog.setItem(row, 0, QTableWidgetItem(logMessage["File_name"]))
+        self.tableWidgetLog.setItem(row, 1, QTableWidgetItem(logMessage["Timestamp"]))
+        self.tableWidgetLog.setItem(row, 2, QTableWidgetItem(logMessage["Probability_ok"]))
+        self.tableWidgetLog.setItem(row, 3, QTableWidgetItem(logMessage["Probability_def"]))
+        self.tableWidgetLog.setItem(row, 4, QTableWidgetItem(logMessage["Result"]))
+        self.tableWidgetLog.insertRow(row+1)
 
         filename = logMessage["File_name"]
         # ui 프린트용 모든 파일 몰아넣기
@@ -166,10 +175,28 @@ class InferenceWindowClass(QMainWindow, form_class) :
         _openFile.triggered.connect(self.editFileDir)
 
         # table setting
-        self.tableWidgetImageList.setColumnCount(3)
-        self.tableWidgetImageList.setHorizontalHeaderLabels(['File Name', 'Created Time', 'Result'])
-        self.tableWidgetImageList.insertRow(0)
-        self.tableWidgetImageList.horizontalHeaderItem(0).setToolTip("코드...")
+        # self.tableWidgetImageList.setColumnCount(3)
+        # self.tableWidgetImageList.setHorizontalHeaderLabels(['File Name', 'Created Time', 'Result'])
+        # self.tableWidgetImageList.insertRow(0)
+        # self.tableWidgetImageList.horizontalHeaderItem(0).setToolTip("코드...")
+        # self.tableWidgetImageList.setColumnWidth(0, self.tableWidgetImageList.width()*2/5)
+        # self.tableWidgetImageList.setColumnWidth(1, self.tableWidgetImageList.width()*2/5)
+        # self.tableWidgetImageList.setColumnWidth(2, self.tableWidgetImageList.width()*1/5)
+
+        self.pushButtonLogClear.clicked.connect(self.clickLogClear)
+
+        # log table setting
+        self.tableWidgetLog.clicked.connect(self.clickTableImages)
+        self.tableWidgetLog.setColumnCount(5)
+        self.tableWidgetLog.setHorizontalHeaderLabels(['File Name', 'Created Time', 'Probability_ok', 'Probability_def', 'Result'])
+        self.tableWidgetLog.insertRow(0)
+        self.tableWidgetLog.horizontalHeaderItem(0).setToolTip("코드...")
+
+        self.tableWidgetLog.setColumnWidth(0, self.tableWidgetLog.width()*1/5)
+        self.tableWidgetLog.setColumnWidth(1, self.tableWidgetLog.width()*1/5)
+        self.tableWidgetLog.setColumnWidth(2, self.tableWidgetLog.width()*1/5)
+        self.tableWidgetLog.setColumnWidth(3, self.tableWidgetLog.width()*1/5)
+        self.tableWidgetLog.setColumnWidth(4, self.tableWidgetLog.width()*1/6)
 
         # 이미지 미리보기
         self.pushButtonOpenSingleImageDir.clicked.connect(self.showSingleImage)
@@ -186,6 +213,10 @@ class InferenceWindowClass(QMainWindow, form_class) :
     
         self.pushButtonControlStop.clicked.connect(self.allStopInference)
     
+    # 로그창 초기화
+    def clickLogClear(self):
+        self.textBrowserLogContent.clear()
+
     # 로깅 초기화
     def initLogger(self, logger_name):
         self.logger = logging.getLogger(logger_name)
@@ -206,6 +237,22 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.logger.addHandler(streamHandler)
         return self.logger
 
+    # 테이블 클릭시 이미지 띄우기
+    def clickTableImages(self):
+        row = self.tableWidgetLog.currentIndex().row()
+        filename = self.tableWidgetLog.item(row, 0).text()
+        detail = self.allInferencedFile[filename]
+
+        imageDir = detail["Image_path"]
+        camDir = detail["CAM_path"]
+        self.singleInferenceDir = detail["Image_path"]
+        self.labelSingleImageDir.setText(detail["Image_path"])
+        # mergedDir = detail["Merged_path"]
+
+        imageDirPixmap = QPixmap(imageDir)
+        camDirPixmap = QPixmap(camDir)
+        self.labelSingleImageShow.setPixmap(imageDirPixmap)
+        self.labelSingleCAMShow.setPixmap(camDirPixmap)
     
 
     # 모달 창 - 모든 이미지 파일 리스트
@@ -216,14 +263,15 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
     # 메뉴에 파일 다시 열기 누르면
     def editFileDir(self):
-        initModal = InferenceInitModal()
-        initModal.exec_()
+        fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        if fname:
+            self.inferenceDir = fname
+            self.textBrowserImageFile.setText(fname)
 
-        self.inferenceDir = initModal.inferenceDir
-        self.modelDir = initModal.modelDir
-
-        self.textBrowserImageFile.setText(self.inferenceDir)
-        self.textBrowserModelSaveFile.setText(self.modelDir)
+        # initModal = InferenceInitModal()
+        # initModal.exec_()
+        # self.inferenceDir = initModal.inferenceDir
+        # self.textBrowserImageFile.setText(self.inferenceDir)
 
 
     # 로그 파일 initialize
@@ -240,14 +288,23 @@ class InferenceWindowClass(QMainWindow, form_class) :
         
         fname = QFileDialog.getOpenFileName(self, '', 'Open file')
         # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
-        self.labelSingleImageDir.setText(fname[0])
+        if fname:
+            self.labelSingleImageDir.setText(fname[0])
 
-        singleImageDir = fname[0]
-        pixmap = QPixmap(singleImageDir)
-        self.labelSingleImageShow.setPixmap(pixmap)
+            singleImageDir = fname[0]
+            self.singleInferenceDir = singleImageDir
+            pixmap = QPixmap(singleImageDir)
+            self.labelSingleImageShow.setPixmap(pixmap)
+
+            self.labelSingleCAMShow.clear()
+            self.labelSingleCAMShow.setText(singleImageDir)
+
+        # self.labelSingleCAMShow = QLabel()
+        # self.labelSingleCAMShow.setText("happy")
 
     # 개별 이미지 추론 시작
     def singleStartInference(self):
+        # self.singleInferenceDir # 이미지 위치..
         pass
 
     # 모든 이미지 추론 시작

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1349</width>
-    <height>783</height>
+    <width>1524</width>
+    <height>761</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,22 +16,34 @@
   <widget class="QWidget" name="gridLayoutWidget_4">
    <property name="geometry">
     <rect>
-     <x>570</x>
+     <x>550</x>
      <y>130</y>
-     <width>671</width>
+     <width>901</width>
      <height>341</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayoutImageSample" rowstretch="1,9">
-    <item row="0" column="0">
-     <widget class="QLabel" name="labelOriginImage">
+    <item row="1" column="1">
+     <widget class="QLabel" name="imageCAM">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ffffff;
+border-width: 1px;
+border-style: solid;
+border-color: #000000;</string>
+      </property>
       <property name="text">
-       <string>원본 이미지</string>
+       <string>CAM 이미지</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
      <widget class="QLabel" name="labelCAMImage">
+      <property name="styleSheet">
+       <string notr="true">font-size: 18px</string>
+      </property>
       <property name="text">
        <string>CAM 이미지</string>
       </property>
@@ -39,15 +51,53 @@
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="imageOriginal">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ffffff;
+border-width: 1px;
+border-style: solid;
+border-color: #000000;</string>
+      </property>
       <property name="text">
-       <string>Original Image</string>
+       <string>원본 이미지</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="imageCAM">
+    <item row="0" column="0">
+     <widget class="QLabel" name="labelOriginImage">
+      <property name="styleSheet">
+       <string notr="true">font-size: 18px</string>
+      </property>
       <property name="text">
-       <string>CAM image</string>
+       <string>원본 이미지</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="labelCAMImage_2">
+      <property name="styleSheet">
+       <string notr="true">font-size: 18px</string>
+      </property>
+      <property name="text">
+       <string>Merged 이미지</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="imageMerged">
+      <property name="styleSheet">
+       <string notr="true">background-color: #ffffff;
+border-width: 1px;
+border-style: solid;
+border-color: #000000;</string>
+      </property>
+      <property name="text">
+       <string>Merged 이미지</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -56,42 +106,23 @@
   <widget class="QLabel" name="allImagesTitle">
    <property name="geometry">
     <rect>
-     <x>70</x>
+     <x>50</x>
      <y>90</y>
      <width>251</width>
      <height>31</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">font-size: 18px</string>
+   </property>
    <property name="text">
     <string>추론한 파일 리스트</string>
    </property>
   </widget>
-  <widget class="QWidget" name="verticalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>570</x>
-     <y>500</y>
-     <width>671</width>
-     <height>201</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayoutSelectedImage">
-    <item>
-     <widget class="QLabel" name="labelSelectedImage">
-      <property name="text">
-       <string>선택 파일 설명</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QTextBrowser" name="textBrowserSelectedImage"/>
-    </item>
-   </layout>
-  </widget>
   <widget class="QTableWidget" name="tableWidgetAllFile">
    <property name="geometry">
     <rect>
-     <x>70</x>
+     <x>50</x>
      <y>130</y>
      <width>461</width>
      <height>571</height>
@@ -101,7 +132,7 @@
   <widget class="QPushButton" name="pushButtonAll">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>60</x>
      <y>30</y>
      <width>121</width>
      <height>41</height>
@@ -114,7 +145,7 @@
   <widget class="QPushButton" name="pushButtonOk">
    <property name="geometry">
     <rect>
-     <x>210</x>
+     <x>190</x>
      <y>30</y>
      <width>121</width>
      <height>41</height>
@@ -127,7 +158,7 @@
   <widget class="QPushButton" name="pushButtonDef">
    <property name="geometry">
     <rect>
-     <x>340</x>
+     <x>320</x>
      <y>30</y>
      <width>121</width>
      <height>41</height>
@@ -135,6 +166,35 @@
    </property>
    <property name="text">
     <string>불량품 이미지</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelSelectedImage">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>490</y>
+     <width>981</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-size: 18px</string>
+   </property>
+   <property name="text">
+    <string>세부 내용</string>
+   </property>
+  </widget>
+  <widget class="QTextBrowser" name="textBrowserSelectedImage">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>518</y>
+     <width>901</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="openExternalLinks">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>
