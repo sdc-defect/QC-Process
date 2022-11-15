@@ -5,16 +5,30 @@
 <td> 내용 </td>
 </tr>
 <tr>
-<td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-<td> <img id="model" src="image/rjh-case7-model.png"/> </td>
+<td> Datetime </td>
+<td id="date">2022-11-13 09:54:09</td>
 </tr>
 <tr>
-<td> optimizer </td>
-<td> Adam </td>
+<td> Time cost </td>
+<td id="time-cost">107m 13s</td>
 </tr>
 <tr>
-<td> scheduler </td>
-<td> CosineDecayRestarts </td>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Model </td>
+</tr>
+<tr>
+<td> Total params </td>
+<td id="total-params">12,933,696</td>
+</tr>
+<tr>
+<td> Trainable params </td>
+<td id="trainable-params">12,824,480</td>
+</tr>
+<tr>
+<td> Non-trainable params </td>
+<td id="non-trainable-params">109,216</td>
+</tr>
+<tr>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Hyperparameters </td>
 </tr>
 <tr>
 <td> init learning rate </td>
@@ -31,17 +45,8 @@
 <tr>
 <td> epoch </td>
 <td id="epoch">50</td>
-</tr>
 <tr>
-<td> GPU 여부 (O / X) </td>
-<td> O </td>
-</tr>
-<tr>
-<td> loss function </td>
-<td> CategoricalCrossentropy </td>
-</tr>
-<tr>
-<td colspan="2" style="font-weight: bold;, font-size: 30px;"> best model </td>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Best Model </td>
 </tr>
 <tr>
 <td> Train Loss </td>
@@ -67,6 +72,5 @@
 <td> must_cnt (total 10) </td>
 <td id="must-cnt">10</td>
 </tr>
-</table>
-<p>이전 실험과 다른 점 : {...}</p>
-<p>결론 : {...}</p>
+</tr></table>
+<p>상세내용 : </p>
