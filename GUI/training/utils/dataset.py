@@ -27,11 +27,11 @@ def merge_dataset_path(path: List, img_size: Union[Tuple[int, int], int] = (300,
     paths = []
     labels = []
 
-    paths0 = glob(path[0] + "/*")
+    paths0 = glob(path[0] + "/*[png$|jpg$|jpeg$|tif$]")
     paths.extend(paths0)
     labels.extend([(1., 0.) for _ in range(len(paths0))])
 
-    paths1 = glob(path[1] + "/*")
+    paths1 = glob(path[1] + "/*[png$|jpg$|jpeg$|tif$]")
     paths.extend(paths1)
     labels.extend([(0., 1.) for _ in range(len(paths1))])
 
@@ -82,21 +82,21 @@ def get_dataset_from_config(config: TrainConfig) \
                  List[Tuple[np.ndarray, Tuple[float, float]]]]:
     train_dataset = merge_dataset_path(config.train_path)
 
-    test_dataset = None
-    if isinstance(config.test_path, List):
+    if config.test_path is None:
+        train_dataset, test_dataset = \
+            train_test_split(train_dataset, test_size=config.test_path)
+    elif config.test_per is None:
         test_dataset = merge_dataset_path(config.test_path)
     else:
-        if config.test_path > 0:
-            train_dataset, test_dataset = \
-                train_test_split(train_dataset, test_size=config.test_path)
+        raise Exception("One of test_path or test_per must be specified")
 
-    val_dataset = None
-    if isinstance(config.val_path, List):
+    if config.val_path is None:
+        train_dataset, val_dataset = \
+            train_test_split(train_dataset, test_size=config.val_path)
+    elif config.test_per is None:
         val_dataset = merge_dataset_path(config.val_path)
     else:
-        if config.test_path > 0:
-            train_dataset, val_dataset = \
-                train_test_split(train_dataset, test_size=config.val_path)
+        raise Exception("One of val_path or val_per must be specified")
 
     flipper = album.OneOf([
         album.HorizontalFlip(p=1),

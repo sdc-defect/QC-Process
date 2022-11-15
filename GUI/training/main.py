@@ -1,43 +1,42 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 import os
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QThread
-from PyQt5.QtCore import QWaitCondition
-from PyQt5.QtCore import QMutex
-from PyQt5.QtCore import pyqtSignal
+
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QProcess
+
 # graph lib
 import pandas as pd
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-import threading
-import time
-import csv
 
+import utils
 from training_init import TrainingInitWindowClass
-from training_ratio import TrainingRatioWindowClass
+from utils.dto import TrainConfig
+
+import json
 
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 form_class = uic.loadUiType("training.ui")[0]
 
 # 그래프 띄워줄 데이터 import
-log_data = pd.read_csv('./_log.csv')
-log_data1=log_data['train_loss']
-log_data2=log_data[ 'train_accuracy']
-log_data3=log_data['train_recall']
-# log_data4=log_data['train_f1']
-log_data5=log_data['val_loss']
-log_data6=log_data['val_accuracy']
-log_data7=log_data['val_recall']
-# log_data8=log_data['val_f1']
+log_data1=[]
+log_data2=[]
+log_data3=[]
+log_data5=[]
+log_data6=[]
+log_data7=[]
 
 #화면을 띄우는데 사용되는 Class 선언
+
 class trainingWindowClass(QMainWindow, form_class) :
+    # set config data
+    isSetFile = False
+    config = TrainConfig(save_path=None, train_path=None, test_path=None, test_per=None, val_path=None, val_per=None)
+
 
     setAugmentation = True
     setFlip = True
@@ -60,42 +59,27 @@ class trainingWindowClass(QMainWindow, form_class) :
     validationFileCount = 0
 
     def __init__(self) :
-        # threading.Thread.__init__(self)
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Training")
-
         self.initUI()
+
+        self.lblAreaAcc:QLabel
+        self.lblAreaLoss:QLabel
+        self.lblAreaRecall:QLabel
+        self.text = QPlainTextEdit()
 
         # 하이퍼파라미터 - 초기값 설정
         self.initHyperParameter()
-        
-        self.lblAreaAcc:QLabel
-        self.lblAreaLoss:Qlabel
-        self.lblAreaRecall:Qlabel
-        
-        
-        # 쓰레드 선언
-        self.th = Thread()
-        self.init_widget()
-        # 쓰레드 시작
-        self.th.start()
 
-    def init_widget(self):
-        # 시그널 슬롯 연결
-        # self.pushButtonControlStart.clicked.connect(self.trainingStart)
-        # self.th.change_value.connect(self.progressBar.setValue)
-        self.th.change_value.connect(self.resultUpdate)
-        self.th.update_log.connect(self.logUpdate)
+        # log clear
+        self.pushClearButton.clicked.connect(self.clickClearButton)
 
-    def resultUpdate(self, progress):
-        self.progressBar.setValue(progress)
+        # 학습 종료
+        self.pushButtonControlStop.clicked.connect(self.trainingStop)
 
-    def logUpdate(self, logContext):
-        self.textBrowser.append(logContext + "\n")
-
-    def test(self):
-        print(self.setEpoch, self.setBatchSize, self.setLearningRate, self.setDecayStep)
+    def clickClearButton(self):
+        self.textBrowser.clear()
 
     # 초기화
     def initUI(self):
@@ -113,39 +97,94 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     # 파일 열기 모달 띄우기
     def editFileDir(self):
-        # 첫 번째 모달
         initFirstModal = TrainingInitWindowClass()
         initFirstModal.exec_()
 
-        self.trainSetDir = initFirstModal.trainSetDir
-        self.testSetDir = initFirstModal.testSetDir
-        self.validationSetDir = initFirstModal.validationSetDir
-        self.modelSaveDir = initFirstModal.modelSaveDir
+        if initFirstModal.fileSetdata != {}:
+            self.config.save_path = initFirstModal.fileSetdata['save_path']
+            self.config.train_path = initFirstModal.fileSetdata['train_path']
+            self.config.test_path = initFirstModal.fileSetdata['test_path']
+            self.config.test_per = initFirstModal.fileSetdata['test_per']
+            self.config.val_path = initFirstModal.fileSetdata['val_path']
+            self.config.val_per = initFirstModal.fileSetdata['val_per']
+            self.isSetFile = True
 
-        self.trainFileCount = initFirstModal.trainFileCount
-        self.testFileCount = initFirstModal.testFileCount
-        self.validationFileCount = initFirstModal.validationFileCount
+            # main.ui에 플롯되는 내용
+            # Train
+            self.labelTrainOkDir.setText(initFirstModal.fileSetdata['train_path'][0])
+            self.labelTrainDefDir.setText(initFirstModal.fileSetdata['train_path'][1])
+            self.labelTrainOkCount.setText(str(initFirstModal.trainOkCount))
+            self.labelTrainDefCount.setText(str(initFirstModal.trainDefCount))
 
-        # 두 번째 모달
-        initSecondModal = TrainingRatioWindowClass(self.trainFileCount, self.testFileCount, self.validationFileCount)
-        initSecondModal.exec_()
+            # Test
+            if self.config.test_path == None:
+                self.labelTestOkCount.setStyleSheet("Color : gray")    
+                self.labelTestOkDir.setStyleSheet("Color : gray")    
+                self.labelTestOkTitle.setStyleSheet("Color : gray")
+                self.labelTestDefCount.setStyleSheet("Color : gray")    
+                self.labelTestDefDir.setStyleSheet("Color : gray")    
+                self.labelTestDefTitle.setStyleSheet("Color : gray")
 
-        self.trainFileCount = initSecondModal.train_cnt
-        self.testFileCount = initSecondModal.test_cnt
-        self.validationFileCount = initSecondModal.val_cnt
+                self.labelTestRatioCount.setStyleSheet("Color : black")    
+                self.labelTestRatioDir.setStyleSheet("Color : black")    
+                self.labelTestRatioTitle.setStyleSheet("Color : black")
 
-        self.labelTrainSetDir.setText(self.trainSetDir)
-        self.labelTestSetDir.setText(self.testSetDir)
-        self.labelValidationSetDir.setText(self.validationSetDir)
-        self.labelModelSaveDir.setText(self.modelSaveDir)
+                self.labelTestRatioDir.setText(str(int(initFirstModal.fileSetdata['test_per'] * 100)) + '%')
+                self.labelTestRatioCount.setText(initFirstModal.testTotalCount)
+            else:
+                self.labelTestOkCount.setStyleSheet("Color : black")    
+                self.labelTestOkDir.setStyleSheet("Color : black")    
+                self.labelTestOkTitle.setStyleSheet("Color : black")
+                self.labelTestDefCount.setStyleSheet("Color : black")    
+                self.labelTestDefDir.setStyleSheet("Color : black")    
+                self.labelTestDefTitle.setStyleSheet("Color : black")
 
-        self.labelTrainSetCount.setText("(" + str(self.trainFileCount) + ")")
-        self.labelTestSetCount.setText("(" + str(self.testFileCount) + ")")
-        self.labelValidationSetCount.setText("(" + str(self.validationFileCount) + ")")
-        
+                self.labelTestRatioCount.setStyleSheet("Color : gray")    
+                self.labelTestRatioDir.setStyleSheet("Color : gray")    
+                self.labelTestRatioTitle.setStyleSheet("Color : gray")
+
+                self.labelTestOkDir.setText(initFirstModal.fileSetdata['test_path'][0])
+                self.labelTestDefDir.setText(initFirstModal.fileSetdata['test_path'][1])
+                self.labelTestOkCount.setText(initFirstModal.testOkCount)
+                self.labelTestDefCount.setText(initFirstModal.testDefCount)
+
+            # Validation
+            if self.config.val_path == None:
+                self.labelValidationOkCount.setStyleSheet("Color : gray")    
+                self.labelValidationOkDir.setStyleSheet("Color : gray")    
+                self.labelValidationOkTitle.setStyleSheet("Color : gray")
+                self.labelValidationDefCount.setStyleSheet("Color : gray")    
+                self.labelValidationDefDir.setStyleSheet("Color : gray")    
+                self.labelValidationDefTitle.setStyleSheet("Color : gray")
+
+                self.labelValidationRatioCount.setStyleSheet("Color : black")    
+                self.labelValidationRatioDir.setStyleSheet("Color : black")    
+                self.labelValidationRatioTitle.setStyleSheet("Color : black")
+
+                self.labelValidationRatioDir.setText(str(int(initFirstModal.fileSetdata['val_per'] * 100)) + '%')
+                self.labelValidationRatioCount.setText(initFirstModal.validationTotalCount)
+            else:
+                self.labelValidationOkCount.setStyleSheet("Color : black")    
+                self.labelValidationOkDir.setStyleSheet("Color : black")    
+                self.labelValidationOkTitle.setStyleSheet("Color : black")
+                self.labelValidationDefCount.setStyleSheet("Color : black")    
+                self.labelValidationDefDir.setStyleSheet("Color : black")    
+                self.labelValidationDefTitle.setStyleSheet("Color : black")
+
+                self.labelValidationRatioCount.setStyleSheet("Color : gray")    
+                self.labelValidationRatioDir.setStyleSheet("Color : gray")    
+                self.labelValidationRatioTitle.setStyleSheet("Color : gray")
+
+                self.labelValidationOkDir.setText(initFirstModal.fileSetdata['val_path'][0])
+                self.labelValidationDefDir.setText(initFirstModal.fileSetdata['val_path'][1])
+                self.labelValidationOkCount.setText(initFirstModal.validationOkCount)
+                self.labelValidationDefCount.setText(initFirstModal.validationDefCount)
+
+            # Save Directiory
+            self.labelSaveDir.setText(initFirstModal.fileSetdata['save_path'])
+
     # 이벤트 연결
     def initData(self):
-
         # 어그멘테이션
         self.checkBoxAugmentation.stateChanged.connect(self.switchAugmentation)
         self.checkBoxFlip.stateChanged.connect(self.switchFlip)
@@ -167,8 +206,6 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.labelLearningRate.setText(str(self.setLearningRate))
 
         self.pushButtonControlStart.clicked.connect(self.trainingStart)
-        self.pushButtonControlRestart.clicked.connect(self.trainingRestart)
-        self.pushButtonControlPause.clicked.connect(self.trainingPause)
         self.pushButtonControlStop.clicked.connect(self.trainingStop)
 
         # 프로그래스바는 0부터 시작
@@ -176,7 +213,7 @@ class trainingWindowClass(QMainWindow, form_class) :
    
     # epoch
     def changeEpoch(self):
-        # 5 단위만 되도록 할 지?
+
         epoch = self.spinBoxEpoch.value()
         if epoch%5 != 0: # 5의 배수 아니면 절삭
             epoch = epoch - epoch%5
@@ -271,33 +308,158 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     # 학습 시작
     @pyqtSlot()
-    def trainingStart(self):
-        self.th.toggle_status()
-        self.pushButtonControlStart.setText({True: "일시정지", False: "시작"}[self.th.status])
+    def trainingStart(self):        
+        # 어그멘테이션 설정
+        if self.setAugmentation:
+            self.config.flip = self.checkBoxFlip.isChecked()
+            self.config.spin = self.checkBoxSpin.isChecked()
+            self.config.shift = self.checkBoxSwift.isChecked()
+            self.config.mixup = self.checkBoxMixup.isChecked()
+        else:
+            self.config.flip = False
+            self.config.spin = False
+            self.config.shift = False
+            self.config.mixup = False
 
-    # 학습 다시시작
-    def trainingRestart(self):
-        pass
+        # 하이퍼 파라미터 설정
+        self.config.epoch = int(self.spinBoxEpoch.text())
+        self.config.lr = float(self.labelLearningRate.text())
 
-    # 학습 일시정지 - 없애고 시작 버튼으로 통일할 듯
-    def trainingPause(self):
-        pass
-    
+        if self.comboBoxBatchSize.currentText() == "사용자 지정":
+            self.config.batch_size = int(self.lineEditBatchSize.text())
+        else:
+            self.config.batch_size = int(self.comboBoxBatchSize.currentText())
+
+        if self.comboBoxDecayStep.currentText() == "사용자 지정":
+            self.config.decay = int(self.lineEditDecayStep.text())
+        else:
+            self.config.decay = int(self.comboBoxDecayStep.currentText())
+
+        if self.isSetFile:
+            try:
+                # Augmentation, hyper parameter unable
+                # Augmentation
+                self.checkBoxAugmentation.setEnabled(False)
+                self.checkBoxFlip.setEnabled(False)
+                self.checkBoxMixup.setEnabled(False)
+                self.checkBoxSpin.setEnabled(False)
+                self.checkBoxSwift.setEnabled(False)
+
+                # hyper parameter
+                self.spinBoxEpoch.setEnabled(False)
+                self.horizontalSliderLearningRate.setEnabled(False)
+                self.labelLearningRate.setEnabled(False)
+                self.comboBoxBatchSize.setEnabled(False)
+                self.lineEditBatchSize.setEnabled(False)
+                self.comboBoxDecayStep.setEnabled(False)
+                self.lineEditDecayStep.setEnabled(False)
+
+                # start button
+                self.pushButtonControlStart.setEnabled(False)
+
+                # QProcess 시작
+                save_path = self.config.process()
+                utils.make_folder(save_path)
+
+                # .json 파일 만들기
+                json_file = os.path.join(save_path, 'config.json')
+                with open(json_file, 'w') as f:
+                    json.dump(self.config.__dict__, f)
+                    print("dumped", json_file)
+
+                # qProcess
+                self.start_process(json_file)
+            except Exception as e:
+                # 오류 메시지 출력하기
+                print(e)
+
+    def message(self, s):
+        self.textBrowser.append(s)
+        s = s.rstrip()
+        if s[-1] == '}':
+            
+            tmp = s.split('-')
+            isTrain = tmp[3].rstrip().lstrip()
+            result_dict = tmp[5].rstrip().lstrip()
+            
+            if isTrain == 'train':
+                result_dict = eval(result_dict)
+                log_data1.append(result_dict['loss'])
+                log_data2.append(result_dict['accuracy'])
+                log_data3.append(result_dict['recall'])
+            
+            elif isTrain == 'val':
+                result_dict = eval(result_dict)
+                log_data5.append(result_dict['loss'])
+                log_data6.append(result_dict['accuracy'])
+                log_data7.append(result_dict['recall'])
+        return
+
+    def start_process(self, json_file):
+        self.message("Executing process")
+        self.p = QProcess()  # Keep a reference to the QProcess (e.g. on self) while it's running.
+        self.p.readyReadStandardOutput.connect(self.handle_stdout)
+        self.p.readyReadStandardError.connect(self.handle_stderr)
+        self.p.stateChanged.connect(self.handle_state)
+        self.p.finished.connect(self.process_finished)  # Clean up once complete.
+        self.message(self.p.start("python", ['train.py', '--json', json_file]))
+
+    def handle_stderr(self):
+        data = self.p.readAllStandardError()
+        stderr = bytes(data).decode("utf8")
+        # Extract progress if it is in the data.
+        self.message(stderr)
+
+    def handle_stdout(self):
+        data = self.p.readAllStandardOutput()
+        print(data)
+        stdout = bytes(data).decode("utf8")
+        print(type(stdout), len(stdout), str(stdout))
+        if stdout[0] == '{' and stdout[-1] == '}':
+            print(TrainConfig)
+            data = json.loads(stdout)
+            print('=============== data:')
+            print(data)
+        self.message(stdout)
+
+    def handle_state(self, state):
+        states = {
+            QProcess.NotRunning: 'Not running',
+            QProcess.Starting: 'Starting',
+            QProcess.Running: 'Running',
+        }
+        state_name = states[state]
+        self.message(f"State changed: {state_name}")
+
+    def process_finished(self):
+        self.message("Process finished.")
+        self.firstAction()
+        self.p = None
+            
     # 학습 정지
     def trainingStop(self):
-        pass
+        self.p.kill()
 
-    # @staticmethod
-    # def trainingStop():
-    #     # 초기화 (재시작)
-    #     trainingWindowClass.singleton = trainingWindowClass()
-    # singleton: 'trainingWindowClass' = None
+        # Augmentation
+        self.checkBoxAugmentation.setEnabled(True)
+        self.checkBoxFlip.setEnabled(True)
+        self.checkBoxMixup.setEnabled(True)
+        self.checkBoxSpin.setEnabled(True)
+        self.checkBoxSwift.setEnabled(True)
 
-    # def updateLogLabel(self, progress):
-    #     self.labelLog.setText("logText")
-    #     print("asdasfa")
-    #     print(progress)
-    #     # self.labelLog.setText(str(90))
+        # hyper parameter
+        self.spinBoxEpoch.setEnabled(True)
+        self.horizontalSliderLearningRate.setEnabled(True)
+        self.labelLearningRate.setEnabled(True)
+        self.comboBoxBatchSize.setEnabled(True)
+        self.comboBoxDecayStep.setEnabled(True)
+        if self.comboBoxBatchSize.currentText() == '사용자 지정':
+            self.lineEditBatchSize.setEnabled(True)
+        if self.comboBoxDecayStep.currentText() == '사용자 지정':
+            self.lineEditDecayStep.setEnabled(True)
+
+        # start button
+        self.pushButtonControlStart.setEnabled(True)
     
     # 그래프 플로팅
     def firstAction(self):
@@ -305,6 +467,7 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.layout().removeWidget(self.lblAreaAcc)
         self.layout().removeWidget(self.lblAreaRecall)
         self.lblAreaLoss.setParent(None)
+
         self.lblAreaAcc.setParent(None)
         self.lblAreaRecall.setParent(None)
         self.plotLoss = WidgetPlotLoss(self.centralwidget)  
@@ -397,104 +560,11 @@ class PlotCanvasRecall(FigureCanvas):
         
 # 그래프 끝
 
-# 결과 출력 쓰레드
-
-class Thread(QThread, form_class):
-    """
-    단순히 0부터 100까지 카운트만 하는 쓰레드
-    값이 변경되면 그 값을 change_value 시그널에 값을 emit 한다.
-    """
-    # 사용자 정의 시그널 선언
-    change_value = pyqtSignal(int)
-    update_log = pyqtSignal(str)
-
-    def __init__(self):
-        QThread.__init__(self)
-        self.cond = QWaitCondition()
-        self.mutex = QMutex()
-        self.cnt = 0
-        self._status = False # True로 바꿔야함
-        print("threadProgress")
-
-        self.logFileDir = "./_log.csv"
-
-    def __del__(self):
-        self.wait()
-
-    def run(self):
-        # 큐로 받을때 한 번만 실행하라고 while 없애면 될 듯?
-        while True:
-            self.mutex.lock()
-
-            if not self._status:
-                self.cond.wait(self.mutex)
-
-            if 100 == self.cnt:
-                self.cnt = 0
-            self.cnt += 1
-            # self.change_value.emit(self.cnt)
-            self.msleep(100)  # ※주의 QThread에서 제공하는 sleep을 사용
-
-            # 파일에서 한 줄 씩 읽어와서 진행상황 출력
-            f = open(self.logFileDir, 'r', encoding='utf-8')
-            self.logCsv = list(csv.reader(f))
-            f.close()
-
-            logIndex = self.logCsv[0]
-            logContent = self.logCsv[self.cnt]
-            logIndexCount = len(logIndex)
-
-            printContent = "Result" + str(self.cnt)
-            for i in range(logIndexCount):
-                addprintContent = logIndex[i] + ": " + logContent[i]
-                printContent = printContent + ", " + addprintContent
-            print(printContent)
-
-            self.change_value.emit(int(self.logCsv[self.cnt][0])/int(trainingWindowClass.setEpoch)*100)
-            
-            self.update_log.emit(printContent)
-
-            # print(self.cnt)
-
-            self.msleep(1000)
-            self.mutex.unlock()
-
-    def toggle_status(self):
-        self._status = not self._status
-        if self._status:
-            self.cond.wakeAll()
-
-    @property
-    def status(self):
-        return self._status
-
 def main():
     app = QApplication(sys.argv) 
     myWindow = trainingWindowClass() 
     myWindow.show()
-    myWindow.firstAction()
     exit(app.exec_())
 
 if __name__ == "__main__" :
     main()
-
-    # threadMain = threading.Thread(target=main)
-    # # threadMain.setDaemon(True)
-    # # threadLog = threading.Thread(target=showLog)
-
-    # threadMain.start()
-    # # showLogProgress()
-
-    # threadLog.start()
-
-    # #QApplication : 프로그램을 실행시켜주는 클래스
-    # app = QApplication(sys.argv) 
-
-    # #WindowClass의 인스턴스 생성
-    # myWindow = trainingWindowClass() 
-
-    # #프로그램 화면을 보여주는 코드
-    # myWindow.show()
-
-    # #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
-    # app.exec_()

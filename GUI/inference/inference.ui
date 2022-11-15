@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1885</width>
-    <height>1029</height>
+    <width>1920</width>
+    <height>1000</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,20 +20,13 @@
    <widget class="QWidget" name="gridLayoutWidget_3">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>130</y>
-      <width>881</width>
-      <height>421</height>
+      <x>70</x>
+      <y>110</y>
+      <width>1091</width>
+      <height>411</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayoutGraph" rowstretch="0,0,0,0">
-     <item row="3" column="0">
-      <widget class="QLabel" name="labelGraph1">
-       <property name="text">
-        <string>수율</string>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="1">
       <widget class="QLabel" name="labelGraph2">
        <property name="text">
@@ -48,6 +41,13 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="labelGraph1">
+       <property name="text">
+        <string>수율</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="1" rowspan="2">
       <widget class="QLabel" name="lblAreaLine">
        <property name="text">
@@ -57,61 +57,21 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>400</y>
-      <width>297</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayoutListShow" stretch="1,4">
-     <item>
-      <widget class="QLabel" name="labelListShow">
-       <property name="text">
-        <string>리스트 보기</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayoutListShow">
-       <item>
-        <widget class="QPushButton" name="pushButtonAllListShow">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>추론 완료 이미지</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>170</y>
+      <x>70</x>
+      <y>590</y>
       <width>281</width>
-      <height>161</height>
+      <height>221</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayoutControl" stretch="1,1,1">
-     <item>
-      <widget class="QLabel" name="labelControl">
-       <property name="text">
-        <string>모든 이미지 추론 제어</string>
-       </property>
-      </widget>
-     </item>
+    <layout class="QVBoxLayout" name="verticalLayoutControl" stretch="1,1,1,1">
      <item>
       <widget class="QPushButton" name="pushButtonControlStart">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -124,7 +84,42 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButtonControlRestart">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>다시시작</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonControlPause">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>일시정지</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pushButtonControlStop">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -138,169 +133,308 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_3">
-    <property name="geometry">
-     <rect>
-      <x>770</x>
-      <y>570</y>
-      <width>1091</width>
-      <height>371</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayoutLog" stretch="1,9">
-     <item>
-      <widget class="QLabel" name="labelLog">
-       <property name="text">
-        <string>로그</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTextBrowser" name="textBrowserLogContent"/>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_4">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>871</width>
-      <height>89</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayoutFileDir" stretch="1,2">
-     <item>
-      <widget class="QLabel" name="labelFileDir">
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string>파일 불러오기</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QGridLayout" name="gridLayoutFileDir_2" columnstretch="1,8">
-       <item row="0" column="1">
-        <widget class="QLabel" name="textBrowserImageFile">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="textBrowserModelSaveFile">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="labelImageFileDir">
-         <property name="text">
-          <string>이미지셋 파일 경로</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="labelModelSaveFileDir">
-         <property name="text">
-          <string>저장 파일 경로</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QTableWidget" name="tableWidgetImageList">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>140</y>
-      <width>371</width>
-      <height>391</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="labelSingleImageShow">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>610</y>
-      <width>311</width>
-      <height>241</height>
+      <x>1200</x>
+      <y>170</y>
+      <width>301</width>
+      <height>301</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #ffffff;
+border-width: 1px;
+border-style: solid;
+border-color: #000000;</string>
+    </property>
     <property name="text">
-     <string>이미지 미리보기</string>
+     <string>원본 이미지</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="labelSingleCAMShow">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>560</y>
-      <width>161</width>
-      <height>16</height>
+      <x>1520</x>
+      <y>170</y>
+      <width>301</width>
+      <height>301</height>
      </rect>
     </property>
-    <property name="text">
-     <string>개별 이미지 추론</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>610</y>
-      <width>311</width>
-      <height>241</height>
-     </rect>
+    <property name="styleSheet">
+     <string notr="true">background-color: #ffffff;
+border-width: 1px;
+border-style: solid;
+border-color: #000000;</string>
     </property>
     <property name="text">
-     <string>CAM이미지 또는 이미지 상세설명</string>
+     <string>CAM 이미지</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonSingleStartInference">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>880</y>
+      <x>1690</x>
+      <y>490</y>
       <width>131</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>추론하기</string>
+     <string>개별 추론</string>
     </property>
    </widget>
    <widget class="QLabel" name="labelSingleImageDir">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>590</y>
-      <width>511</width>
+      <x>1200</x>
+      <y>140</y>
+      <width>621</width>
       <height>16</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">font-size: 16px</string>
+    </property>
     <property name="text">
-     <string>이미지 위치 출력</string>
+     <string>이미지를 선택해주세요.</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonOpenSingleImageDir">
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>550</y>
-      <width>141</width>
+      <x>1690</x>
+      <y>80</y>
+      <width>131</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>파일 열기</string>
+     <string>개별 이미지 열기</string>
     </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidgetLog">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>590</y>
+      <width>991</width>
+      <height>341</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalWidget_4" native="true">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>20</y>
+      <width>711</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">padding: 3px 5px;</string>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="labelImageFileDir">
+       <property name="styleSheet">
+        <string notr="true">font-size: 19px;</string>
+       </property>
+       <property name="text">
+        <string>파일 저장 경로</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="textBrowserImageFile">
+       <property name="styleSheet">
+        <string notr="true">font-size: 17px;</string>
+       </property>
+       <property name="text">
+        <string>이미지 저장 경로를 설정해주세요.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="labelLog">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>560</y>
+      <width>291</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-size: 18px</string>
+    </property>
+    <property name="text">
+     <string>로그</string>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="textBrowserLogContent">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>590</y>
+      <width>409</width>
+      <height>339</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelLog_2">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>560</y>
+      <width>409</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-size: 18px</string>
+    </property>
+    <property name="text">
+     <string>추론 완료 이미지</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonLogClear">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>550</y>
+      <width>93</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Clear</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelControl">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>560</y>
+      <width>279</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-size: 18px</string>
+    </property>
+    <property name="text">
+     <string>모든 이미지 추론 제어</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelListShow">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>840</y>
+      <width>279</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-size: 18px</string>
+    </property>
+    <property name="text">
+     <string>리스트 보기</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButtonAllListShow">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>870</y>
+      <width>277</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;양품, 불품 리스트를 나눠서 볼 수 있습니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>추론 완료 리스트</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelSingleImageDir_2">
+    <property name="geometry">
+     <rect>
+      <x>1200</x>
+      <y>110</y>
+      <width>511</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-size: 18px</string>
+    </property>
+    <property name="text">
+     <string>이미지 위치</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalWidget_5" native="true">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>20</y>
+      <width>871</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="labelModelFileDir">
+       <property name="styleSheet">
+        <string notr="true">font-size: 19px;</string>
+       </property>
+       <property name="text">
+        <string>모델 파일</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="textBrowserModelFile">
+       <property name="styleSheet">
+        <string notr="true">font-size: 17px;</string>
+       </property>
+       <property name="text">
+        <string>모델 파일을 설정해주세요.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -308,8 +442,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1885</width>
-     <height>21</height>
+     <width>1920</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>
