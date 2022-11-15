@@ -450,6 +450,163 @@ class MyCustomModel9(tf.keras.Model): # ksh-case 22
             x = layer(x)
         return x
 
-test = MyCustomModel9()
+
+class MyCustomModel10(tf.keras.Model): # ksh-case 23
+    def __init__(self):
+        super(MyCustomModel10, self).__init__()
+
+        conv2d = tf.keras.layers.Conv2D
+        maxpool = tf.keras.layers.MaxPool2D
+        avgpool = tf.keras.layers.GlobalAveragePooling2D
+        norm = tf.keras.layers.BatchNormalization
+        dense = tf.keras.layers.Dense
+        dropout = tf.keras.layers.Dropout
+
+        self.sequence = list()
+
+        self.sequence.append(conv2d(32, (3, 3), padding='same', activation='relu', input_shape=(300, 300, 3)))
+        self.sequence.append(conv2d(32, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(norm())
+        self.sequence.append(maxpool((2, 2)))
+
+
+        self.sequence.append(conv2d(64, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(conv2d(64, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(norm())
+        self.sequence.append(maxpool((2, 2)))
+
+
+        self.sequence.append(conv2d(128, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(conv2d(128, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(norm())
+        # self.sequence.append(maxpool((2, 2)))
+
+        # self.sequence.append(conv2d(256, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(conv2d(256, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(maxpool((2, 2)))
+        #
+        # self.sequence.append(conv2d(512, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(conv2d(512, (3, 3), padding='same', activation='relu'))
+
+        self.sequence.append(norm())
+        self.sequence.append(tf.keras.layers.LeakyReLU())
+        self.sequence.append(dropout(0.5))
+        # parameter 수 감소 효과
+        self.sequence.append(avgpool())
+        self.sequence.append(dropout(0.5))
+        self.sequence.append(dense(2, activation="softmax"))
+
+    def call(self, x, training=False, mask=None):
+        for layer in self.sequence:
+            x = layer(x)
+        return x
+
+
+class MyCustomModel11(tf.keras.Model): # ksh-case 24
+    def __init__(self):
+        super(MyCustomModel11, self).__init__()
+
+        conv2d = tf.keras.layers.Conv2D
+        maxpool = tf.keras.layers.MaxPool2D
+        avgpool = tf.keras.layers.GlobalAveragePooling2D
+        norm = tf.keras.layers.BatchNormalization
+        dense = tf.keras.layers.Dense
+        dropout = tf.keras.layers.Dropout
+
+        self.sequence = list()
+
+        self.sequence.append(conv2d(32, (3, 3), padding='same', activation='relu', input_shape=(300, 300, 3)))
+        self.sequence.append(conv2d(32, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(norm())
+        self.sequence.append(maxpool((2, 2)))
+
+
+        self.sequence.append(conv2d(64, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(conv2d(64, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(norm())
+        self.sequence.append(maxpool((2, 2)))
+
+
+        # self.sequence.append(conv2d(128, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(conv2d(128, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(norm())
+        # self.sequence.append(maxpool((2, 2)))
+
+        # self.sequence.append(conv2d(256, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(conv2d(256, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(maxpool((2, 2)))
+        #
+        # self.sequence.append(conv2d(512, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(conv2d(512, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(dense(120, activation='relu'))
+        self.sequence.append(dense(120, activation='relu'))
+        self.sequence.append(norm())
+        self.sequence.append(tf.keras.layers.LeakyReLU())
+        self.sequence.append(dropout(0.5))
+        # parameter 수 감소 효과
+        self.sequence.append(avgpool())
+        self.sequence.append(dropout(0.5))
+        self.sequence.append(dense(2, activation="softmax"))
+
+    def call(self, x, training=False, mask=None):
+        for layer in self.sequence:
+            x = layer(x)
+        return x
+
+
+
+class MyCustomModel12(tf.keras.Model): # ksh-case 25
+    def __init__(self):
+        super(MyCustomModel12, self).__init__()
+
+        conv2d = tf.keras.layers.Conv2D
+        maxpool = tf.keras.layers.MaxPool2D
+        avgpool = tf.keras.layers.GlobalAveragePooling2D
+        norm = tf.keras.layers.BatchNormalization
+        dense = tf.keras.layers.Dense
+        dropout = tf.keras.layers.Dropout
+
+        self.sequence = list()
+
+        self.sequence.append(conv2d(32, (3, 3), padding='same', activation='relu', input_shape=(300, 300, 3)))
+        self.sequence.append(conv2d(32, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(norm())
+        self.sequence.append(maxpool((2, 2)))
+
+
+        self.sequence.append(conv2d(64, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(conv2d(64, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(norm())
+        self.sequence.append(maxpool((2, 2)))
+
+
+        self.sequence.append(conv2d(128, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(conv2d(128, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(norm())
+        self.sequence.append(maxpool((2, 2)))
+
+        self.sequence.append(conv2d(256, (3, 3), padding='same', activation='relu'))
+        self.sequence.append(conv2d(256, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(maxpool((2, 2)))
+        #
+        # self.sequence.append(conv2d(512, (3, 3), padding='same', activation='relu'))
+        # self.sequence.append(conv2d(512, (3, 3), padding='same', activation='relu'))
+
+        self.sequence.append(norm())
+        self.sequence.append(tf.keras.layers.LeakyReLU())
+        self.sequence.append(dropout(0.5))
+        # parameter 수 감소 효과
+        self.sequence.append(dense(120, activation='relu'))
+        self.sequence.append(dense(120, activation='relu'))
+        self.sequence.append(avgpool())
+        self.sequence.append(dropout(0.5))
+        self.sequence.append(dense(2, activation="softmax"))
+
+    def call(self, x, training=False, mask=None):
+        for layer in self.sequence:
+            x = layer(x)
+        return x
+
+test = MyCustomModel12()
 test.build(input_shape=(None, 300, 300, 3))
 test.summary()
