@@ -452,7 +452,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
         return [self.line2]
     
     def on_start(self):
-        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=25)
+        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=1000)
 
     
     def on_stop(self):
