@@ -11,9 +11,8 @@ from keras.utils import Progbar
 
 from utils.trainer import MyTrainer, MyTester, inference
 from utils.matrix import Must, count_def_in_must_list
-from utils.preprocess import Preprocessor, get_index_batch_slices
-from utils.saver import Saver
-from dataset.read_record import get_dataset, get_dataset_with_fname
+from utils.dataset import Preprocessor, get_index_batch_slices, get_dataset, get_dataset_with_fname
+from utils.saver import Saver, save_test_log
 
 
 if __name__ == "__main__":
@@ -77,8 +76,6 @@ if __name__ == "__main__":
     # Load Model
     module = importlib.import_module(f"train.{user}.{module}")
     model = getattr(module, cls)()
-    # model.build(input_shape=(None, 300, 300, 3))
-    # model.summary()
 
     # Load Trainers
     trainer = MyTrainer(model=model, init_lr=init_lr, decay_steps=decay_steps)
@@ -133,6 +130,40 @@ if __name__ == "__main__":
             f"f1 score: {validator.get_f1_score():.4f}, ok_f1 score: {validator.get_ok_f1_score():.4f}")
         print(f"2nd validation: {cnt} / 50\n")
         saver.save_train_log(epoch, trainer, validator, cnt, musts)
-        if cnt >= 48:
-            saver.save_best_model(epoch, model,
-                                  validator.get_recall(), validator.get_ok_recall(), validator.get_loss())
+        # if cnt >= 48:
+        saver.save_best_model(epoch, model,
+                              validator.get_recall(), validator.get_ok_recall(), validator.get_loss())
+
+    # Test
+    best_model = tf.saved_model.load(os.path.join("train", user, save))
+    tester = MyTester(model=best_model)
+    test_dataset_img, test_dataset_label, test_dataset_fname = get_dataset_with_fname("dataset/test.tfrecord")
+    test_ds_slices = get_index_batch_slices(len(test_dataset_img), batch_size)
+    test_logs = []
+    for slice_list in test_ds_slices:
+        img = np.array([test_dataset_img[i] for i in slice_list])
+        label = np.array([test_dataset_label[i] for i in slice_list])
+        fnames = [test_dataset_fname[i] for i in slice_list]
+        img = tf.image.grayscale_to_rgb(tf.convert_to_tensor(img))
+        lab = tf.convert_to_tensor(label)
+        probs, results = tester.test(img, lab)
+        for prob, result, fname in zip(probs, results, fnames):
+            prob = prob.numpy()
+            result = str(result.numpy())
+            test_logs.append({fname: {"result": result, "probability": [float(prob[0]), float(prob[1])]}})
+
+    print(f"test result - loss: {tester.get_loss():.4f}, accuracy: {tester.get_accuracy():.4f}, "
+          f"recall: {tester.get_recall():.4f}, f1: {tester.get_f1_score():.4f}, "
+          f"ok_recall: {tester.get_ok_recall():.4f}, ok_f1: {tester.get_ok_f1_score():.4f}")
+
+    # Must
+    must_dataset_img, _, must_dataset_fname = get_dataset_with_fname("dataset/must.tfrecord")
+    img = tf.convert_to_tensor(np.array(must_dataset_img))
+    predictions = inference(best_model, img)
+    musts = []
+    for i, (fname, pred) in enumerate(zip(must_dataset_fname, predictions.numpy())):
+        correct = np.argmax(pred) == 1
+        musts.append(Must(fname, correct, pred))
+
+    # Save Log
+    save_test_log(os.path.join("train", user, save), tester, musts, test_logs)
