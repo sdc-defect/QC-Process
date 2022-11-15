@@ -1,0 +1,8 @@
+user: hsd
+save: case19
+module: model.custom_model
+class: MyCustomModel4
+batch_size: 16
+epochs: 50
+init_lr: 0.0005
+decay_steps: 1200
