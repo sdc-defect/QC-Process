@@ -1,6 +1,9 @@
+import datetime
 import importlib
 import json
 import os
+import time
+from glob import glob
 
 import markdown
 import pandas as pd
@@ -57,11 +60,25 @@ def log_to_md(user, case):
         file_img.close()
 
     file_yaml.close()
-    file_train.close()
     file_best.close()
     file_test.close()
 
 
+def get_train_time():
+    paths = glob('train/**/*.csv', recursive=True)
+    time_sum = 0
+    for path in paths:
+        file = pd.read_csv(path)
+        ts = file['timestamp']
+        mi = time.mktime(datetime.datetime.strptime(ts.min(), "%Y-%m-%d %H:%M:%S.%f").timetuple())
+        ma = time.mktime(datetime.datetime.strptime(ts.max(), "%Y-%m-%d %H:%M:%S.%f").timetuple())
+        total = ((ma - mi) / (len(ts) - 1)) * (len(ts))
+        time_sum += total
+    print(time_sum / 60)
+    print((time_sum / len(paths)) / 60)
+
+
 if __name__ == "__main__":
-    for c in ['case1', 'case2', 'case4', 'case5', 'case6', 'case7', 'EB0', 'EB1', 'EB2']:
-        log_to_md('rjh', c)
+    # for c in ['case1', 'case2', 'case4', 'case5', 'case6', 'case7', 'EB0', 'EB1', 'EB2']:
+    #     log_to_md('rjh', c)
+    get_train_time()

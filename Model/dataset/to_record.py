@@ -1,5 +1,3 @@
-import os
-
 import tensorflow as tf
 from glob import glob
 
