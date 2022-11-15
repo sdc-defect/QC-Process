@@ -360,14 +360,14 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         # Train path 
         self.fileSetdata['train_path'] = [self.labelOkTrainListDir.text(), self.labelDefTrainListDir.text()]
         self.trainOkCount = self.labelOkTrainCount.text()
-        self.trainDefCount = self.labelOkTrainCount.text()
+        self.trainDefCount = self.labelDefTrainCount.text()
 
         # Test path
         if self.checkBoxTest.isChecked():
             self.fileSetdata['test_path'] = [self.labelOkTestListDir.text(), self.labelDefTestListDir.text()]
             self.fileSetdata['test_per'] = None
             self.testOkCount = self.labelOkTestCount.text()
-            self.testDefCount = self.labelOkTestCount.text()
+            self.testDefCount = self.labelDefTestCount.text()
         else:
             self.fileSetdata['test_path'] = None
             self.fileSetdata['test_per'] = float(self.spinBoxTotalRatioTestCount.text()) / 100
@@ -377,7 +377,7 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
             self.fileSetdata['val_path'] = [self.labelOkValidationListDir.text(), self.labelDefValidationListDir.text()]
             self.fileSetdata['val_per'] = None
             self.validationOkCount = self.labelOkValidationCount.text()
-            self.validationDefCount = self.labelOkValidationCount.text()
+            self.validationDefCount = self.labelDefValidationCount.text()
         else:
             self.fileSetdata['val_per'] = float(self.spinBoxTotalRatioValidationCount.text()) / 100
             self.fileSetdata['val_path'] = None
