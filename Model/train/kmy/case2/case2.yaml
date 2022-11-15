@@ -1,7 +1,7 @@
 module: train.kmy.model.mymodel
 class: MyModel2
 root_dir: train/kmy
-save_dir: case1
+save_dir: case2
 batch_size: 16
 epochs: 50
 init_lr: 0.0008
