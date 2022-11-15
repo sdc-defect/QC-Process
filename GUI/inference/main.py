@@ -144,9 +144,9 @@ class InferenceWindowClass(QMainWindow, form_class) :
         logMessage = {
             "Timestamp" : imgDescription["timestamp"],
             "File_name" : imgDescription["filename"] ,
-            "Probability_ok" : str(imgDescription["prob"][0]),
-            "Probability_def" : str(imgDescription["prob"][1]),
-            "Result" : imgDescription["label"] if imgDescription["label"] is "ok" else "def" ,
+            "Probability_ok" : str(round(imgDescription["prob"][0], 6)),
+            "Probability_def" : str(round(imgDescription["prob"][1], 6)),
+            "Result" : "ok" if imgDescription["label"] == 0 else "def",
             "Image_path" : imagePath,
             "CAM_path" : camPath,
             "Merged_path" : mergedPath
@@ -169,7 +169,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
         self.allInferencedFile[filename] = logMessage
         self.allFileLst.append(filename)
-        if imgDescription["label"] == "1": # 양품
+        if imgDescription["label"] == 0: # 양품
             self.okInferencedFile[filename] = logMessage
             self.okFileLst.append(filename)
         else: # 불량
@@ -236,8 +236,12 @@ class InferenceWindowClass(QMainWindow, form_class) :
         # 전체 이미지 추론 시작 버튼
         self.pushButtonControlStart.clicked.connect(self.allStartInference)
         # 전체 이미지 추론 정지 버튼
-    
         self.pushButtonControlStop.clicked.connect(self.allStopInference)
+        # 전체 이미지 추론 일시 정지 버튼
+        self.pushButtonControlPause.clicked.connect(self.pauseInference)
+        #self.pushButtonControlStatus.clicked.connect(self.statusInference)
+        # 전체 이미지 추론 다시 시작 버튼
+        self.pushButtonControlRestart.clicked.connect(self.restartInference)
     
     # 로그창 초기화
     def clickLogClear(self):
@@ -354,8 +358,9 @@ class InferenceWindowClass(QMainWindow, form_class) :
             self.threadWebsocket = Client()
             self.threadWebsocket.start()
             self.init_widget()
-            self.threadWebsocket.status_true()
-            self.startInfInit()
+            # self.threadWebsocket.status_true()
+
+            # self.startInfInit()
             self.textBrowserLogContent.append("Inference started\n")
 
             # 정지, 일시정지 버튼 활성화
@@ -367,18 +372,18 @@ class InferenceWindowClass(QMainWindow, form_class) :
             self.pushButtonSingleStartInference.setEnabled(False)
     
 
-    def startInfInit(self):
-        self.pushButtonControlPause.clicked.connect(self.pauseInference)
-        #self.pushButtonControlStatus.clicked.connect(self.statusInference)
-        self.pushButtonControlRestart.clicked.connect(self.restartInference)
+    # def startInfInit(self):
+    #     self.pushButtonControlPause.clicked.connect(self.pauseInference)
+    #     #self.pushButtonControlStatus.clicked.connect(self.statusInference)
+    #     self.pushButtonControlRestart.clicked.connect(self.restartInference)
 
     # 모든 이미지 추론 정지
     def allStopInference(self):
         print("stop")
         self.textBrowserLogContent.append("Inference stoped\n")
         self.threadWebsocket.websocketFinish()
-        self.threadWebsocket.stopThread()
         self.threadWebsocket.status_false()
+        self.threadWebsocket.stopThread()
         # 시작 버튼 활성화, 나머지 비활성화
         self.pushButtonControlStart.setEnabled(True)
         self.pushButtonControlRestart.setEnabled(False)
@@ -412,7 +417,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.pushButtonControlPause.setEnabled(True)
         self.pushButtonControlStop.setEnabled(True)
     
-
+    # 창 닫을 떄 발생하는 이벤트
     def closeEvent(self, event):
         try:
             self.pauseInference()
@@ -566,7 +571,8 @@ class Client(QThread, form_class):
         QThread.__init__(self)
         self.cond = QWaitCondition()
         self.mutex = QMutex()
-        self._status = False
+        self._status = True
+        # self.cond.wakeAll()
 
         self.client = QtWebSockets.QWebSocket("",QtWebSockets.QWebSocketProtocol.Version13,None)
         self.client.error.connect(self.error)
@@ -600,8 +606,8 @@ class Client(QThread, form_class):
         self.client.close()
     def status_true(self):
         self._status = True
-        # if self._status:
-        #     self.cond.wakeAll()
+        if self._status:
+            self.cond.wakeAll()
     def status_false(self):
         self._status = False
 
@@ -636,10 +642,13 @@ class Client(QThread, form_class):
 
     def pause_inference(self):
         response=send_api('/pause','POST')
+        # self._status = False
         print(response)
 
     def restart_inference(self):
         response=send_api('/restart','POST')
+        # self._status = True
+        # self.cond.wakeAll()
         print(response)
 
     def status_inference(self):
@@ -650,7 +659,7 @@ class Client(QThread, form_class):
         print('Thread Stop')
         self.power = False
         self.terminate()
-        self.wait(3000)
+        # self.wait(3000)
 
 
 
