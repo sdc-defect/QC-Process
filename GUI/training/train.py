@@ -106,8 +106,7 @@ if __name__ == "__main__":
 
         # Save
         if recorder.check_best_score():
-            logger.info("New Best Model!!! model will be saved in",
-                        os.path.abspath(os.path.join(save_path, "model.onnx")))
+            logger.info(f"New Best Model!!! model will be saved in {os.path.abspath(os.path.join(save_path, 'model.onnx'))}")
             utils.model_to_onnx(model, os.path.join(save_path, "model.onnx"))
 
     # Test

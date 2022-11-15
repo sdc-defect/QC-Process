@@ -18,6 +18,8 @@ from utils.dto import TrainConfig
 
 import json
 
+import pyqtgraph as pg
+
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 form_class = uic.loadUiType("training.ui")[0]
@@ -36,7 +38,6 @@ class trainingWindowClass(QMainWindow, form_class) :
     # set config data
     isSetFile = False
     config = TrainConfig(save_path=None, train_path=None, test_path=None, test_per=None, val_path=None, val_per=None)
-
 
     setAugmentation = True
     setFlip = True
@@ -63,10 +64,7 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.setupUi(self)
         self.setWindowTitle("Training")
         self.initUI()
-
-        self.lblAreaAcc:QLabel
-        self.lblAreaLoss:QLabel
-        self.lblAreaRecall:QLabel
+        
         self.text = QPlainTextEdit()
 
         # 하이퍼파라미터 - 초기값 설정
@@ -77,6 +75,14 @@ class trainingWindowClass(QMainWindow, form_class) :
 
         # 학습 종료
         self.pushButtonControlStop.clicked.connect(self.trainingStop)
+
+        #
+        self.graphLoss = Graph_Widget(Xaxis='epoch', Yaxis='Loss', trainName='Train Loss', valName='Validation Loss')
+        self.graphAcc = Graph_Widget(Xaxis='epoch', Yaxis='Acc', trainName='Train Accuracy', valName='Validation Accuracy')
+        self.graphRecall = Graph_Widget(Xaxis='epoch', Yaxis='Recall', trainName='Train Recall', valName='Validation Recall')
+        self.graphLayout.addWidget(self.graphLoss.graph, 0, 0)
+        self.graphLayout.addWidget(self.graphAcc.graph, 0, 1)
+        self.graphLayout.addWidget(self.graphRecall.graph, 0, 2)
 
     def clickClearButton(self):
         self.textBrowser.clear()
@@ -387,12 +393,21 @@ class trainingWindowClass(QMainWindow, form_class) :
                 log_data1.append(result_dict['loss'])
                 log_data2.append(result_dict['accuracy'])
                 log_data3.append(result_dict['recall'])
+                    
+                self.graphLoss.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['loss']), name =isTrain)
+                self.graphAcc.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['accuracy']), name =isTrain)
+                self.graphRecall.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['recall']), name =isTrain)
+                self.updateGrpah()
             
             elif isTrain == 'val':
                 result_dict = eval(result_dict)
                 log_data5.append(result_dict['loss'])
                 log_data6.append(result_dict['accuracy'])
                 log_data7.append(result_dict['recall'])
+
+                self.graphLoss.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['loss']), name =isTrain)
+                self.graphAcc.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['accuracy']), name =isTrain)
+                self.graphRecall.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['recall']), name =isTrain)
         return
 
     def start_process(self, json_file):
@@ -433,7 +448,6 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     def process_finished(self):
         self.message("Process finished.")
-        self.firstAction()
         self.p = None
             
     # 학습 정지
@@ -462,102 +476,61 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.pushButtonControlStart.setEnabled(True)
     
     # 그래프 플로팅
-    def firstAction(self):
-        self.layout().removeWidget(self.lblAreaLoss)
-        self.layout().removeWidget(self.lblAreaAcc)
-        self.layout().removeWidget(self.lblAreaRecall)
-        self.lblAreaLoss.setParent(None)
-
-        self.lblAreaAcc.setParent(None)
-        self.lblAreaRecall.setParent(None)
-        self.plotLoss = WidgetPlotLoss(self.centralwidget)  
-        self.plotAcc = WidgetPlotAcc(self.centralwidget)   
-        self.plotRecall = WidgetPlotRecall(self.centralwidget)      
-            
-        self.gridLayout.addWidget(self.plotLoss)
-        self.gridLayout.addWidget(self.plotAcc)
-        self.gridLayout.addWidget(self.plotRecall)
+    def updateGrpah(self):
+        return
         
 # 그래프용 Class 선언
-class WidgetPlotLoss(QWidget):
-    def __init__(self, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
-        self.setLayout(QVBoxLayout())
-        self.canvas = PlotCanvasLoss(self, width=10, height=8)
-        self.layout().addWidget(self.canvas)
-        
-class PlotCanvasLoss(FigureCanvas):
-    def __init__(self, parent=None, width=10, height=8, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        FigureCanvas.__init__(self, fig)
-        self.setParent(parent)
-        FigureCanvas.setSizePolicy(self, 
-                QSizePolicy.Expanding, QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
-        self.plot()
-        
-    def plot(self):        
-        ax = self.figure.add_subplot(111)
-        ax.plot(log_data1, color='#d62828', marker='o', linestyle='dashed', label='train_loss')
-        ax.plot(log_data5, color='#003049', marker='o', linestyle='solid',label= 'val_loss')
-        ax.grid(True,axis='y',linestyle='--')
-        ax.legend(loc='best')
-        ax.set_title('Loss')
-        self.draw()
+class Graph_Widget:
+    def __init__(self, Xaxis, Yaxis, trainName, valName):
 
-class WidgetPlotAcc(QWidget):
-    def __init__(self, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
-        self.setLayout(QVBoxLayout())
-        self.canvas = PlotCanvasAcc(self, width=10, height=8)
-        self.layout().addWidget(self.canvas)
-        
-class PlotCanvasAcc(FigureCanvas):
-    def __init__(self, parent=None, width=10, height=8, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        FigureCanvas.__init__(self, fig)
-        self.setParent(parent)
-        FigureCanvas.setSizePolicy(self, 
-                QSizePolicy.Expanding, QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
-        self.plotacc()
-        
-    def plotacc(self):
-        ax = self.figure.add_subplot(111)
-        ax.plot(log_data2, color='#d62828', marker='o', linestyle='dashed', label='train_accuracy')
-        ax.plot(log_data6, color='#003049', marker='o', linestyle='solid',label= 'val_accuracy')
-        ax.grid(True,axis='y',linestyle='--')
-        ax.legend(loc='best')
-        ax.set_title('Accuracy')
-        self.draw()
-        
-class WidgetPlotRecall(QWidget):
-    def __init__(self, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
-        self.setLayout(QVBoxLayout())
-        self.canvas = PlotCanvasRecall(self, width=10, height=8)
-        self.layout().addWidget(self.canvas)
-        
-class PlotCanvasRecall(FigureCanvas):
-    def __init__(self, parent=None, width=10, height=8, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        FigureCanvas.__init__(self, fig)
-        self.setParent(parent)
-        FigureCanvas.setSizePolicy(self, 
-                QSizePolicy.Expanding, QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
-        self.plotrecall()
-        
-    def plotrecall(self):
-        ax = self.figure.add_subplot(111)
-        ax.plot(log_data3, color='#d62828', marker='o', linestyle='dashed', label='train_recall')
-        ax.plot(log_data7, color='#003049', marker='o', linestyle='solid', label= 'val_recall')
-        ax.grid(True,axis='y',linestyle='--')
-        ax.legend(loc='best')
-        ax.set_title('Recall')
-        
-        self.draw()
-        
+        self.graph = pg.PlotWidget(background='w')
+        self.x1 = []
+        self.y1 = []
+        self.trainName = trainName
+        self.startEpoch = 1
+
+        self.x2 = []
+        self.y2 = []
+        self.valName = valName
+        self.valStartEpoch = 1
+        # style
+        self.graph.setBackground('w')
+        # self.graph.setTitle("Title")
+        self.graph.setLabel("left", Yaxis)
+        self.graph.setLabel("bottom", Xaxis)
+        self.graph.addLegend(size=(100, 10))
+        self.graph.showGrid(x=True, y=True)
+        self.graph.setGeometry(300, 100, 550, 650)
+        self.graph.setXRange(0, 50) 
+        self.graph.setYRange(0, 1) 
+        # plot 
+        self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=trainName, symbol='+', symbolSize=30, symbolBrush=('r'))
+        self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=valName, symbol='+', symbolSize=30, symbolBrush=('b'))
+
+    def update(self, epoch, data, name):
+        if name == 'train':
+            if epoch == self.startEpoch:
+                self.x1.append(epoch)
+                self.y1.append(data)
+                self.startEpoch += 1
+            else:
+                self.y1[epoch - 1] = data
+            self.graph.clear()
+            self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=self.trainName, symbol='+', symbolSize=10, symbolBrush=('r'))
+            self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=self.valName, symbol='+', symbolSize=10, symbolBrush=('b'))
+        else:
+            if epoch == self.valStartEpoch:
+                self.x2.append(epoch)
+                self.y2.append(data)
+                self.valStartEpoch += 1
+            else:
+                self.y2[epoch - 1] = data
+            self.graph.clear()
+            self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=self.trainName, symbol='+', symbolSize=10, symbolBrush=('r'))
+            self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=self.valName, symbol='+', symbolSize=10, symbolBrush=('b'))
+
+        return
+
 # 그래프 끝
 
 def main():
