@@ -30,7 +30,7 @@
      <item row="3" column="1">
       <widget class="QLabel" name="labelGraph2">
        <property name="text">
-        <string>불량의 비율</string>
+        <string>생산량</string>
        </property>
       </widget>
      </item>
@@ -44,7 +44,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="labelGraph1">
        <property name="text">
-        <string>수율</string>
+        <string>불량의 비율</string>
        </property>
       </widget>
      </item>
@@ -443,7 +443,7 @@ border-color: #000000;</string>
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

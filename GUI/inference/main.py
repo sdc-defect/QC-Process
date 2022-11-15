@@ -67,6 +67,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
     total = 0
     old_ts = 0
     a = 0
+    cur_result = 0
 
     def __init__(self) :
         super().__init__()
@@ -153,6 +154,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
         self.logUpdate("Timestamp: "+logMessage["Timestamp"]+", File_name: "+logMessage["File_name"]+", Probability_ok: "+logMessage["Probability_ok"]+", Probability_def: "+logMessage["Probability_def"]+", Result: "+logMessage["Result"]+", Image_path: "+logMessage["Image_path"]+", CAM_path: "+logMessage["CAM_path"]+", Merged_path: "+logMessage["Merged_path"]+"\n")
         self.get_data(logMessage)
+        self.get_result(logMessage)
         
         # 메인 화면 이미지 리스트에 계속 추가해주기
         row = self.tableWidgetLog.rowCount()-1
@@ -425,6 +427,7 @@ class InferenceWindowClass(QMainWindow, form_class) :
         
         
     def get_data(self, log):
+        print(log)
         if type(log) == dict:
             if log['Result'] == 'def':
                 self.yy += 1
@@ -454,35 +457,37 @@ class InferenceWindowClass(QMainWindow, form_class) :
         return [self.line2]
     
     def on_start(self):
-        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=25)
+        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=1000)
 
     
     def on_stop(self):
         self.ani._stop()
     
-    def get_result(self, cur_result):
-        
+    def get_result(self, data):
+        if type(data) == dict:
+            self.cur_result += 1
         dt = QDateTime.currentDateTime()
         # self.statusBar().showMessage(dt.toString('mm'))
-        self.ticks[dt] = cur_result
+        # self.ticks[dt] = cur_result
 
         # # check whether minute changed
         # #if dt.time().minute() != self.minute_cur.time().minute():
 
         ts = dt.toString('mm')
-        print(ts, cur_result, type(cur_result))
+        print(ts, self.cur_result, type(self.cur_result))
         
         if len(self.series.barSets())>0:
             self.a=self.series.barSets()[-1]
+            print('=====================')
             print(self.series.take(self.a))
-        if self.a!=0:
-            cur_result=cur_result+int(self.a[0])
+        # if self.a!=0:
+        #     self.cur_result=self.cur_result+int(self.a[0])
         new_set = QBarSet(f'{ts}')
-        if self.a!=0 and new_set.label()!=a.label():
+        if self.a!=0 and new_set.label()!=self.a.label():
             self.series.append(self.a)
             # new_set[0]= 0
-            cur_result = 0
-        new_set << cur_result
+            self.cur_result = 0
+        new_set << self.cur_result
         self.series.append(new_set)
         self.chartView.update()
         print('sum=',new_set[0], type(new_set[0]))
