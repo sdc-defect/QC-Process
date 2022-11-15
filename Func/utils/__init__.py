@@ -5,7 +5,7 @@ import os
 import cv2
 import numpy as np
 import onnx
-import psutil
+
 import logging
 
 import onnxruntime
@@ -18,13 +18,6 @@ def check_folder(folder):
     if not os.path.exists(folder):
         os.mkdir(folder)
 
-
-def print_mem_use():
-    psutil.cpu_percent(percpu=False)
-    pid = os.getpid()
-    ps = psutil.Process(pid)
-    mem = round(ps.memory_info()[0] / (1024 * 1024), 2)
-    print(f"{mem}MB")
 
 
 def get_logger(name):
