@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1920</width>
-    <height>1009</height>
+    <height>1000</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,6 +69,9 @@
     <layout class="QVBoxLayout" name="verticalLayoutControl" stretch="1,1,1,1">
      <item>
       <widget class="QPushButton" name="pushButtonControlStart">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -82,6 +85,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonControlRestart">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -95,6 +101,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonControlPause">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -108,6 +117,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonControlStop">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -166,6 +178,9 @@ border-color: #000000;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonSingleStartInference">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>1690</x>
@@ -216,6 +231,12 @@ border-color: #000000;</string>
       <height>341</height>
      </rect>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::NoEditTriggers</set>
+    </property>
    </widget>
    <widget class="QWidget" name="verticalWidget_4" native="true">
     <property name="geometry">
@@ -257,7 +278,7 @@ border-color: #000000;</string>
      <rect>
       <x>380</x>
       <y>560</y>
-      <width>409</width>
+      <width>291</width>
       <height>21</height>
      </rect>
     </property>
@@ -340,6 +361,9 @@ border-color: #000000;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonAllListShow">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -353,6 +377,9 @@ border-color: #000000;</string>
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;양품, 불품 리스트를 나눠서 볼 수 있습니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>추론 완료 리스트</string>
@@ -372,16 +399,6 @@ border-color: #000000;</string>
     </property>
     <property name="text">
      <string>이미지 위치</string>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="textBrowserFileDir">
-    <property name="geometry">
-     <rect>
-      <x>1200</x>
-      <y>480</y>
-      <width>301</width>
-      <height>61</height>
-     </rect>
     </property>
    </widget>
    <widget class="QWidget" name="verticalWidget_5" native="true">
