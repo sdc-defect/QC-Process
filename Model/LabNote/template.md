@@ -6,16 +6,30 @@
     <td> 내용 </td>
   </tr>
   <tr>
-    <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img id="model" src="image/image-20221030115827888.png"> </td>
+    <td> Datetime </td>
+    <td id="date"> {%Y}-{%m}-{%d} {%H}:{%M}:{%S} </td>
   </tr>
   <tr>
-    <td> optimizer </td>
-    <td> Adam </td>
+    <td> Time cost </td>
+    <td id="time-cost"> {00}m {00}s </td>
   </tr>
   <tr>
-    <td> scheduler </td>
-    <td> CosineDecayRestarts </td>
+    <td colspan="2" style="font-weight: bold;, font-size: 30px;"> Model </td>
+  </tr>
+  <tr>
+    <td> Total params </td>
+    <td id="total-params"> {Total params} </td>
+  </tr> 
+  <tr>
+    <td> Trainable params </td>
+    <td id="trainable-params"> {Trainable params} </td>
+  </tr>
+  <tr>
+    <td> Non-trainable params </td>
+    <td id="non-trainable-params"> {Non-trainable params} </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="font-weight: bold;, font-size: 30px;"> Hyperparameters </td>
   </tr>
   <tr>
     <td> init learning rate </td>
@@ -32,17 +46,8 @@
   <tr>
     <td> epoch </td>
     <td id="epoch"> {epoch} </td>
-  </tr>
   <tr>
-    <td> GPU 여부 (O / X) </td>
-    <td> O </td>
-  </tr>
-  <tr>
-    <td> loss function </td>
-    <td> CategoricalCrossentropy </td>
-  </tr>
-  <tr>
-    <td colspan="2" style="font-weight: bold;, font-size: 30px;"> best model </td>
+    <td colspan="2" style="font-weight: bold;, font-size: 30px;"> Best Model </td>
   </tr>
   <tr>
     <td> Train Loss </td>
@@ -72,6 +77,4 @@
 
 
 
-이전 실험과 다른 점 : {...}
-
-결론 : {...}
+상세내용 : 
