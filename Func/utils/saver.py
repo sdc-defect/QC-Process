@@ -49,4 +49,3 @@ class Convertor:
         save_model(model, os.path.join(folder, "default.onnx"))
 
         self._logger.info(f"Modify ONNX {time.time() - st:.2f}s")
-
