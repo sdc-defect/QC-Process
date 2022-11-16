@@ -1,11 +1,8 @@
-from typing import Tuple
-
 import os
 
 import cv2
 import numpy as np
 import onnx
-import psutil
 import logging
 
 import onnxruntime
@@ -16,15 +13,7 @@ from utils.dto import ONNXRuntime, InferenceResult
 
 def check_folder(folder):
     if not os.path.exists(folder):
-        os.mkdir(folder)
-
-
-def print_mem_use():
-    psutil.cpu_percent(percpu=False)
-    pid = os.getpid()
-    ps = psutil.Process(pid)
-    mem = round(ps.memory_info()[0] / (1024 * 1024), 2)
-    print(f"{mem}MB")
+        os.makedirs(folder, exist_ok=True)
 
 
 def get_logger(name):
@@ -62,7 +51,7 @@ def merge_two_imgs(img1: np.ndarray, img2: np.ndarray, per_1: float = 0.5, per_2
     return merged
 
 
-async def save_logs(data: InferenceResult) -> None:
+async def save_images(data: InferenceResult) -> None:
     if not isinstance(data, InferenceResult):
         raise TypeError("Invalid Type")
     # save images
