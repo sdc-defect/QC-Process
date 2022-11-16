@@ -1,42 +1,43 @@
 import re
-from typing import List, Union, Tuple, Dict
-from multiprocessing.synchronize import Event
+from typing import List, Optional
 
-import time
 import datetime
 
-import multiprocessing as mp
 import numpy as np
 import cv2
 
 import utils
-from utils.data import transfer_image
 from utils.dto import InferenceResult, ONNXRuntime
 
 
 class IWorker:
-    def __init__(self, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
+    def __init__(self, path: str):
         self._path = path
-        self._size = size
-        self._runtime: Union[ONNXRuntime, None] = utils.load_onnx(self._path)
-        self._img0: Union[np.ndarray, None] = None
-        self._timestamp: Union[datetime.datetime, None] = None
+        self._size = (300, 300)
+        self._runtime: Optional[ONNXRuntime] = utils.load_onnx(self._path)
 
-    def __getstate__(self) -> Dict:
-        return {'path': self._path, 'size': self._size}
+        self._img0: Optional[np.ndarray] = None
+        self._timestamp: Optional[datetime.datetime] = None
 
-    def __setstate__(self, values):
-        self._path = values['path']
-        self._size = values['size']
+    def get_model_path(self):
+        return self._path
+
+    def update_runtime(self, path):
+        self._path = path
+        del self._runtime.runtime
+        del self._runtime.dense
         self._runtime = utils.load_onnx(self._path)
 
     def _preprocess(self, img: np.ndarray) -> np.ndarray:
-        self._timestamp = datetime.datetime.now()
+        img = cv2.resize(img, self._size)
         self._img0 = img.copy()
 
         return np.expand_dims(img / 255, axis=0).astype('float32')
 
-    def inference(self, img: np.ndarray) -> InferenceResult:
+    def inference(self, img: np.ndarray, timestamp) -> InferenceResult:
+        if self._runtime is None:
+            raise Exception("No Runtime")
+        self._timestamp = timestamp
         img = self._preprocess(img)
 
         output = self._runtime.runtime.run(None, {'input_1': img})
@@ -68,24 +69,3 @@ class IWorker:
             cam = cv2.cvtColor(cam, cv2.COLOR_BGR2RGB)
 
         return cam
-
-
-class IProcess(mp.Process):
-    def __init__(self, flag: Event, queue: mp.Queue, path: str, size: Union[Tuple[int, int], int] = (300, 300)):
-        super(IProcess, self).__init__()
-        self._queue = queue
-        self._worker = IWorker(path, size)
-        self._flag = flag
-
-    def run(self) -> None:
-        while True:
-            time.sleep(1)
-
-            if not self._flag.is_set():
-                continue
-
-            rimg = np.uint8(np.random.rand(300, 300, 3) * 255)
-
-            result = self._worker.inference(rimg)
-
-            self._queue.put(result)
