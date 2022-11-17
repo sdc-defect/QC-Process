@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  server:
+    build: .
+    container_name: sdc
+    restart: always
+    ports:
+      - '8080:8080'
+    working_dir: /app
+    volumes:
+      - ./app/log:/app/log
+      - ./app/model:/app/model
+    environment:
+      - TZ=Asia/Seoul
