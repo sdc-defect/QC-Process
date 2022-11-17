@@ -1,0 +1,19 @@
+Model: "my_model2_13"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ efficientnetv2-b0 (Function  (None, 10, 10, 1280)     5919312   
+ al)                                                             
+                                                                 
+ global_average_pooling2d_62  multiple                 0         
+  (GlobalAveragePooling2D)                                       
+                                                                 
+ dropout_119 (Dropout)       multiple                  0         
+                                                                 
+ dense_80 (Dense)            multiple                  2562      
+                                                                 
+=================================================================
+Total params: 5,921,874
+Trainable params: 5,861,266
+Non-trainable params: 60,608
+_________________________________________________________________

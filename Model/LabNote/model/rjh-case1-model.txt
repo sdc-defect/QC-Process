@@ -1,0 +1,17 @@
+Model: "my_model1"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ efficientnetb3 (Functional)  (None, 1536)             10783535  
+                                                                 
+ dense_75 (Dense)            multiple                  184440    
+                                                                 
+ dense_76 (Dense)            multiple                  14520     
+                                                                 
+ dense_77 (Dense)            multiple                  242       
+                                                                 
+=================================================================
+Total params: 10,982,737
+Trainable params: 10,895,434
+Non-trainable params: 87,303
+_________________________________________________________________

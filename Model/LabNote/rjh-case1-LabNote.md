@@ -16,6 +16,14 @@
 <td colspan="2" style="font-weight: bold;, font-size: 30px;"> Model </td>
 </tr>
 <tr>
+<td> Module </td>
+<td id="module">&lt;module 'train.rjh.model.mymodel' from 'E:\\SDC\\Model\\train\\rjh\\model\\mymodel.py'&gt;</td>
+</tr>
+<tr>
+<td> Class </td>
+<td id="class">MyModel1</td>
+</tr>
+<tr>
 <td> Total params </td>
 <td id="total-params">10,982,737</td>
 </tr>
