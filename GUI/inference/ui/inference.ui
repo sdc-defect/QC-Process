@@ -27,13 +27,6 @@
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayoutGraph" rowstretch="0,0,0,0">
-     <item row="3" column="1">
-      <widget class="QLabel" name="labelGraph2">
-       <property name="text">
-        <string>생산량</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0" rowspan="2">
       <widget class="QLabel" name="lblAreaBar">
        <property name="text">
@@ -52,6 +45,13 @@
       <widget class="QLabel" name="lblAreaLine">
        <property name="text">
         <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="labelGraph2">
+       <property name="text">
+        <string>생산량</string>
        </property>
       </widget>
      </item>
@@ -137,7 +137,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>130</y>
+      <y>140</y>
       <width>300</width>
       <height>300</height>
      </rect>
@@ -159,7 +159,7 @@ border-color: #000000;</string>
     <property name="geometry">
      <rect>
       <x>340</x>
-      <y>130</y>
+      <y>140</y>
       <width>300</width>
       <height>300</height>
      </rect>
@@ -558,6 +558,51 @@ border-color: #000000;</string>
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>130</y>
+      <width>641</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color : #b5b5b5</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>label</zorder>
+   <zorder>gridLayoutWidget_3</zorder>
+   <zorder>verticalLayoutWidget_2</zorder>
+   <zorder>labelSingleImageShow</zorder>
+   <zorder>labelSingleCAMShow</zorder>
+   <zorder>pushButtonSingleStartInference</zorder>
+   <zorder>pushButtonOpenSingleImageDir</zorder>
+   <zorder>tableWidgetLog</zorder>
+   <zorder>labelLog</zorder>
+   <zorder>textBrowserLogContent</zorder>
+   <zorder>labelLog_2</zorder>
+   <zorder>pushButtonLogClear</zorder>
+   <zorder>labelControl</zorder>
+   <zorder>pushButtonAllListShow</zorder>
+   <zorder>labelImageFileDir</zorder>
+   <zorder>textBrowserImageFile</zorder>
+   <zorder>logDirBtn</zorder>
+   <zorder>modelDirBtn</zorder>
+   <zorder>modelListBtn</zorder>
+   <zorder>modelBox</zorder>
+   <zorder>modelLabel2</zorder>
+   <zorder>labelSingleImageDir</zorder>
+   <zorder>inferenceLabel</zorder>
+   <zorder>inferenceLabel_2</zorder>
+   <zorder>inferenceLabel_3</zorder>
+   <zorder>inferenceLabel_4</zorder>
+   <zorder>textBrowserSingleResult</zorder>
+   <zorder>textBrowserSingleResult_2</zorder>
+   <zorder>textBrowserSingleResult_3</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionIMAGE">
