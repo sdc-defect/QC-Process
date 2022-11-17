@@ -117,9 +117,9 @@ class InferenceWindowClass(QMainWindow, form_class):
         logMessage = {
             "Timestamp": imgDescription["timestamp"],
             "File_name": imgDescription["filename"],
-            "Probability_ok": str(round(imgDescription["prob"][0], 6)),
-            "Probability_def": str(round(imgDescription["prob"][1], 6)),
-            "Result": "ok" if imgDescription["label"] == 0 else "def",
+            "Probability_ok": str(format(round(imgDescription["prob"][0], 6),'.6f')),
+            "Probability_def": str(format(round(imgDescription["prob"][1], 6),'.6f')),
+            "Result": "양품" if imgDescription["label"] == 0 else "불량품",
             "Image_path": imagePath,
             "CAM_path": camPath,
             "Merged_path": mergedPath
@@ -135,12 +135,21 @@ class InferenceWindowClass(QMainWindow, form_class):
 
         # 메인 화면 이미지 리스트에 계속 추가해주기
         row = self.tableWidgetLog.rowCount() - 1
+        font = QFont()
+        font.setBold(True)
+        resultItem=QTableWidgetItem(logMessage["Result"])
+        if logMessage["Result"]=='불량품':
+            resultItem.setForeground(QBrush(QColor(255, 0,0)))
         self.tableWidgetLog.setItem(row, 0, QTableWidgetItem(logMessage["File_name"]))
         self.tableWidgetLog.setItem(row, 1, QTableWidgetItem(logMessage["Timestamp"]))
-        self.tableWidgetLog.setItem(row, 2, QTableWidgetItem(logMessage["Probability_ok"]))
-        self.tableWidgetLog.setItem(row, 3, QTableWidgetItem(logMessage["Probability_def"]))
-        self.tableWidgetLog.setItem(row, 4, QTableWidgetItem(logMessage["Result"]))
+        self.tableWidgetLog.setItem(row, 2, QTableWidgetItem(f'{(float(logMessage["Probability_ok"]))* 100:.2f}%'))
+        self.tableWidgetLog.setItem(row, 3, QTableWidgetItem(f'{(float(logMessage["Probability_def"]))* 100:.2f}%'))
+        self.tableWidgetLog.setItem(row, 4, resultItem)
         self.tableWidgetLog.insertRow(row + 1)
+        if float(logMessage["Probability_ok"]) > float(logMessage["Probability_def"]):
+            self.tableWidgetLog.item(row,2).setFont(font)
+        else:
+            self.tableWidgetLog.item(row,3).setFont(font)
 
         filename = logMessage["File_name"]
 
@@ -179,7 +188,9 @@ class InferenceWindowClass(QMainWindow, form_class):
             self.modelBox.setCurrentIndex(0)
 
         # log table setting
+        
         self.tableWidgetLog.clicked.connect(self.clickTableImages)
+    
         self.tableWidgetLog.setColumnCount(5)
         self.tableWidgetLog.setHorizontalHeaderLabels(
             ['File Name', 'Created Time', 'Probability_ok', 'Probability_def', 'Result'])
@@ -236,17 +247,24 @@ class InferenceWindowClass(QMainWindow, form_class):
         try:
             filename = self.tableWidgetLog.item(row, 0).text()
             detail = self.allInferencedFile[filename]
+            self.tableWidgetLog.selectRow(row)
 
             imageDir = detail["Image_path"]
-            camDir = detail["CAM_path"]
             self.singleInferenceDir = detail["Image_path"]
             self.labelSingleImageDir.setText(detail["Image_path"])
-            # mergedDir = detail["Merged_path"]
+            mergedDir = detail["Merged_path"]
 
             imageDirPixmap = QPixmap(imageDir)
-            camDirPixmap = QPixmap(camDir)
+            merDirPixmap = QPixmap(mergedDir)
             self.labelSingleImageShow.setPixmap(imageDirPixmap)
-            self.labelSingleCAMShow.setPixmap(camDirPixmap)
+            self.labelSingleCAMShow.setPixmap(merDirPixmap)
+
+            if self.tableWidgetLog.item(row, 4).text() == 'ok':
+                self.textBrowserSingleResult.setText("양품")
+            else:
+                self.textBrowserSingleResult.setText("불량품")
+            self.textBrowserSingleResult_2.setText(self.tableWidgetLog.item(row, 2).text())
+            self.textBrowserSingleResult_3.setText(self.tableWidgetLog.item(row, 3).text())
 
         except AttributeError:
             pass
@@ -410,7 +428,7 @@ class InferenceWindowClass(QMainWindow, form_class):
 
     def get_data(self, log):
         if type(log) == dict:
-            if log['Result'] == 'def':
+            if log['Result'] == '불량품':
                 self.yy += 1
             self.total += 1
             dt = QDateTime.currentDateTime()

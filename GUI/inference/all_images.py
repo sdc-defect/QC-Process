@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QBrush,QColor
 
 # UI파일 연결
 # 단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -60,7 +60,12 @@ class AllImageWindowClass(QMainWindow, form_class):
                 # print(name, fileDict[name]["Timestamp"],fileDict[name]["Result"] )
                 self.tableWidgetAllFile.setItem(cnt, 0, QTableWidgetItem(name))
                 self.tableWidgetAllFile.setItem(cnt, 1, QTableWidgetItem(fileDict[name]["Timestamp"]))
-                self.tableWidgetAllFile.setItem(cnt, 2, QTableWidgetItem(fileDict[name]["Result"]))
+                resultItem=QTableWidgetItem(fileDict[name]["Result"])
+                if fileDict[name]["Result"]=='불량품':
+                    resultItem.setForeground(QBrush(QColor(255, 0,0)))
+                self.tableWidgetAllFile.setItem(cnt, 2, resultItem)
+                
+
                 cnt = cnt + 1
         else:
             self.tableWidgetAllFile.clear()
@@ -107,6 +112,7 @@ class AllImageWindowClass(QMainWindow, form_class):
     # 테이블 클릭 이벤트
     def clickTableAllImages(self):
         row = self.tableWidgetAllFile.currentIndex().row()
+        self.tableWidgetAllFile.selectRow(row)
         filename = self.tableWidgetAllFile.item(row, 0).text()
         # 첫 열 값 넘김
         self.showDetail(filename)
