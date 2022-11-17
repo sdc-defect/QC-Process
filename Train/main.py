@@ -14,7 +14,6 @@ from utils.matrix import Must, count_def_in_must_list
 from utils.dataset import Preprocessor, get_index_batch_slices, get_dataset, get_dataset_with_fname
 from utils.saver import Saver, save_test_log
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--root",
@@ -130,9 +129,9 @@ if __name__ == "__main__":
             f"f1 score: {validator.get_f1_score():.4f}, ok_f1 score: {validator.get_ok_f1_score():.4f}")
         print(f"2nd validation: {cnt} / 50\n")
         saver.save_train_log(epoch, trainer, validator, cnt, musts)
-        # if cnt >= 48:
-        saver.save_best_model(epoch, model,
-                              validator.get_recall(), validator.get_ok_recall(), validator.get_loss())
+        if cnt >= 48:
+            saver.save_best_model(epoch, model,
+                                  validator.get_recall(), validator.get_ok_recall(), validator.get_loss())
 
     # Test
     best_model = tf.saved_model.load(os.path.join("train", user, save))

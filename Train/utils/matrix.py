@@ -1,6 +1,5 @@
 from typing import List, Dict, Union
 
-import numpy as np
 from dataclasses import dataclass
 
 from keras.metrics import TruePositives, TrueNegatives, FalsePositives, FalseNegatives
