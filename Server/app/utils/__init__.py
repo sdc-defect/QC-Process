@@ -1,9 +1,11 @@
+import base64
+import json
 import os
+from dataclasses import asdict
 
 import cv2
 import numpy as np
 import onnx
-import logging
 
 import onnxruntime
 import onnx.numpy_helper as numpy_helper
@@ -14,21 +16,6 @@ from utils.dto import ONNXRuntime, InferenceResult
 def check_folder(folder):
     if not os.path.exists(folder):
         os.makedirs(folder, exist_ok=True)
-
-
-def get_logger(name):
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
-
-    # file_handler = logging.FileHandler('my.log')
-    # file_handler.setFormatter(formatter)
-    # logger.addHandler(file_handler)
-
-    return logger
 
 
 def load_onnx(path: str) -> ONNXRuntime:
@@ -64,3 +51,18 @@ async def save_images(data: InferenceResult) -> None:
         cv2.imwrite(f"{folder}/{fname}_merged.jpg", data.merged)
     except Exception as e:
         print("save InferenceResult Failed - ", e)
+
+
+def transfer_image(result: InferenceResult):
+    result = asdict(result)
+    result['img'] = image_to_base64(result['img'])
+    result['cam'] = image_to_base64(result['cam'])
+    result['merged'] = image_to_base64(result['merged'])
+
+    return json.dumps(result)
+
+
+def image_to_base64(img: np.ndarray) -> str:
+    img_buffer = cv2.imencode('.jpg', img)[1]
+
+    return base64.b64encode(img_buffer).decode('utf-8')

@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 import subprocess
@@ -12,7 +13,6 @@ import utils
 
 class Convertor:
     def __init__(self, onnx_name: str = 'model.onnx', modified_name: str = 'default.onnx'):
-        self._logger = utils.get_logger(__name__)
         self._onnx_name = onnx_name
         self._modified_name = modified_name
 
@@ -24,7 +24,7 @@ class Convertor:
             self._saved_model_to_onnx(model_path, folder)
             self._modify_onnx(folder)
         except Exception as e:
-            self._logger.error(f"Failed to convert saved model to onnx!!! - {e}")
+            logging.error(f"Failed to convert saved model to onnx!!! - {e}")
 
     def _saved_model_to_onnx(self, model_path, folder):
         st = time.time()
@@ -32,7 +32,7 @@ class Convertor:
                              "--saved-model", model_path, "--output",
                              os.path.join(folder, self._onnx_name)],
                        shell=True, encoding='utf-8')
-        self._logger.info(f"Convert Tensorflow Model to ONNX {time.time() - st:.2f}s")
+        logging.info(f"Convert Tensorflow Model to ONNX {time.time() - st:.2f}s")
 
     def _modify_onnx(self, folder):
         st = time.time()
@@ -48,4 +48,4 @@ class Convertor:
         checker.check_model(model)
         save_model(model, os.path.join(folder, "default.onnx"))
 
-        self._logger.info(f"Modify ONNX {time.time() - st:.2f}s")
+        logging.info(f"Modify ONNX {time.time() - st:.2f}s")

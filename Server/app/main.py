@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, WebSocket, UploadFile
 
 import utils
 from utils.service import Service
-from utils.data import transfer_image
+from utils import transfer_image
 
 app = FastAPI()
 service = Service()
