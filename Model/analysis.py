@@ -20,7 +20,7 @@ def log_to_md(user, case):
     # config
     file_yaml = open(os.path.join(path, f'{case}.yaml'), 'r')
     config = yaml.load(file_yaml, yaml.FullLoader)
-    module = user + '.' + '.'.join(config['module'].split('.')[-2:])
+    module_name = user + '.' + '.'.join(config['module'].split('.')[-2:])
     cls = config['class']
 
     # train log
@@ -63,7 +63,7 @@ def log_to_md(user, case):
         soup.select_one('#date').string = datetime.datetime.fromtimestamp(mi - mean_time).strftime("%Y-%m-%d %H:%M:%S")
         soup.select_one('#time-cost').string = f'{str(int(total / 60)).zfill(2)}m {str(int(total % 60)).zfill(2)}s'
 
-        soup.select_one('#module').string = str(module)
+        soup.select_one('#module').string = str(module_name)
         soup.select_one('#class').string = str(cls)
         if isModel:
             with open(f"LabNote/model/{user}-{case}-model.txt", "r") as model_txt:

@@ -17,7 +17,7 @@
 </tr>
 <tr>
 <td> Module </td>
-<td id="module">&lt;module 'train.ksh.model.mymodel3' from 'E:\\SDC\\Model\\train\\ksh\\model\\mymodel3.py'&gt;</td>
+<td id="module">ksh.model.mymodel3</td>
 </tr>
 <tr>
 <td> Class </td>

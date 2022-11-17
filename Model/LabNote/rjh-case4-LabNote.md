@@ -17,7 +17,7 @@
 </tr>
 <tr>
 <td> Module </td>
-<td id="module">&lt;module 'train.rjh.model.mymodel' from 'E:\\SDC\\Model\\train\\rjh\\model\\mymodel.py'&gt;</td>
+<td id="module">rjh.model.mymodel</td>
 </tr>
 <tr>
 <td> Class </td>
