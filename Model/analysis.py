@@ -43,7 +43,7 @@ def log_to_md(user, case):
     module = importlib.import_module(f"train.{user}.{config['module']}")
     model = getattr(module, config['class'])()
     model.build(input_shape=(None, 300, 300, 3))
-    with open(f'LabNote/model/{user}-case-model.txt', 'w') as model_txt:
+    with open(f'LabNote/model/{user}-{case}-model.txt', 'w') as model_txt:
         model.summary(print_fn=lambda x: model_txt.write(x + "\n"))
 
     with open("LabNote/template.md", "r", encoding='utf-8') as f:
@@ -59,7 +59,7 @@ def log_to_md(user, case):
         soup.select_one('#date').string = datetime.datetime.fromtimestamp(mi - mean_time).strftime("%Y-%m-%d %H:%M:%S")
         soup.select_one('#time-cost').string = f'{str(int(total / 60)).zfill(2)}m {str(int(total % 60)).zfill(2)}s'
 
-        with open(f"LabNote/model/{user}-case-model.txt", "r") as model_txt:
+        with open(f"LabNote/model/{user}-{case}-model.txt", "r") as model_txt:
             lines = model_txt.readlines()
             for l in lines:
                 split = l.split(': ')
@@ -105,7 +105,43 @@ def get_train_time():
     print((time_sum / len(paths)) / 60)
 
 
+def get_cases():
+    paths = glob('train/**/*.yaml', recursive=True)
+
+    result = {}
+    for path in paths:
+        with open(path, "r", encoding='utf-8') as f:
+            config: dict = yaml.load(f, yaml.FullLoader)
+            if 'root_dir' in config.keys():
+                del config['root_dir']
+            if 'save_dir' in config.keys():
+                del config['save_dir']
+            if 'user' in config.keys():
+                config['module'] = config['user'] + '.' + config['module']
+                del config['user']
+            if 'save' in config.keys():
+                del config['save']
+            config['module'] = config['module'].replace("train.", '').replace('.model', '')
+            config['class'] = config['module'] + '.' + config['class']
+            config['class'] = config['class']
+            del config['module']
+
+            for key in config.keys():
+                if key not in result:
+                    result[key] = {}
+                if config[key] not in result[key]:
+                    result[key][config[key]] = 1
+                else:
+                    result[key][config[key]] += 1
+
+    with open('case_analysis.json', 'w') as f:
+        json.dump(result, f)
+
+
 if __name__ == "__main__":
-    for c in tqdm(['case1', 'case2', 'case4', 'case5', 'case6', 'case7', 'EB0', 'EB1', 'EB2']):
+    for c in tqdm(os.listdir('train/rjh')):
+        if not c.startswith('case') and not c.startswith('EB'):
+            continue
         log_to_md('rjh', c)
     # get_train_time()
+    # get_cases()
