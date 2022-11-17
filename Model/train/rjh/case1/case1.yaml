@@ -1,0 +1,8 @@
+user: rjh
+save: case1
+module: model.mymodel
+class: MyModel1
+batch_size: 8
+epochs: 50
+init_lr: 0.001
+decay_steps: 1000

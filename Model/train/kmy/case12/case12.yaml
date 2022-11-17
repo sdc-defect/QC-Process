@@ -1,0 +1,8 @@
+user: kmy
+save: case12
+module: model.mymodel
+class: MyModel3
+batch_size: 16
+epochs: 50
+init_lr: 0.001
+decay_steps: 1000
