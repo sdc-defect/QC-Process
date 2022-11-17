@@ -58,7 +58,3 @@ class MyModel3(tf.keras.Model):
         x = self.headModel3(x)
         
         return self.outputs(x)
-
-test = MyModel3()
-test.build(input_shape=(None, 300, 300, 3))
-test.summary()
