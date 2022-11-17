@@ -70,7 +70,12 @@ def get_model_path():
 def get_models():
     files = os.listdir('model')
 
-    return {'models': [file.split('.')[0] for file in files]}
+    models = [service.get_model_path().split('/')[-1].split('.')[0]]
+    for file in files:
+        fname = file.split('.')[0]
+        if file.endswith('.onnx') and fname not in models:
+            models.append(fname)
+    return {'models': models}
 
 
 @app.put("/model/upload", status_code=200)
