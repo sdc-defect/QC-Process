@@ -7,6 +7,7 @@ import utils
 from utils.service import Service
 from utils import transfer_image
 
+
 app = FastAPI()
 service = Service()
 
@@ -14,6 +15,8 @@ service = Service()
 @app.on_event("startup")
 async def startup_event():
     await service.start_listening()
+    from glob import glob
+    service.files = glob('dataset/*.jpeg', recursive=True)
     service.start_worker()
 
 

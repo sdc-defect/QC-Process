@@ -11,7 +11,6 @@ import cv2
 import websockets
 import multiprocessing as mp
 import numpy as np
-from glob import glob
 
 from utils import InferenceResult
 from utils.iworker import IWorker
@@ -26,7 +25,7 @@ class Service:
         self._listener_task: Optional[Task] = None
         self._worker_task: Optional[threading.Thread] = None
 
-        self._files = glob('dataset/*.[png$|jpg$|jpeg$|tif$]', recursive=True)
+        self.files = None
 
     def get_flag(self) -> bool:
         return self._flag.is_set()
@@ -89,7 +88,7 @@ class Service:
                 continue
             try:
                 time.sleep(1)
-                img = cv2.imread(random.choice(self._files))
+                img = cv2.imread(random.choice(self.files))
 
                 data = self._worker.inference(img, datetime.datetime.now())
 
