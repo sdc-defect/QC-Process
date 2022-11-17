@@ -83,7 +83,7 @@ def get_models():
 
 @app.put("/model/upload", status_code=200)
 async def upload_model(file: UploadFile):
-    path = f"app/model/{file.filename}"
+    path = f"model/{file.filename}"
     f = file.file.read()
     with open(path, "wb+") as ff:
         ff.write(f)
