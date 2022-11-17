@@ -5,4 +5,4 @@ class: MyModel3
 batch_size: 16
 epochs: 50
 init_lr: 0.0001
-init_lr: 800
+decay_steps: 800

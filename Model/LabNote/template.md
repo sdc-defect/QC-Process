@@ -17,6 +17,14 @@
     <td colspan="2" style="font-weight: bold;, font-size: 30px;"> Model </td>
   </tr>
   <tr>
+    <td> Module </td>
+    <td id="module"> {module file name} </td>
+  </tr>
+  <tr>
+    <td> Class </td>
+    <td id="class"> {class name} </td>
+  </tr> 
+  <tr>
     <td> Total params </td>
     <td id="total-params"> {Total params} </td>
   </tr> 

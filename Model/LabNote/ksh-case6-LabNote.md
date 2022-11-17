@@ -1,80 +1,84 @@
-# ksh-case6-LabNote
-
+<h1 id="title">ksh-case6-LabNote</h1>
 <table style="border: 2px; text-align:center;">
-  <tr style="font-weight: bold;, font-size: 30px;">
-    <td> 제목 </td>
-    <td> 내용 </td>
-  </tr>
-  <tr>
-    <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img src="image/ksh-2022-10-30-mymodel3-B0.jpg"> </td>
-  </tr>
-  <tr>
-    <td> optimizer </td>
-    <td> Adam </td>
-  </tr>
-  <tr>
-    <td> scheduler </td>
-    <td> CosineDecayRestarts </td>
-  </tr>
-  <tr>
-    <td> init learning rate </td>
-    <td> 0.0005 </td>
-  </tr>
-  <tr>
-    <td> decay steps </td>
-    <td> 800 </td>
-  </tr>
-  <tr>
-    <td> batch size </td>
-    <td> 16 </td>
-  </tr>
-  <tr>
-    <td> epoch </td>
-    <td> 50 </td>
-  </tr>
-  <tr>
-    <td> GPU 여부 (O / X) </td>
-    <td> O </td>
-  </tr>
-  <tr>
-    <td> loss function </td>
-    <td> CategoricalCrossentropy </td>
-  </tr>
-  <tr>
-    <td colspan="2" style="font-weight: bold;, font-size: 30px;"> best model </td>
-  </tr>
-  <tr>
-    <td> Train Loss </td>
-    <td> 0.0974 </td>
-  </tr>
-  <tr>
-    <td> Test Loss </td>
-    <td> 0.0472 </td>
-  </tr>
-  <tr>
-    <td> Train accuracy / recall / F1-Score </td>
-    <td> 0.9977 / 0.9974 / 0.9980 </td>
-  </tr>
-  <tr>
-    <td> Test accuracy / recall / F1-Score </td>
-    <td> 0.9769 / 0.9589 / 0.9790 </td>
-  </tr>
-  <tr>
-    <td> val2_cnt (total 50) </td>
-    <td> 48 </td>
-  </tr>
-  <tr>
-    <td> must_cnt (total 10) </td>
-    <td> 10 </td>
-  </tr>
-</table>
-
-
-
-
-
-이전 실험과 다른 점 : decay steps 1200 -> 800 변경
-
-결론 : decay steps 줄어들면서 전체적으로 성능이 떨어진 것 같다. 600 / 1000 으로도 나중에 돌려보면서 비교해볼 예정
-
+<tr style="font-weight: bold;, font-size: 30px;">
+<td> 제목 </td>
+<td> 내용 </td>
+</tr>
+<tr>
+<td> Datetime </td>
+<td id="date">2022-10-28 14:29:18</td>
+</tr>
+<tr>
+<td> Time cost </td>
+<td id="time-cost">55m 13s</td>
+</tr>
+<tr>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Model </td>
+</tr>
+<tr>
+<td> Module </td>
+<td id="module">ksh.model.mymodel3</td>
+</tr>
+<tr>
+<td> Class </td>
+<td id="class">MyModel</td>
+</tr>
+<tr>
+<td> Total params </td>
+<td id="total-params">5,926,994</td>
+</tr>
+<tr>
+<td> Trainable params </td>
+<td id="trainable-params">5,863,826</td>
+</tr>
+<tr>
+<td> Non-trainable params </td>
+<td id="non-trainable-params">63,168</td>
+</tr>
+<tr>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Hyperparameters </td>
+</tr>
+<tr>
+<td> init learning rate </td>
+<td id="init-lr">0.0005</td>
+</tr>
+<tr>
+<td> decay steps </td>
+<td id="decay-steps">800</td>
+</tr>
+<tr>
+<td> batch size </td>
+<td id="batch-size">16</td>
+</tr>
+<tr>
+<td> epoch </td>
+<td id="epoch">50</td>
+<tr>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Best Model </td>
+</tr>
+<tr>
+<td> Train Loss </td>
+<td id="train-loss">0.09737314</td>
+</tr>
+<tr>
+<td> Test Loss </td>
+<td id="test-loss">0.0472</td>
+</tr>
+<tr>
+<td> Train accuracy / recall / F1-Score </td>
+<td id="train-score">0.9977 / 0.9974 / 0.9980</td>
+</tr>
+<tr>
+<td> Test accuracy / recall / F1-Score </td>
+<td id="test-score">0.9769 / 0.9589 / 0.9790</td>
+</tr>
+<tr>
+<td> val2_cnt (total 50) </td>
+<td id="val2-cnt">48</td>
+</tr>
+<tr>
+<td> must_cnt (total 10) </td>
+<td id="must-cnt">10</td>
+</tr>
+</tr></table>
+<p>상세내용 : </p>

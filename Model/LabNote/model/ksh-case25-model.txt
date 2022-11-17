@@ -1,0 +1,61 @@
+Model: "my_custom_model12_1"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ conv2d_701 (Conv2D)         multiple                  896       
+                                                                 
+ conv2d_702 (Conv2D)         multiple                  9248      
+                                                                 
+ batch_normalization_689 (Ba  multiple                 128       
+ tchNormalization)                                               
+                                                                 
+ max_pooling2d_46 (MaxPoolin  multiple                 0         
+ g2D)                                                            
+                                                                 
+ conv2d_703 (Conv2D)         multiple                  18496     
+                                                                 
+ conv2d_704 (Conv2D)         multiple                  36928     
+                                                                 
+ batch_normalization_690 (Ba  multiple                 256       
+ tchNormalization)                                               
+                                                                 
+ max_pooling2d_47 (MaxPoolin  multiple                 0         
+ g2D)                                                            
+                                                                 
+ conv2d_705 (Conv2D)         multiple                  73856     
+                                                                 
+ conv2d_706 (Conv2D)         multiple                  147584    
+                                                                 
+ batch_normalization_691 (Ba  multiple                 512       
+ tchNormalization)                                               
+                                                                 
+ max_pooling2d_48 (MaxPoolin  multiple                 0         
+ g2D)                                                            
+                                                                 
+ conv2d_707 (Conv2D)         multiple                  295168    
+                                                                 
+ conv2d_708 (Conv2D)         multiple                  590080    
+                                                                 
+ batch_normalization_692 (Ba  multiple                 1024      
+ tchNormalization)                                               
+                                                                 
+ leaky_re_lu_8 (LeakyReLU)   multiple                  0         
+                                                                 
+ dropout_101 (Dropout)       multiple                  0         
+                                                                 
+ dense_65 (Dense)            multiple                  30840     
+                                                                 
+ dense_66 (Dense)            multiple                  14520     
+                                                                 
+ global_average_pooling2d_52  multiple                 0         
+  (GlobalAveragePooling2D)                                       
+                                                                 
+ dropout_102 (Dropout)       multiple                  0         
+                                                                 
+ dense_67 (Dense)            multiple                  242       
+                                                                 
+=================================================================
+Total params: 1,219,778
+Trainable params: 1,218,818
+Non-trainable params: 960
+_________________________________________________________________

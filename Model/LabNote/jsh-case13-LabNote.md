@@ -1,73 +1,84 @@
-# jsh-case13-LabNote
-
+<h1 id="title">jsh-case13-LabNote</h1>
 <table style="border: 2px; text-align:center;">
-  <tr style="font-weight: bold;, font-size: 30px;">
-    <td> 제목 </td>
-    <td> 내용 </td>
-  </tr>
-  <tr>
-    <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
-    <td> <img src="image/jsh-image-case13.png"> </td>
-  </tr>
-  <tr>
-    <td> optimizer </td>
-    <td> Adam </td>
-  </tr>
-  <tr>
-    <td> scheduler </td>
-    <td> CosineDecayRestarts </td>
-  </tr>
-  <tr>
-    <td> init learning rate </td>
-    <td> 0.005 </td>
-  </tr>
-  <tr>
-    <td> decay steps </td>
-    <td> 1200 </td>
-  </tr>
-  <tr>
-    <td> batch size </td>
-    <td> 8 </td>
-  </tr>
-  <tr>
-    <td> epoch </td>
-    <td> 100 </td>
-  </tr>
-  <tr>
-    <td> GPU 여부 (O / X) </td>
-    <td> O </td>
-  </tr>
-  <tr>
-    <td> loss function </td>
-    <td> CategoricalCrossentropy </td>
-  </tr>
-  <tr>
-    <td colspan="2" style="font-weight: bold;, font-size: 30px;"> best model </td>
-  </tr>
-  <tr>
-    <td> Train Loss </td>
-    <td> 0.1755 </td>
-  </tr>
-  <tr>
-    <td> Test Loss </td>
-    <td> 0.0697 </td>
-  </tr>
-  <tr>
-    <td> Train accuracy / recall / F1-Score </td>
-    <td> 0.9995 / 0.9991 / 0.9996 </td>
-  </tr>
-  <tr>
-    <td> Test accuracy / recall / F1-Score </td>
-    <td> 0.9846 / 0.9726 / 0.9861 </td>
-  </tr>
-  <tr>
-    <td> val2_cnt (total 50) </td>
-    <td> 48 </td>
-  </tr>
-  <tr>
-    <td> must_cnt (total 10) </td>
-    <td> 10 </td>
-  </tr>
-</table>
-
-결론: best model이 100번째 epoch이여서 오버피팅 가능성 있음
+<tr style="font-weight: bold;, font-size: 30px;">
+<td> 제목 </td>
+<td> 내용 </td>
+</tr>
+<tr>
+<td> Datetime </td>
+<td id="date">2022-10-30 20:38:36</td>
+</tr>
+<tr>
+<td> Time cost </td>
+<td id="time-cost">164m 03s</td>
+</tr>
+<tr>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Model </td>
+</tr>
+<tr>
+<td> Module </td>
+<td id="module">jsh.model.mymodel</td>
+</tr>
+<tr>
+<td> Class </td>
+<td id="class">MyModel10</td>
+</tr>
+<tr>
+<td> Total params </td>
+<td id="total-params"> {Total params} </td>
+</tr>
+<tr>
+<td> Trainable params </td>
+<td id="trainable-params"> {Trainable params} </td>
+</tr>
+<tr>
+<td> Non-trainable params </td>
+<td id="non-trainable-params"> {Non-trainable params} </td>
+</tr>
+<tr>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Hyperparameters </td>
+</tr>
+<tr>
+<td> init learning rate </td>
+<td id="init-lr">0.005</td>
+</tr>
+<tr>
+<td> decay steps </td>
+<td id="decay-steps">1200</td>
+</tr>
+<tr>
+<td> batch size </td>
+<td id="batch-size">8</td>
+</tr>
+<tr>
+<td> epoch </td>
+<td id="epoch">100</td>
+<tr>
+<td colspan="2" style="font-weight: bold;, font-size: 30px;"> Best Model </td>
+</tr>
+<tr>
+<td> Train Loss </td>
+<td id="train-loss">0.17552824</td>
+</tr>
+<tr>
+<td> Test Loss </td>
+<td id="test-loss">0.0697</td>
+</tr>
+<tr>
+<td> Train accuracy / recall / F1-Score </td>
+<td id="train-score">0.9995 / 0.9991 / 0.9996</td>
+</tr>
+<tr>
+<td> Test accuracy / recall / F1-Score </td>
+<td id="test-score">0.9846 / 0.9726 / 0.9861</td>
+</tr>
+<tr>
+<td> val2_cnt (total 50) </td>
+<td id="val2-cnt">48</td>
+</tr>
+<tr>
+<td> must_cnt (total 10) </td>
+<td id="must-cnt">10</td>
+</tr>
+</tr></table>
+<p>상세내용 : </p>

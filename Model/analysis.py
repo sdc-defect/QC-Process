@@ -5,12 +5,12 @@ import math
 import os
 import time
 from glob import glob
+import traceback
 
 import markdown
 import pandas as pd
 import yaml
 from bs4 import BeautifulSoup as bs
-from tqdm import tqdm
 
 
 def log_to_md(user, case):
@@ -20,6 +20,8 @@ def log_to_md(user, case):
     # config
     file_yaml = open(os.path.join(path, f'{case}.yaml'), 'r')
     config = yaml.load(file_yaml, yaml.FullLoader)
+    module_name = user + '.' + '.'.join(config['module'].split('.')[-2:])
+    cls = config['class']
 
     # train log
     csvs = glob(os.path.join(path, '*.csv'))
@@ -27,12 +29,9 @@ def log_to_md(user, case):
         print(path, "is empty folder !!!")
         return
     file_train = pd.read_csv(csvs[0])
-    try:
-        file_best = open(os.path.join(path, "best_model.txt"), "r")
-    except Exception as e:
-        print(e)
-        return
-    best = int(file_best.readline().split(' ')[0])
+    file_best = open(os.path.join(path, "best_model.txt"), "r")
+    best = file_best.readline().split(' ')[-2]
+    best = int(best)
     row = file_train[file_train['epoch'] == best].values[0]
 
     # test log
@@ -40,11 +39,16 @@ def log_to_md(user, case):
     test_log = json.load(file_test)
 
     # model summary
-    module = importlib.import_module(f"train.{user}.{config['module']}")
-    model = getattr(module, config['class'])()
-    model.build(input_shape=(None, 300, 300, 3))
-    with open(f'LabNote/model/{user}-{case}-model.txt', 'w') as model_txt:
-        model.summary(print_fn=lambda x: model_txt.write(x + "\n"))
+    isModel = True
+    try:
+        module = importlib.import_module(f"train.{user}.{config['module']}")
+        model = getattr(module, config['class'])()
+        model.build(input_shape=(None, 300, 300, 3))
+        with open(f'LabNote/model/{user}-{case}-model.txt', 'w') as model_txt:
+            model.summary(print_fn=lambda x: model_txt.write(x + "\n"))
+    except Exception as er:
+        print(er)
+        isModel = False
 
     with open("LabNote/template.md", "r", encoding='utf-8') as f:
         md = markdown.markdown(f.read())
@@ -59,16 +63,19 @@ def log_to_md(user, case):
         soup.select_one('#date').string = datetime.datetime.fromtimestamp(mi - mean_time).strftime("%Y-%m-%d %H:%M:%S")
         soup.select_one('#time-cost').string = f'{str(int(total / 60)).zfill(2)}m {str(int(total % 60)).zfill(2)}s'
 
-        with open(f"LabNote/model/{user}-{case}-model.txt", "r") as model_txt:
-            lines = model_txt.readlines()
-            for l in lines:
-                split = l.split(': ')
-                if split[0] == 'Total params':
-                    soup.select_one('#total-params').string = split[1].split('\n')[0]
-                elif split[0] == 'Trainable params':
-                    soup.select_one('#trainable-params').string = split[1].split('\n')[0]
-                elif split[0] == 'Non-trainable params':
-                    soup.select_one('#non-trainable-params').string = split[1].split('\n')[0]
+        soup.select_one('#module').string = str(module_name)
+        soup.select_one('#class').string = str(cls)
+        if isModel:
+            with open(f"LabNote/model/{user}-{case}-model.txt", "r") as model_txt:
+                lines = model_txt.readlines()
+                for l in lines:
+                    split = l.split(': ')
+                    if split[0] == 'Total params':
+                        soup.select_one('#total-params').string = split[1].split('\n')[0]
+                    elif split[0] == 'Trainable params':
+                        soup.select_one('#trainable-params').string = split[1].split('\n')[0]
+                    elif split[0] == 'Non-trainable params':
+                        soup.select_one('#non-trainable-params').string = split[1].split('\n')[0]
 
         soup.select_one('#init-lr').string = str(config['init_lr'])
         soup.select_one('#decay-steps').string = str(config['decay_steps'])
@@ -139,9 +146,16 @@ def get_cases():
 
 
 if __name__ == "__main__":
-    for c in tqdm(os.listdir('train/rjh')):
-        if not c.startswith('case') and not c.startswith('EB'):
-            continue
-        log_to_md('rjh', c)
+    for u in ['hsd', 'jjh', 'jsh', 'kmy', 'ksh', 'rjh']:
+        for c in os.listdir(f'train/{u}'):
+            print(u, c)
+            if not c.startswith('case'):
+                continue
+            try:
+                log_to_md(u, c)
+            except Exception as e:
+                print('-' * 50)
+                print(os.path.join(u, c), traceback.format_exc())
+                print('-' * 50)
     # get_train_time()
     # get_cases()

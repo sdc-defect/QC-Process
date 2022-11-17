@@ -1,0 +1,19 @@
+Model: "eb1"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ efficientnetv2-b1 (Function  (None, 10, 10, 1280)     6931124   
+ al)                                                             
+                                                                 
+ global_average_pooling2d_67  multiple                 0         
+  (GlobalAveragePooling2D)                                       
+                                                                 
+ dropout_124 (Dropout)       multiple                  0         
+                                                                 
+ dense_85 (Dense)            multiple                  2562      
+                                                                 
+=================================================================
+Total params: 6,933,686
+Trainable params: 6,862,614
+Non-trainable params: 71,072
+_________________________________________________________________

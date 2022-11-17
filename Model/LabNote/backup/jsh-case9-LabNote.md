@@ -1,0 +1,71 @@
+# jsh-case9-LabNote
+
+<table style="border: 2px; text-align:center;">
+  <tr style="font-weight: bold;, font-size: 30px;">
+    <td> 제목 </td>
+    <td> 내용 </td>
+  </tr>
+  <tr>
+    <td> 모델 요약 (ex. 블록 개수, 구조 등) </td>
+    <td> <img src="image/jsh-image-case9.png"> </td>
+  </tr>
+  <tr>
+    <td> optimizer </td>
+    <td> Adam </td>
+  </tr>
+  <tr>
+    <td> scheduler </td>
+    <td> CosineDecayRestarts </td>
+  </tr>
+  <tr>
+    <td> init learning rate </td>
+    <td> 0.001 </td>
+  </tr>
+  <tr>
+    <td> decay steps </td>
+    <td> 1200 </td>
+  </tr>
+  <tr>
+    <td> batch size </td>
+    <td> 8 </td>
+  </tr>
+  <tr>
+    <td> epoch </td>
+    <td> 100 </td>
+  </tr>
+  <tr>
+    <td> GPU 여부 (O / X) </td>
+    <td> O </td>
+  </tr>
+  <tr>
+    <td> loss function </td>
+    <td> CategoricalCrossentropy </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="font-weight: bold;, font-size: 30px;"> best model </td>
+  </tr>
+  <tr>
+    <td> Train Loss </td>
+    <td> 0.1248 </td>
+  </tr>
+  <tr>
+    <td> Test Loss </td>
+    <td> 6.9337 </td>
+  </tr>
+  <tr>
+    <td> Train accuracy / recall / F1-Score </td>
+    <td> 0.9871 / 0.9835 / 0.9890 </td>
+  </tr>
+  <tr>
+    <td> Test accuracy / recall / F1-Score </td>
+    <td> 0.5714 / 1 / 0.7192 </td>
+  </tr>
+  <tr>
+    <td> val2_cnt (total 50) </td>
+    <td> 50 </td>
+  </tr>
+  <tr>
+    <td> must_cnt (total 10) </td>
+    <td> 10 </td>
+  </tr>
+</table>

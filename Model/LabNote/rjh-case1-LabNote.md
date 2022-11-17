@@ -16,6 +16,14 @@
 <td colspan="2" style="font-weight: bold;, font-size: 30px;"> Model </td>
 </tr>
 <tr>
+<td> Module </td>
+<td id="module">rjh.model.mymodel</td>
+</tr>
+<tr>
+<td> Class </td>
+<td id="class">MyModel1</td>
+</tr>
+<tr>
 <td> Total params </td>
 <td id="total-params">10,982,737</td>
 </tr>
