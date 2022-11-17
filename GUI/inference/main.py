@@ -259,7 +259,7 @@ class InferenceWindowClass(QMainWindow, form_class):
             self.labelSingleImageShow.setPixmap(imageDirPixmap)
             self.labelSingleCAMShow.setPixmap(merDirPixmap)
 
-            if self.tableWidgetLog.item(row, 4).text() == 'ok':
+            if self.tableWidgetLog.item(row, 4).text() == '양품':
                 self.textBrowserSingleResult.setText("양품")
             else:
                 self.textBrowserSingleResult.setText("불량품")
