@@ -16,6 +16,7 @@ class PlotCanvasLine(FigureCanvas):
         self.axes.spines['top'].set_visible(False)
         self.axes.spines['bottom'].set_position('center')
         self.axes.set_label('')
+        self.axes.set_xticks([])
 
         FigureCanvas.__init__(self, fig)
         self.setParent(parent)

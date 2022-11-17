@@ -69,7 +69,7 @@ class InferenceWindowClass(QMainWindow, form_class):
         self.x = np.arange(60)
         self.y = np.ones(60, dtype=np.float64) * np.nan
         self.line, = self.canvas.axes.plot(self.x, self.y, animated=True, color='red', lw=2)
-        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line, blit=True, interval=1000)
+        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line, blit=True, interval=60000)
         self.pushButtonControlStart.clicked.connect(lambda x: self.ani.event_source.start())
         self.pushButtonControlStop.clicked.connect(lambda x: self.ani.event_source.stop())
         self.ani.event_source.stop()
@@ -81,7 +81,7 @@ class InferenceWindowClass(QMainWindow, form_class):
         chart.addSeries(self.series)
         chart.layout().setContentsMargins(0, 0, 0, 0)
 
-        chart.setTitle('수율')
+        chart.setTitle('생산량')
         chart.setAnimationOptions(QChart.SeriesAnimations)
 
         dt = QDateTime.currentDateTime()
@@ -101,7 +101,7 @@ class InferenceWindowClass(QMainWindow, form_class):
         chart.legend().setAlignment(Qt.AlignBottom)
 
         self.chartView = QChartView(chart)
-
+        self.chartView.setMinimumWidth(300)
         self.gridLayoutGraph.addWidget(self.chartView)
 
     # 웹소켓에서 데이터 받았을 때 실행
