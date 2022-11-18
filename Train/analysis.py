@@ -18,7 +18,7 @@ def log_to_md(user, case):
     title = f"{user}-{case}-LabNote"
 
     # config
-    file_yaml = open(os.path.join(path, f'{case}.yaml'), 'r')
+    file_yaml = open(os.path.join(path, f'{case}.yaml'), 'r', encoding='utf-8')
     config = yaml.load(file_yaml, yaml.FullLoader)
     module_name = user + '.' + '.'.join(config['module'].split('.')[-2:])
     cls = config['class']
@@ -146,6 +146,7 @@ def get_cases():
 
 
 if __name__ == "__main__":
+    # Generate LabNote
     for u in ['hsd', 'jjh', 'jsh', 'kmy', 'ksh', 'rjh']:
         for c in os.listdir(f'train/{u}'):
             print(u, c)
@@ -157,5 +158,9 @@ if __name__ == "__main__":
                 print('-' * 50)
                 print(os.path.join(u, c), traceback.format_exc())
                 print('-' * 50)
-    # get_train_time()
-    # get_cases()
+
+    # Get All Train Time
+    get_train_time()
+
+    # Get analysis of yaml file
+    get_cases()

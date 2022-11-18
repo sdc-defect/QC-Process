@@ -1,0 +1,25 @@
+Model: "my_model"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ resnet101 (Functional)      (None, 10, 10, 2048)      42658176  
+                                                                 
+ batch_normalization (BatchN  multiple                 8192      
+ ormalization)                                                   
+                                                                 
+ re_lu (ReLU)                multiple                  0         
+                                                                 
+ dropout (Dropout)           multiple                  0         
+                                                                 
+ global_average_pooling2d (G  multiple                 0         
+ lobalAveragePooling2D)                                          
+                                                                 
+ dropout_1 (Dropout)         multiple                  0         
+                                                                 
+ dense (Dense)               multiple                  4098      
+                                                                 
+=================================================================
+Total params: 42,670,466
+Trainable params: 42,561,026
+Non-trainable params: 109,440
+_________________________________________________________________
