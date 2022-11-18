@@ -7,11 +7,6 @@ import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QProcess
 
-# graph lib
-import pandas as pd
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-
 import utils
 from training_init import TrainingInitWindowClass
 from utils.dto import TrainConfig
@@ -20,23 +15,21 @@ import json
 
 import pyqtgraph as pg
 
-#UI파일 연결
-#단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
+# UI파일 연결
+# 단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 form_class = uic.loadUiType("training.ui")[0]
-import inspect
-import random
-print(inspect.getfile(random))
+
 # 그래프 띄워줄 데이터 import
-log_data1=[]
-log_data2=[]
-log_data3=[]
-log_data5=[]
-log_data6=[]
-log_data7=[]
+log_data1 = []
+log_data2 = []
+log_data3 = []
+log_data5 = []
+log_data6 = []
+log_data7 = []
 
-#화면을 띄우는데 사용되는 Class 선언
 
-class trainingWindowClass(QMainWindow, form_class) :
+# 화면을 띄우는데 사용되는 Class 선언
+class trainingWindowClass(QMainWindow, form_class):
     # set config data
     isSetFile = False
     config = TrainConfig(save_path=None, train_path=None, test_path=None, test_per=None, val_path=None, val_per=None)
@@ -61,12 +54,12 @@ class trainingWindowClass(QMainWindow, form_class) :
     testFileCount = 0
     validationFileCount = 0
 
-    def __init__(self) :
+    def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Training")
         self.initUI()
-        
+
         self.text = QPlainTextEdit()
 
         # 하이퍼파라미터 - 초기값 설정
@@ -79,9 +72,12 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.pushButtonControlStop.clicked.connect(self.trainingStop)
 
         #
-        self.graphLoss = Graph_Widget(Xaxis='epoch', Yaxis='Loss', trainName='Train Loss', valName='Validation Loss',title='Loss')
-        self.graphAcc = Graph_Widget(Xaxis='epoch', Yaxis='Acc', trainName='Train Accuracy', valName='Validation Accuracy', title='Accuracy')
-        self.graphRecall = Graph_Widget(Xaxis='epoch', Yaxis='Recall', trainName='Train Recall', valName='Validation Recall',title='Recall')
+        self.graphLoss = Graph_Widget(Xaxis='epoch', Yaxis='Loss', trainName='Train Loss', valName='Validation Loss',
+                                      title='Loss')
+        self.graphAcc = Graph_Widget(Xaxis='epoch', Yaxis='Acc', trainName='Train Accuracy',
+                                     valName='Validation Accuracy', title='Accuracy')
+        self.graphRecall = Graph_Widget(Xaxis='epoch', Yaxis='Recall', trainName='Train Recall',
+                                        valName='Validation Recall', title='Recall')
         self.graphLayout.addWidget(self.graphLoss.graph, 0, 0)
         self.graphLayout.addWidget(self.graphAcc.graph, 0, 1)
         self.graphLayout.addWidget(self.graphRecall.graph, 0, 2)
@@ -92,7 +88,7 @@ class trainingWindowClass(QMainWindow, form_class) :
     # 초기화
     def initUI(self):
         _openFile = QtWidgets.QAction("다른 파일 열기", self)
-        
+
         # Menu Bar Settings
         menu = self.menuBar()
         _file = menu.addMenu("파일")
@@ -127,29 +123,29 @@ class trainingWindowClass(QMainWindow, form_class) :
 
             # Test
             if self.config.test_path == None:
-                self.labelTestOkCount.setStyleSheet("Color : gray")    
-                self.labelTestOkDir.setStyleSheet("Color : gray")    
+                self.labelTestOkCount.setStyleSheet("Color : gray")
+                self.labelTestOkDir.setStyleSheet("Color : gray")
                 self.labelTestOkTitle.setStyleSheet("Color : gray")
-                self.labelTestDefCount.setStyleSheet("Color : gray")    
-                self.labelTestDefDir.setStyleSheet("Color : gray")    
+                self.labelTestDefCount.setStyleSheet("Color : gray")
+                self.labelTestDefDir.setStyleSheet("Color : gray")
                 self.labelTestDefTitle.setStyleSheet("Color : gray")
 
-                self.labelTestRatioCount.setStyleSheet("Color : black")    
-                self.labelTestRatioDir.setStyleSheet("Color : black")    
+                self.labelTestRatioCount.setStyleSheet("Color : black")
+                self.labelTestRatioDir.setStyleSheet("Color : black")
                 self.labelTestRatioTitle.setStyleSheet("Color : black")
 
                 self.labelTestRatioDir.setText(str(int(initFirstModal.fileSetdata['test_per'] * 100)) + '%')
                 self.labelTestRatioCount.setText(initFirstModal.fileSetdata['testTotalCount'])
             else:
-                self.labelTestOkCount.setStyleSheet("Color : black")    
-                self.labelTestOkDir.setStyleSheet("Color : black")    
+                self.labelTestOkCount.setStyleSheet("Color : black")
+                self.labelTestOkDir.setStyleSheet("Color : black")
                 self.labelTestOkTitle.setStyleSheet("Color : black")
-                self.labelTestDefCount.setStyleSheet("Color : black")    
-                self.labelTestDefDir.setStyleSheet("Color : black")    
+                self.labelTestDefCount.setStyleSheet("Color : black")
+                self.labelTestDefDir.setStyleSheet("Color : black")
                 self.labelTestDefTitle.setStyleSheet("Color : black")
 
-                self.labelTestRatioCount.setStyleSheet("Color : gray")    
-                self.labelTestRatioDir.setStyleSheet("Color : gray")    
+                self.labelTestRatioCount.setStyleSheet("Color : gray")
+                self.labelTestRatioDir.setStyleSheet("Color : gray")
                 self.labelTestRatioTitle.setStyleSheet("Color : gray")
 
                 self.labelTestOkDir.setText(initFirstModal.fileSetdata['test_path'][0])
@@ -159,29 +155,29 @@ class trainingWindowClass(QMainWindow, form_class) :
 
             # Validation
             if self.config.val_path == None:
-                self.labelValidationOkCount.setStyleSheet("Color : gray")    
-                self.labelValidationOkDir.setStyleSheet("Color : gray")    
+                self.labelValidationOkCount.setStyleSheet("Color : gray")
+                self.labelValidationOkDir.setStyleSheet("Color : gray")
                 self.labelValidationOkTitle.setStyleSheet("Color : gray")
-                self.labelValidationDefCount.setStyleSheet("Color : gray")    
-                self.labelValidationDefDir.setStyleSheet("Color : gray")    
+                self.labelValidationDefCount.setStyleSheet("Color : gray")
+                self.labelValidationDefDir.setStyleSheet("Color : gray")
                 self.labelValidationDefTitle.setStyleSheet("Color : gray")
 
-                self.labelValidationRatioCount.setStyleSheet("Color : black")    
-                self.labelValidationRatioDir.setStyleSheet("Color : black")    
+                self.labelValidationRatioCount.setStyleSheet("Color : black")
+                self.labelValidationRatioDir.setStyleSheet("Color : black")
                 self.labelValidationRatioTitle.setStyleSheet("Color : black")
 
                 self.labelValidationRatioDir.setText(str(int(initFirstModal.fileSetdata['val_per'] * 100)) + '%')
                 self.labelValidationRatioCount.setText(initFirstModal.fileSetdata['validationTotalCount'])
             else:
-                self.labelValidationOkCount.setStyleSheet("Color : black")    
-                self.labelValidationOkDir.setStyleSheet("Color : black")    
+                self.labelValidationOkCount.setStyleSheet("Color : black")
+                self.labelValidationOkDir.setStyleSheet("Color : black")
                 self.labelValidationOkTitle.setStyleSheet("Color : black")
-                self.labelValidationDefCount.setStyleSheet("Color : black")    
-                self.labelValidationDefDir.setStyleSheet("Color : black")    
+                self.labelValidationDefCount.setStyleSheet("Color : black")
+                self.labelValidationDefDir.setStyleSheet("Color : black")
                 self.labelValidationDefTitle.setStyleSheet("Color : black")
 
-                self.labelValidationRatioCount.setStyleSheet("Color : gray")    
-                self.labelValidationRatioDir.setStyleSheet("Color : gray")    
+                self.labelValidationRatioCount.setStyleSheet("Color : gray")
+                self.labelValidationRatioDir.setStyleSheet("Color : gray")
                 self.labelValidationRatioTitle.setStyleSheet("Color : gray")
 
                 self.labelValidationOkDir.setText(initFirstModal.fileSetdata['val_path'][0])
@@ -209,7 +205,7 @@ class trainingWindowClass(QMainWindow, form_class) :
 
         self.lineEditBatchSize.textChanged.connect(self.customBatchSize)
         self.lineEditDecayStep.textChanged.connect(self.customDecayStep)
-        
+
         self.comboBoxBatchSize.setCurrentText("16")
         self.comboBoxDecayStep.setCurrentText("1000")
         self.labelLearningRate.setText(str(self.setLearningRate))
@@ -219,16 +215,16 @@ class trainingWindowClass(QMainWindow, form_class) :
 
         # 프로그래스바는 0부터 시작
         self.progressBar.setValue(0)
-   
+
     # epoch
     def changeEpoch(self):
 
         epoch = self.spinBoxEpoch.value()
-        if epoch%5 != 0: # 5의 배수 아니면 절삭
-            epoch = epoch - epoch%5
+        if epoch % 5 != 0:  # 5의 배수 아니면 절삭
+            epoch = epoch - epoch % 5
             self.spinBoxEpoch.setValue(epoch)
         self.setEpoch = epoch
-        
+
     # batch size
     def changeBatchSize(self):
         if self.comboBoxBatchSize.currentText() == "사용자 지정":
@@ -275,7 +271,7 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     # 어그멘테이션 전체 on/off 활성화 비활성화
     def switchAugmentation(self):
-        self.setAugmentation  = self.checkBoxAugmentation.isChecked()
+        self.setAugmentation = self.checkBoxAugmentation.isChecked()
         isAugmentation = self.setAugmentation
 
         if isAugmentation:
@@ -305,10 +301,13 @@ class trainingWindowClass(QMainWindow, form_class) :
     # 어그멘테이션 개별 on/off
     def switchFlip(self):
         self.setFlip = self.checkBoxFlip.isChecked()
+
     def switchSpin(self):
         self.setSpin = self.checkBoxSpin.isChecked()
+
     def switchSwift(self):
         self.setSwift = self.checkBoxSwift.isChecked()
+
     def switchMixup(self):
         self.setMixup = self.checkBoxMixup.isChecked()
 
@@ -317,7 +316,7 @@ class trainingWindowClass(QMainWindow, form_class) :
 
     # 학습 시작
     @pyqtSlot()
-    def trainingStart(self):        
+    def trainingStart(self):
         # 어그멘테이션 설정
         if self.setAugmentation:
             self.config.flip = self.checkBoxFlip.isChecked()
@@ -386,20 +385,23 @@ class trainingWindowClass(QMainWindow, form_class) :
         self.textBrowser.append(s)
         s = s.rstrip()
         if s[-1] == '}':
-            
+
             tmp = s.split('-')
             isTrain = tmp[3].rstrip().lstrip()
             result_dict = tmp[5].rstrip().lstrip()
-            
+
             if isTrain == 'train':
                 result_dict = eval(result_dict)
                 log_data1.append(result_dict['loss'])
                 log_data2.append(result_dict['accuracy'])
                 log_data3.append(result_dict['recall'])
-                    
-                self.graphLoss.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['loss']), name =isTrain)
-                self.graphAcc.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['accuracy']), name =isTrain)
-                self.graphRecall.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['recall']), name =isTrain)
+
+                self.graphLoss.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['loss']),
+                                      name=isTrain)
+                self.graphAcc.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['accuracy']),
+                                     name=isTrain)
+                self.graphRecall.update(epoch=int(result_dict['epoch'].split('/')[0]),
+                                        data=float(result_dict['recall']), name=isTrain)
                 self.updateGrpah()
 
             elif isTrain == 'val':
@@ -408,14 +410,17 @@ class trainingWindowClass(QMainWindow, form_class) :
                 log_data6.append(result_dict['accuracy'])
                 log_data7.append(result_dict['recall'])
 
-                self.graphLoss.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['loss']), name =isTrain)
-                self.graphAcc.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['accuracy']), name =isTrain)
-                self.graphRecall.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['recall']), name =isTrain)
+                self.graphLoss.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['loss']),
+                                      name=isTrain)
+                self.graphAcc.update(epoch=int(result_dict['epoch'].split('/')[0]), data=float(result_dict['accuracy']),
+                                     name=isTrain)
+                self.graphRecall.update(epoch=int(result_dict['epoch'].split('/')[0]),
+                                        data=float(result_dict['recall']), name=isTrain)
 
                 if result_dict['batch'].split('/')[0] == result_dict['batch'].split('/')[1]:
-                    epoch = int(result_dict['epoch'].split('/')[0]) 
+                    epoch = int(result_dict['epoch'].split('/')[0])
                     Mepoch = int(self.spinBoxEpoch.text())
-                    cal = epoch * 100 // Mepoch    
+                    cal = epoch * 100 // Mepoch
                     self.changeProgressbar(cal)
         return
 
@@ -458,7 +463,7 @@ class trainingWindowClass(QMainWindow, form_class) :
     def process_finished(self):
         self.message("Process finished.")
         self.p = None
-            
+
     # 학습 정지
     def trainingStop(self):
         if self.p != None:
@@ -485,11 +490,12 @@ class trainingWindowClass(QMainWindow, form_class) :
 
             # start button
             self.pushButtonControlStart.setEnabled(True)
-    
+
     # 그래프 플로팅
     def updateGrpah(self):
         return
-        
+
+
 # 그래프용 Class 선언
 class Graph_Widget:
     def __init__(self, Xaxis, Yaxis, trainName, valName, title):
@@ -510,14 +516,16 @@ class Graph_Widget:
         self.graph.setLabel("left", Yaxis)
         self.graph.setLabel("bottom", Xaxis)
         self.graph.setTitle(title)
-        self.graph.addLegend(size=(80, 10), offset=(355,1))
+        self.graph.addLegend(size=(80, 10), offset=(355, 1))
         self.graph.showGrid(x=True, y=True)
         self.graph.setGeometry(300, 100, 550, 650)
-        self.graph.setXRange(0, 50) 
-        self.graph.setYRange(0, 1) 
+        self.graph.setXRange(0, 50)
+        self.graph.setYRange(0, 1)
         # plot 
-        self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=trainName, symbol='o', symbolSize=8, symbolBrush=('r'))
-        self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=valName, symbol='o', symbolSize=8, symbolBrush=('b'))
+        self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=trainName, symbol='o',
+                        symbolSize=8, symbolBrush=('r'))
+        self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=valName, symbol='o', symbolSize=8,
+                        symbolBrush=('b'))
 
     def update(self, epoch, data, name):
         if name == 'train':
@@ -528,8 +536,10 @@ class Graph_Widget:
             else:
                 self.y1[epoch - 1] = data
             self.graph.clear()
-            self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=self.trainName, symbol='o', symbolSize=8, symbolBrush=('r'))
-            self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=self.valName, symbol='o', symbolSize=8, symbolBrush=('b'))
+            self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=self.trainName, symbol='o',
+                            symbolSize=8, symbolBrush=('r'))
+            self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=self.valName, symbol='o',
+                            symbolSize=8, symbolBrush=('b'))
         else:
             if epoch == self.valStartEpoch:
                 self.x2.append(epoch)
@@ -538,18 +548,22 @@ class Graph_Widget:
             else:
                 self.y2[epoch - 1] = data
             self.graph.clear()
-            self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=self.trainName, symbol='o', symbolSize=8, symbolBrush=('r'))
-            self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=self.valName, symbol='o', symbolSize=8, symbolBrush=('b'))
+            self.graph.plot(x=self.x1, y=self.y1, pen=pg.mkPen(width=2, color='r'), name=self.trainName, symbol='o',
+                            symbolSize=8, symbolBrush=('r'))
+            self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=self.valName, symbol='o',
+                            symbolSize=8, symbolBrush=('b'))
 
         return
+
 
 # 그래프 끝
 
 def main():
-    app = QApplication(sys.argv) 
-    myWindow = trainingWindowClass() 
+    app = QApplication(sys.argv)
+    myWindow = trainingWindowClass()
     myWindow.show()
     sys.exit(app.exec_())
 
-if __name__ == "__main__" :
+
+if __name__ == "__main__":
     main()

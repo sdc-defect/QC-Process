@@ -1,5 +1,4 @@
 import base64
-import json
 import os
 from io import BytesIO
 
@@ -48,6 +47,8 @@ def saveImageFile(filestring, savePath):
 
     imgFile = filestring.encode("utf-8")
     im = Image.open(BytesIO(base64.b64decode(imgFile)))
+    b, g, r = im.split()
+    im = Image.merge("RGB", (r, g, b))
     im.save(savePath)
 
 

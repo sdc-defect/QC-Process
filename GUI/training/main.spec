@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-ui = [('training.ui', '.'), ('training_init.ui', '.')]
+ui = [('training.ui', '.'), ('training_init.ui', '.'), ('train.py', '.'), ('utils/*.py', 'utils')]
 
 block_cipher = None
 
@@ -9,7 +9,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=ui,
-    hiddenimports=[],
+    hiddenimports=['keras'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

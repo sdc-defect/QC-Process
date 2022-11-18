@@ -119,7 +119,7 @@ class InferenceWindowClass(QMainWindow, form_class):
             "File_name": imgDescription["filename"],
             "Probability_ok": str(format(round(imgDescription["prob"][0], 6),'.6f')),
             "Probability_def": str(format(round(imgDescription["prob"][1], 6),'.6f')),
-            "Result": "양품" if imgDescription["label"] == 0 else "불량품",
+            "Result": "양품" if imgDescription["label"] == 0 else "불량",
             "Image_path": imagePath,
             "CAM_path": camPath,
             "Merged_path": mergedPath
@@ -138,7 +138,7 @@ class InferenceWindowClass(QMainWindow, form_class):
         font = QFont()
         font.setBold(True)
         resultItem=QTableWidgetItem(logMessage["Result"])
-        if logMessage["Result"]=='불량품':
+        if logMessage["Result"]=='불량':
             resultItem.setForeground(QBrush(QColor(255, 0,0)))
         self.tableWidgetLog.setItem(row, 0, QTableWidgetItem(logMessage["File_name"]))
         self.tableWidgetLog.setItem(row, 1, QTableWidgetItem(logMessage["Timestamp"]))
@@ -262,7 +262,7 @@ class InferenceWindowClass(QMainWindow, form_class):
             if self.tableWidgetLog.item(row, 4).text() == '양품':
                 self.textBrowserSingleResult.setText("양품")
             else:
-                self.textBrowserSingleResult.setText("불량품")
+                self.textBrowserSingleResult.setText("불량")
             self.textBrowserSingleResult_2.setText(self.tableWidgetLog.item(row, 2).text())
             self.textBrowserSingleResult_3.setText(self.tableWidgetLog.item(row, 3).text())
 
@@ -357,7 +357,7 @@ class InferenceWindowClass(QMainWindow, form_class):
         if result['label'] == 0:
             self.textBrowserSingleResult.setText("양품")
         else:
-            self.textBrowserSingleResult.setText("불량품")
+            self.textBrowserSingleResult.setText("불량")
         self.textBrowserSingleResult_2.setText(f'{(result["prob"][0] * 100):.2f}%')
         self.textBrowserSingleResult_3.setText(f'{(result["prob"][1] * 100):.2f}%')
 
@@ -428,7 +428,7 @@ class InferenceWindowClass(QMainWindow, form_class):
 
     def get_data(self, log):
         if type(log) == dict:
-            if log['Result'] == '불량품':
+            if log['Result'] == '불량':
                 self.yy += 1
             self.total += 1
             dt = QDateTime.currentDateTime()
