@@ -61,7 +61,7 @@ class AllImageWindowClass(QMainWindow, form_class):
                 self.tableWidgetAllFile.setItem(cnt, 0, QTableWidgetItem(name))
                 self.tableWidgetAllFile.setItem(cnt, 1, QTableWidgetItem(fileDict[name]["Timestamp"]))
                 resultItem=QTableWidgetItem(fileDict[name]["Result"])
-                if fileDict[name]["Result"]=='불량품':
+                if fileDict[name]["Result"]=='불량':
                     resultItem.setForeground(QBrush(QColor(255, 0,0)))
                 self.tableWidgetAllFile.setItem(cnt, 2, resultItem)
                 
