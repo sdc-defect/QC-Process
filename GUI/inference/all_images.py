@@ -1,11 +1,14 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5.QtGui import QPixmap, QBrush,QColor
+from PyQt5.QtGui import QPixmap, QBrush, QColor
+
+import utils
 
 # UI파일 연결
 # 단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
-form_class = uic.loadUiType("ui/all_images.ui")[0]
+form = utils.resource_path('ui/all_images.ui')
+form_class = uic.loadUiType(form)[0]
 
 
 # form_class = uic.loadUiType(r"C:\Users\multicampus\Desktop\guiFILE\6try1\inference\all_images.ui")[0]

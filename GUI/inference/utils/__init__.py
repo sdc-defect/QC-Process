@@ -1,9 +1,16 @@
-import base64
 import os
+import sys
 from io import BytesIO
 
 import requests
+import base64
 from PIL import Image
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 
 def send_file_post(ip: str, path, file_path):
