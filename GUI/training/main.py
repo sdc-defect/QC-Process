@@ -342,7 +342,11 @@ class trainingWindowClass(QMainWindow, form_class):
             self.config.decay = int(self.lineEditDecayStep.text())
         else:
             self.config.decay = int(self.comboBoxDecayStep.currentText())
-
+        
+        self.graphLoss.setEpoch(self.config.epoch)
+        self.graphAcc.setEpoch(self.config.epoch)
+        self.graphRecall.setEpoch(self.config.epoch)
+        
         if self.isSetFile:
             try:
                 # Augmentation, hyper parameter unable
@@ -526,6 +530,10 @@ class Graph_Widget:
                         symbolSize=8, symbolBrush=('r'))
         self.graph.plot(x=self.x2, y=self.y2, pen=pg.mkPen(width=2, color='b'), name=valName, symbol='o', symbolSize=8,
                         symbolBrush=('b'))
+
+    def setEpoch(self, epoch):
+        self.graph.setXRange(0, epoch)
+        return
 
     def update(self, epoch, data, name):
         if name == 'train':
