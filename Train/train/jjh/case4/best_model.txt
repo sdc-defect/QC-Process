@@ -1,1 +1,1 @@
-50 epoch
+45 epoch
