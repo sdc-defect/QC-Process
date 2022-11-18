@@ -203,7 +203,7 @@
      <item>
       <widget class="QCheckBox" name="checkBoxSpin">
        <property name="text">
-        <string>Spin</string>
+        <string>Rotate</string>
        </property>
       </widget>
      </item>
@@ -450,7 +450,7 @@
      <rect>
       <x>50</x>
       <y>10</y>
-      <width>91</width>
+      <width>361</width>
       <height>20</height>
      </rect>
     </property>
@@ -458,7 +458,7 @@
      <string notr="true">font-size:18px;</string>
     </property>
     <property name="text">
-     <string>파일 위치</string>
+     <string>파일 버튼을 눌러 파일 경로를 설정해주세요.</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_4">
@@ -673,7 +673,7 @@
      <rect>
       <x>220</x>
       <y>640</y>
-      <width>121</width>
+      <width>141</width>
       <height>21</height>
      </rect>
     </property>
@@ -693,7 +693,7 @@
      <string notr="true">font-size:18px;</string>
     </property>
     <property name="text">
-     <string>파라미터 설정</string>
+     <string>Hyperparameter</string>
     </property>
    </widget>
    <widget class="QLabel" name="labelLearningRate">
@@ -757,106 +757,45 @@
      <string>Clear</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>140</x>
-      <y>10</y>
-      <width>16</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;좌측 상단의 파일 버튼을 눌러 data set을 등록해주세요.&lt;/p&gt;&lt;p&gt;Train data의 Ok data set과 Def data set의 파일 경로를 등록해주세요.&lt;/p&gt;&lt;p&gt;Test data의 비율을 설정하거나, Ok data set과 Def data set의 파일 경로를 등록해주세요.&lt;/p&gt;&lt;p&gt;Validation data의 비율을 설정하거나, Ok data set과 Def data set의 파일 경로를 등록해주세요.&lt;/p&gt;&lt;p&gt;학습이 끝난 파일들을 저장할 경로를 등록해주세요.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>❓</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="augmentationToolTips">
     <property name="geometry">
      <rect>
       <x>190</x>
       <y>640</y>
-      <width>16</width>
+      <width>21</width>
       <height>21</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Augmentation을 설정해주세요.&lt;/p&gt;&lt;p&gt;Flip은&lt;/p&gt;&lt;p&gt;Spin은&lt;/p&gt;&lt;p&gt;Shift는&lt;/p&gt;&lt;p&gt;Mix up&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flip : 좌 / 우 / 상 / 하 반전시킵니다.&lt;/p&gt;&lt;p&gt;Rotate : 이미지를 회전시킵니다.&lt;/p&gt;&lt;p&gt;Shift : 이미지를 이동시킵니다.&lt;/p&gt;&lt;p&gt;Mix up : 랜덤으로 두 개의 이미즐 합성하여 새로운 데이터를 만듭니다.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
-     <string>❓</string>
+     <string>ℹ</string>
     </property>
    </widget>
    <widget class="QLabel" name="hyperParameterToolTips">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>360</x>
       <y>640</y>
-      <width>16</width>
+      <width>21</width>
       <height>21</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hyper Parameter를 설정해주세요.&lt;/p&gt;&lt;p&gt;Epoch은&lt;/p&gt;&lt;p&gt;Learning Rate은&lt;/p&gt;&lt;p&gt;Batch Size는&lt;/p&gt;&lt;p&gt;Decay Step은&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Epoch : 반복 횟수, 모델을 몇 번 학습시킬지 결정합니다.&lt;/p&gt;&lt;p&gt;Learning Rate : 학습율, 모델이 한 번에 학습시킬 양을 결정합니다.&lt;/p&gt;&lt;p&gt;Batch Size : 묶음 단위, 데이터 셋을 여러 작은 그룹으로 나누었을 때 하나의 소그룹에 해당하는 데이터 수를 의미합니다.&lt;/p&gt;&lt;p&gt;Decay Step : 학습률을 조정해줍니다.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
-     <string>❓</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>210</y>
-      <width>598</width>
-      <height>15</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="text">
-     <string>table1 - loss</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>660</x>
-      <y>210</y>
-      <width>599</width>
-      <height>15</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>table - acc</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>1270</x>
-      <y>210</y>
-      <width>598</width>
-      <height>15</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>table - recall precision</string>
+     <string>ℹ</string>
     </property>
    </widget>
    <widget class="QWidget" name="gridLayoutWidget_2">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>240</y>
+      <y>210</y>
       <width>1811</width>
-      <height>371</height>
+      <height>401</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="graphLayout"/>

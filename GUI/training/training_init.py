@@ -22,14 +22,6 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
 
     fileSetdata = {
     }
-    trainOkCount = 0
-    trainDefCount = 0
-    testOkCount = 0
-    testDefCount = 0
-    testTotalCount = 0
-    validationOkCount = 0
-    validationDefCount = 0
-    validationTotalCount = 0
 
     def __init__(self) :
         super().__init__()
@@ -359,29 +351,32 @@ class TrainingInitWindowClass(QDialog, init_form_class) :
         self.fileSetdata['save_path'] = self.labelModelSaveDir.text()
         # Train path 
         self.fileSetdata['train_path'] = [self.labelOkTrainListDir.text(), self.labelDefTrainListDir.text()]
-        self.trainOkCount = self.labelOkTrainCount.text()
-        self.trainDefCount = self.labelDefTrainCount.text()
+        self.fileSetdata['trainOkCount'] = self.labelOkTrainCount.text()
+        self.fileSetdata['trainDefCount'] = self.labelDefTrainCount.text()
 
         # Test path
         if self.checkBoxTest.isChecked():
             self.fileSetdata['test_path'] = [self.labelOkTestListDir.text(), self.labelDefTestListDir.text()]
             self.fileSetdata['test_per'] = None
-            self.testOkCount = self.labelOkTestCount.text()
-            self.testDefCount = self.labelDefTestCount.text()
+            self.fileSetdata['testOkCount'] = self.labelOkTestCount.text()
+            self.fileSetdata['testDefCount'] = self.labelDefTestCount.text()
+
         else:
             self.fileSetdata['test_path'] = None
             self.fileSetdata['test_per'] = float(self.spinBoxTotalRatioTestCount.text()) / 100
-            self.testTotalCount = self.totalRatioPlotCountTest.text()
+            self.fileSetdata['testTotalCount'] = self.totalRatioPlotCountTest.text()
+
         # Val path
         if self.checkBoxValidation.isChecked():
             self.fileSetdata['val_path'] = [self.labelOkValidationListDir.text(), self.labelDefValidationListDir.text()]
             self.fileSetdata['val_per'] = None
-            self.validationOkCount = self.labelOkValidationCount.text()
-            self.validationDefCount = self.labelDefValidationCount.text()
+            self.fileSetdata['validationOkCount'] = self.labelOkValidationCount.text()
+            self.fileSetdata['validationDefCount'] = self.labelDefValidationCount.text()
+
         else:
             self.fileSetdata['val_per'] = float(self.spinBoxTotalRatioValidationCount.text()) / 100
             self.fileSetdata['val_path'] = None
-            self.validationTotalCount = self.totalRatioPlotCountValidation.text()
+            self.fileSetdata['validationTotalCount'] = self.totalRatioPlotCountValidation.text()
         
         self.close()
 

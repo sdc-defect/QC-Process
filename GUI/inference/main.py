@@ -1,112 +1,91 @@
 import sys
-from PyQt5.QtWidgets import *
+from typing import Optional
+
 from PyQt5 import uic
 import os
 from PyQt5 import QtWidgets
-# from PyQt5.QtCore import *
-from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
-# graph lib
-import pandas as pd
-from pandas import Series
 import numpy as np
-from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtChart import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import *
 from PyQt5.QtCore import pyqtSlot
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+
 import matplotlib.animation as animation
-from matplotlib.figure import Figure
-import random
 
-# 출력 thread
 import json
-from PyQt5.QtCore import QThread
-from PyQt5.QtCore import QWaitCondition
-from PyQt5.QtCore import QMutex
-
-# 웹소켓
-import requests
-
-from PyQt5 import QtWebSockets, QtNetwork
-from PyQt5.QtCore import QUrl, QCoreApplication, QTimer
 from PyQt5.QtWidgets import QApplication
 
 import logging
-import base64
-from PIL import Image
-from io import BytesIO
 
+import utils
 from all_images import AllImageWindowClass
+import utils.client as client
+import utils.plot as plot
 
-#UI파일 연결
-#단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
+# UI파일 연결
+# 단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
+form = utils.resource_path('ui/inference.ui')
+form_class = uic.loadUiType(form)[0]
+ip = "k7b306.p.ssafy.io:8080"
 
-form_class = uic.loadUiType("inference.ui")[0]
-# form_class = uic.loadUiType(r"C:\Users\multicampus\Desktop\guiFILE\6try1\inference\inference.ui")[0]
 
-#화면을 띄우는데 사용되는 Class 선언
-class InferenceWindowClass(QMainWindow, form_class) :
-    inferenceDir = ""
-    modelDir = ""
-    singleInferenceDir = ""
+# 화면을 띄우는데 사용되는 Class 선언
+class InferenceWindowClass(QMainWindow, form_class):
 
-    allFileLst = []
-    okFileLst = []
-    defFileLst = []
-
-    allInferencedFile = {}
-    okInferencedFile = {}
-    defInferencedFile = {}
-
-    yy = 0
-    total = 0
-    old_ts = 0
-    a = 0
-    cur_result = 0
-
-    def __init__(self) :
+    def __init__(self):
         super().__init__()
+        self.websocket: Optional[client.Client] = None
         self.setupUi(self)
+
+        self.inferenceDir = os.path.abspath(os.path.join('.', 'temp'))
+        utils.create_folder(self.inferenceDir)
+        self.modelName = ""
+        self.singleInferenceDir = ""
+
+        self.allFileLst = []
+        self.okFileLst = []
+        self.defFileLst = []
+
+        self.allInferencedFile = {}
+        self.okInferencedFile = {}
+        self.defInferencedFile = {}
+
+        self.yy = 0
+        self.total = 0
+        self.old_ts = 0
+        self.a = 0
+        self.cur_result = 0
 
         self.initUI()
         self.setWindowTitle("Inference")
         self.setWindowIcon(QIcon('logo.png'))
-        # self.setWindowIcon(QIcon(r'C:\Users\multicampus\Desktop\guiFILE\6try\inference\logo.png'))
-        
+
         # 그래프
-        self.canvas = PlotCanvasLine(self, width=10, height=8)
+        self.canvas = plot.PlotCanvasLine(self, width=10, height=8)
         self.gridLayoutGraph.addWidget(self.canvas)
         self.x = np.arange(60)
-        self.y = np.ones(60, dtype=np.float64)*np.nan
+        self.y = np.ones(60, dtype=np.float64) * np.nan
         self.line, = self.canvas.axes.plot(self.x, self.y, animated=True, color='red', lw=2)
-        self.pushButtonControlStart.clicked.connect(self.on_start)
-        self.pushButtonControlStop.clicked.connect(self.on_stop)
-        # self.on_start()
-            # window size
-        # self.setMinimumSize(800, 800)
+        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line, blit=True, interval=60000)
+        self.pushButtonControlStart.clicked.connect(lambda x: self.ani.event_source.start())
+        self.pushButtonControlStop.clicked.connect(lambda x: self.ani.event_source.stop())
+        self.ani.event_source.stop()
+
         self.series = QBarSeries()
-        
-        
-            # chart object
+
+        # chart object
         chart = QChart()
-            # chart.legend().hide()
         chart.addSeries(self.series)
         chart.layout().setContentsMargins(0, 0, 0, 0)
 
-            # self.resize(800, 600)
-
-        chart.setTitle('수율')
+        chart.setTitle('생산량')
         chart.setAnimationOptions(QChart.SeriesAnimations)
 
         dt = QDateTime.currentDateTime()
         self.ts = dt.toString('mm')
-
-        months = (self.ts)
 
         axisX = QBarCategoryAxis()
         axisX.append('시간')
@@ -122,14 +101,8 @@ class InferenceWindowClass(QMainWindow, form_class) :
         chart.legend().setAlignment(Qt.AlignBottom)
 
         self.chartView = QChartView(chart)
-        
+        self.chartView.setMinimumWidth(300)
         self.gridLayoutGraph.addWidget(self.chartView)
-
-        
-    def init_widget(self):
-        # 시그널 슬롯 연결
-        self.threadWebsocket.recieved_message.connect(self.logSave)
-
 
     # 웹소켓에서 데이터 받았을 때 실행
     def logSave(self, logContext):
@@ -142,90 +115,96 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
         # 로그 파일 저장용
         logMessage = {
-            "Timestamp" : imgDescription["timestamp"],
-            "File_name" : imgDescription["filename"] ,
-            "Probability_ok" : str(round(imgDescription["prob"][0], 6)),
-            "Probability_def" : str(round(imgDescription["prob"][1], 6)),
-            "Result" : "ok" if imgDescription["label"] == 0 else "def",
-            "Image_path" : imagePath,
-            "CAM_path" : camPath,
-            "Merged_path" : mergedPath
-           }
+            "Timestamp": imgDescription["timestamp"],
+            "File_name": imgDescription["filename"],
+            "Probability_ok": str(format(round(imgDescription["prob"][0], 6),'.6f')),
+            "Probability_def": str(format(round(imgDescription["prob"][1], 6),'.6f')),
+            "Result": "양품" if imgDescription["label"] == 0 else "불량",
+            "Image_path": imagePath,
+            "CAM_path": camPath,
+            "Merged_path": mergedPath
+        }
 
-        self.logUpdate("Timestamp: "+logMessage["Timestamp"]+", File_name: "+logMessage["File_name"]+", Probability_ok: "+logMessage["Probability_ok"]+", Probability_def: "+logMessage["Probability_def"]+", Result: "+logMessage["Result"]+", Image_path: "+logMessage["Image_path"]+", CAM_path: "+logMessage["CAM_path"]+", Merged_path: "+logMessage["Merged_path"]+"\n")
+        self.textBrowserLogContent.append(
+            "Timestamp: " + logMessage["Timestamp"] + ", File_name: " + logMessage["File_name"] + ", Probability_ok: " +
+            logMessage["Probability_ok"] + ", Probability_def: " + logMessage["Probability_def"] + ", Result: " +
+            logMessage["Result"] + ", Image_path: " + logMessage["Image_path"] + ", CAM_path: " + logMessage[
+                "CAM_path"] + ", Merged_path: " + logMessage["Merged_path"] + "\n")
         self.get_data(logMessage)
         self.get_result(logMessage)
-        
+
         # 메인 화면 이미지 리스트에 계속 추가해주기
-        row = self.tableWidgetLog.rowCount()-1
+        row = self.tableWidgetLog.rowCount() - 1
+        font = QFont()
+        font.setBold(True)
+        resultItem=QTableWidgetItem(logMessage["Result"])
+        if logMessage["Result"]=='불량':
+            resultItem.setForeground(QBrush(QColor(255, 0,0)))
         self.tableWidgetLog.setItem(row, 0, QTableWidgetItem(logMessage["File_name"]))
         self.tableWidgetLog.setItem(row, 1, QTableWidgetItem(logMessage["Timestamp"]))
-        self.tableWidgetLog.setItem(row, 2, QTableWidgetItem(logMessage["Probability_ok"]))
-        self.tableWidgetLog.setItem(row, 3, QTableWidgetItem(logMessage["Probability_def"]))
-        self.tableWidgetLog.setItem(row, 4, QTableWidgetItem(logMessage["Result"]))
-        self.tableWidgetLog.insertRow(row+1)
+        self.tableWidgetLog.setItem(row, 2, QTableWidgetItem(f'{(float(logMessage["Probability_ok"]))* 100:.2f}%'))
+        self.tableWidgetLog.setItem(row, 3, QTableWidgetItem(f'{(float(logMessage["Probability_def"]))* 100:.2f}%'))
+        self.tableWidgetLog.setItem(row, 4, resultItem)
+        self.tableWidgetLog.insertRow(row + 1)
+        if float(logMessage["Probability_ok"]) > float(logMessage["Probability_def"]):
+            self.tableWidgetLog.item(row,2).setFont(font)
+        else:
+            self.tableWidgetLog.item(row,3).setFont(font)
 
         filename = logMessage["File_name"]
 
         self.allInferencedFile[filename] = logMessage
         self.allFileLst.append(filename)
-        if imgDescription["label"] == 0: # 양품
+        if imgDescription["label"] == 0:  # 양품
             self.okInferencedFile[filename] = logMessage
             self.okFileLst.append(filename)
-        else: # 불량
+        else:  # 불량
             self.defInferencedFile[filename] = logMessage
             self.defFileLst.append(filename)
-        
+
         logger = self.initLogger("Inferenced")
         logger.info(logMessage)
 
         # 이미지 파일 jpg로 변환해서 저장
-        self.saveImageFile(imgDescription["img"], imagePath)
-        self.saveImageFile(imgDescription["cam"], camPath)
-        self.saveImageFile(imgDescription["merged"], mergedPath)
-    
-    # 이미지 파일 저장하기
-    def saveImageFile(self, filestring, savePath):
-        imgFile = filestring.encode("utf-8")
-        im = Image.open(BytesIO(base64.b64decode(imgFile)))
-        im.save(savePath)
-
-
-    def logUpdate(self, logContext):
-        print("logUdate")
-        self.textBrowserLogContent.append(logContext)
+        utils.saveImageFile(imgDescription["img"], imagePath)
+        utils.saveImageFile(imgDescription["cam"], camPath)
+        utils.saveImageFile(imgDescription["merged"], mergedPath)
 
     # 초기화
     def initUI(self):
-        _openFile = QtWidgets.QAction("다른 파일 열기", self)
-        _openModel = QtWidgets.QAction("모델 열기", self)
-        
-        # Menu Bar Settings
-        menu = self.menuBar()
-        _file = menu.addMenu("파일")
-        _file.addAction(_openFile)
-        _file.addAction(_openModel)
+        self.textBrowserImageFile.setText(self.inferenceDir)
+        self.logDirBtn.clicked.connect(self.editFileDir)
+        self.modelDirBtn.clicked.connect(self.editModelDir)
+        self.pushButtonLogClear.clicked.connect(lambda x: self.textBrowserLogContent.clear())
+        self.modelListBtn.clicked.connect(self.getModelList)
+        self.modelBox.activated[str].connect(self.modelSelect)
 
-        # Connect Actions
-        _openFile.triggered.connect(self.editFileDir)
-        _openModel.triggered.connect(self.editModelDir)
-        self.pushButtonLogClear.clicked.connect(self.clickLogClear)
+        response = utils.send_api(ip, '/model/list', 'GET')
+        self.modelName = self.modelBox.currentText()
+        if response.status_code == 200:
+            models = json.loads(response.content.decode('utf-8'))['models']
+            for model in models:
+                self.modelBox.addItem(model)
+            self.modelBox.setCurrentIndex(0)
 
         # log table setting
+        
         self.tableWidgetLog.clicked.connect(self.clickTableImages)
+    
         self.tableWidgetLog.setColumnCount(5)
-        self.tableWidgetLog.setHorizontalHeaderLabels(['File Name', 'Created Time', 'Probability_ok', 'Probability_def', 'Result'])
+        self.tableWidgetLog.setHorizontalHeaderLabels(
+            ['File Name', 'Created Time', 'Probability_ok', 'Probability_def', 'Result'])
         self.tableWidgetLog.insertRow(0)
         self.tableWidgetLog.horizontalHeaderItem(0).setToolTip("코드...")
 
-        self.tableWidgetLog.setColumnWidth(0, self.tableWidgetLog.width()*1/5)
-        self.tableWidgetLog.setColumnWidth(1, self.tableWidgetLog.width()*1/5)
-        self.tableWidgetLog.setColumnWidth(2, self.tableWidgetLog.width()*1/5)
-        self.tableWidgetLog.setColumnWidth(3, self.tableWidgetLog.width()*1/5)
-        self.tableWidgetLog.setColumnWidth(4, self.tableWidgetLog.width()*1/6)
+        self.tableWidgetLog.setColumnWidth(0, self.tableWidgetLog.width() * 1 / 5)
+        self.tableWidgetLog.setColumnWidth(1, self.tableWidgetLog.width() * 1 / 5)
+        self.tableWidgetLog.setColumnWidth(2, self.tableWidgetLog.width() * 1 / 5)
+        self.tableWidgetLog.setColumnWidth(3, self.tableWidgetLog.width() * 1 / 5)
+        self.tableWidgetLog.setColumnWidth(4, self.tableWidgetLog.width() * 1 / 6)
 
         # 이미지 미리보기
-        self.pushButtonOpenSingleImageDir.clicked.connect(self.showSingleImage)
+        self.pushButtonOpenSingleImageDir.clicked.connect(self.openSingleImage)
 
         # 추론 모든 이미지 보기
         self.pushButtonAllListShow.clicked.connect(self.allImagesWindowOpen)
@@ -239,13 +218,8 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.pushButtonControlStop.clicked.connect(self.allStopInference)
         # 전체 이미지 추론 일시 정지 버튼
         self.pushButtonControlPause.clicked.connect(self.pauseInference)
-        #self.pushButtonControlStatus.clicked.connect(self.statusInference)
         # 전체 이미지 추론 다시 시작 버튼
         self.pushButtonControlRestart.clicked.connect(self.restartInference)
-    
-    # 로그창 초기화
-    def clickLogClear(self):
-        self.textBrowserLogContent.clear()
 
     # 로깅 초기화
     def initLogger(self, logger_name):
@@ -273,27 +247,33 @@ class InferenceWindowClass(QMainWindow, form_class) :
         try:
             filename = self.tableWidgetLog.item(row, 0).text()
             detail = self.allInferencedFile[filename]
+            self.tableWidgetLog.selectRow(row)
 
             imageDir = detail["Image_path"]
-            camDir = detail["CAM_path"]
             self.singleInferenceDir = detail["Image_path"]
             self.labelSingleImageDir.setText(detail["Image_path"])
-            # mergedDir = detail["Merged_path"]
+            mergedDir = detail["Merged_path"]
 
             imageDirPixmap = QPixmap(imageDir)
-            camDirPixmap = QPixmap(camDir)
+            merDirPixmap = QPixmap(mergedDir)
             self.labelSingleImageShow.setPixmap(imageDirPixmap)
-            self.labelSingleCAMShow.setPixmap(camDirPixmap)
+            self.labelSingleCAMShow.setPixmap(merDirPixmap)
+
+            if self.tableWidgetLog.item(row, 4).text() == '양품':
+                self.textBrowserSingleResult.setText("양품")
+            else:
+                self.textBrowserSingleResult.setText("불량")
+            self.textBrowserSingleResult_2.setText(self.tableWidgetLog.item(row, 2).text())
+            self.textBrowserSingleResult_3.setText(self.tableWidgetLog.item(row, 3).text())
 
         except AttributeError:
             pass
-        
 
     # 모달 창 - 모든 이미지 파일 리스트
     def allImagesWindowOpen(self):
-        self.allImages = AllImageWindowClass(self.allInferencedFile, self.allFileLst, self.okInferencedFile, self.okFileLst, self.defInferencedFile, self.defFileLst)
+        self.allImages = AllImageWindowClass(self.allInferencedFile, self.allFileLst, self.okInferencedFile,
+                                             self.okFileLst, self.defInferencedFile, self.defFileLst)
         self.allImages.show()
-
 
     # 메뉴에 파일 다시 열기 누르면
     def editFileDir(self):
@@ -304,26 +284,49 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
     # 메뉴에 모델 열기 누르면
     def editModelDir(self):
-        # fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(.onnx)') # 확장자 정해지면 설정하기
-        fname = QFileDialog.getOpenFileName(self, '', 'Open file')
+        fname = QFileDialog.getOpenFileName(self, '', 'Open file', 'ONNX(*.onnx)')  # 확장자 정해지면 설정하기
         if fname:
             self.modelDir = fname[0]
-            self.textBrowserModelFile.setText(fname[0])
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+            response = utils.send_file_put(ip, "/model/upload", fname[0])
+            QApplication.setOverrideCursor(Qt.ArrowCursor)
+            if response.status_code == 200:
+                QMessageBox.information(self, '모델 업로드', "업로드 성공")
+                self.getModelList()
+            else:
+                QMessageBox.critical(self, '모델 업로드', "업로드 실패")
 
+    def getModelList(self):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        response = utils.send_api(ip, '/model/list', 'GET')
+        QApplication.setOverrideCursor(Qt.ArrowCursor)
+        self.modelBox.clear()
+        if response.status_code == 200:
+            models = json.loads(response.content.decode('utf-8'))['models']
+            for model in models:
+                self.modelBox.addItem(model)
+        self.modelBox.setCurrentIndex(0)
+        self.modelName = self.modelBox.currentText()
 
-    # 로그 파일 initialize
-    def logFileInit(self, directory):
-        # 이미지 파일들 리스트
-        imageFileList = os.listdir(directory)
-        # 이미지 딕셔너리 만듦
-        imageDict = {}
-        for image in imageFileList:
-            imageDict[image] = {}
+    def modelSelect(self, text):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        response = utils.send_api(ip, f'/model/update/{text}', 'PUT')
+        QApplication.setOverrideCursor(Qt.ArrowCursor)
+        if response.status_code == 200:
+            QMessageBox.information(self, '모델 변경', "성공")
+        else:
+            QMessageBox.critical(self, '모델 변경', "실패")
 
-    # 이미지 미리보기
-    def showSingleImage(self):
+    # 개별 이미지 추론 열기
+    def openSingleImage(self):
         fname = QFileDialog.getOpenFileName(self, '', 'Open file')
         if fname:
+            self.labelSingleImageDir.clear()
+            self.labelSingleImageDir.setText('원본 이미지')
+            self.labelSingleImageShow.clear()
+            self.labelSingleImageShow.setText('CAM 이미지')
+            self.labelSingleCAMShow.clear()
+
             self.labelSingleImageDir.setText(fname[0])
 
             singleImageDir = fname[0]
@@ -336,16 +339,33 @@ class InferenceWindowClass(QMainWindow, form_class) :
 
     # 개별 이미지 추론 시작
     def singleStartInference(self):
-        # self.singleInferenceDir # 이미지 위치..
-        pass
+        if not self.singleInferenceDir:
+            QMessageBox.critical(self, '개별 이미지 추론', "이미지 입력이 필요합니다.")
+            return
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        response = utils.send_file_post(ip, '/single', self.singleInferenceDir)
+        QApplication.setOverrideCursor(Qt.ArrowCursor)
+        content = response.content.decode('utf-8')
+        result: dict = json.loads(content[1:-1].replace("\\", ""))
+
+        save = self.inferenceDir + '/single/' + result['filename']
+        utils.saveImageFile(result['img'], f'{save}.jpg')
+        utils.saveImageFile(result['cam'], f'{save}_cam.jpg')
+        utils.saveImageFile(result['merged'], f'{save}_merged.jpg')
+        self.labelSingleCAMShow.setPixmap(QPixmap(f'{save}_merged.jpg'))
+
+        if result['label'] == 0:
+            self.textBrowserSingleResult.setText("양품")
+        else:
+            self.textBrowserSingleResult.setText("불량")
+        self.textBrowserSingleResult_2.setText(f'{(result["prob"][0] * 100):.2f}%')
+        self.textBrowserSingleResult_3.setText(f'{(result["prob"][1] * 100):.2f}%')
 
     # 모든 이미지 추론 시작
     @pyqtSlot()
     def allStartInference(self):
         if not self.inferenceDir:
             QtWidgets.QMessageBox.critical(self, "저장 경로 미설정", "파일 저장 경로를 설정해주세요.")
-        elif not self.modelDir:
-            QtWidgets.QMessageBox.critical(self, "모델 미설정", "사용할 모델을 설정해주세요.")
         else:
             # 사용자 지정 dir에 image, cam, merged 파일 없으면 만듦
             if "image" not in os.listdir(self.inferenceDir):
@@ -355,12 +375,12 @@ class InferenceWindowClass(QMainWindow, form_class) :
             if "merged" not in os.listdir(self.inferenceDir):
                 os.mkdir(self.inferenceDir + "/merged")
 
-            self.threadWebsocket = Client()
-            self.threadWebsocket.start()
-            self.init_widget()
-            # self.threadWebsocket.status_true()
+            if self.websocket is not None:
+                print("websocket already exist")
+                self.websocket.close()
 
-            # self.startInfInit()
+            self.websocket = client.Client(f"ws://{ip}/ws")
+            self.websocket.signal.connect(self.logSave)
             self.textBrowserLogContent.append("Inference started\n")
 
             # 정지, 일시정지 버튼 활성화
@@ -370,20 +390,12 @@ class InferenceWindowClass(QMainWindow, form_class) :
             self.pushButtonControlStop.setEnabled(True)
             # 개별 추론 버튼 비활성화
             self.pushButtonSingleStartInference.setEnabled(False)
-    
-
-    # def startInfInit(self):
-    #     self.pushButtonControlPause.clicked.connect(self.pauseInference)
-    #     #self.pushButtonControlStatus.clicked.connect(self.statusInference)
-    #     self.pushButtonControlRestart.clicked.connect(self.restartInference)
 
     # 모든 이미지 추론 정지
     def allStopInference(self):
-        print("stop")
         self.textBrowserLogContent.append("Inference stoped\n")
-        self.threadWebsocket.websocketFinish()
-        self.threadWebsocket.status_false()
-        self.threadWebsocket.stopThread()
+        self.websocket.close()
+
         # 시작 버튼 활성화, 나머지 비활성화
         self.pushButtonControlStart.setEnabled(True)
         self.pushButtonControlRestart.setEnabled(False)
@@ -393,296 +405,93 @@ class InferenceWindowClass(QMainWindow, form_class) :
         self.pushButtonSingleStartInference.setEnabled(True)
 
     def pauseInference(self):
-        #self.threadWebsocket.websocketFinish()
         self.textBrowserLogContent.append("Inference paused\n")
-        self.threadWebsocket.pause_inference()
-        self.threadWebsocket.status_false()
-        # 다시 시작, 정지 활성화
-        self.pushButtonControlStart.setEnabled(False)
-        self.pushButtonControlRestart.setEnabled(True)
-        self.pushButtonControlPause.setEnabled(False)
-        self.pushButtonControlStop.setEnabled(True)
+        response = utils.send_api(ip, '/pause', 'POST')
 
-    # def statusInference(self):
-    #     self.textBrowserLogContent.append("Inference status checked")
-    #     self.threadWebsocket.status_inference()
-    
+        # 다시 시작, 정지 활성화
+        if response.status_code == 200:
+            self.pushButtonControlStart.setEnabled(False)
+            self.pushButtonControlRestart.setEnabled(True)
+            self.pushButtonControlPause.setEnabled(False)
+            self.pushButtonControlStop.setEnabled(True)
+
     def restartInference(self):
         self.textBrowserLogContent.append("Inference restarted\n")
-        self.threadWebsocket.restart_inference()
-        self.threadWebsocket.status_true()
+        response = utils.send_api(ip, '/restart', 'POST')
+
         # 정지, 일시정지 버튼 활성화
-        self.pushButtonControlStart.setEnabled(False)
-        self.pushButtonControlRestart.setEnabled(False)
-        self.pushButtonControlPause.setEnabled(True)
-        self.pushButtonControlStop.setEnabled(True)
-    
-    # 창 닫을 떄 발생하는 이벤트
-    def closeEvent(self, event):
-        try:
-            self.pauseInference()
-            self.threadWebsocket.stopThread()
-        except AttributeError:
-            pass
-        
-        
+        if response.status_code == 200:
+            self.pushButtonControlStart.setEnabled(False)
+            self.pushButtonControlRestart.setEnabled(False)
+            self.pushButtonControlPause.setEnabled(True)
+            self.pushButtonControlStop.setEnabled(True)
+
     def get_data(self, log):
-        print(log)
         if type(log) == dict:
-            if log['Result'] == 'def':
+            if log['Result'] == '불량':
                 self.yy += 1
             self.total += 1
             dt = QDateTime.currentDateTime()
             ts = dt.toString('mm')
-            # print(log)
-        if ts != self.old_ts:
-            self.old_ts = ts
-        
-    
+            if ts != self.old_ts:
+                self.old_ts = ts
+
     def update_line(self, i):
         y = self.yy / self.total if self.yy != 0 else 0
         old_y = self.line.get_ydata()
         new_y = np.r_[old_y[1:], y]
         self.line.set_ydata(new_y)
-    
-        # print(self.y)
+
         return [self.line]
 
-    def update_line2(self, i):
-        pass
-        y2 = random.randint(0,510)
-        old_y2 = self.line2.get_ydata()
-        new_y2 = np.r_[old_y2[1:], y2]
-        self.line2.set_ydata(new_y2)
-        return [self.line2]
-    
-    def on_start(self):
-        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line,blit=True, interval=1000)
-
-    
-    def on_stop(self):
-        self.ani._stop()
-    
     def get_result(self, data):
         if type(data) == dict:
             self.cur_result += 1
         dt = QDateTime.currentDateTime()
-        # self.statusBar().showMessage(dt.toString('mm'))
-        # self.ticks[dt] = cur_result
-
-        # # check whether minute changed
-        # #if dt.time().minute() != self.minute_cur.time().minute():
 
         ts = dt.toString('mm')
-        print(ts, self.cur_result, type(self.cur_result))
-        
-        if len(self.series.barSets())>0:
-            self.a=self.series.barSets()[-1]
-            print('=====================')
-            print(self.series.take(self.a))
-        # if self.a!=0:
-        #     self.cur_result=self.cur_result+int(self.a[0])
+
+        if len(self.series.barSets()) > 0:
+            self.a = self.series.barSets()[-1]
+            self.series.take(self.a)
         new_set = QBarSet(f'{ts}')
-        if self.a!=0 and new_set.label()!=self.a.label():
+        if self.a != 0 and new_set.label() != self.a.label():
             self.series.append(self.a)
-            # new_set[0]= 0
             self.cur_result = 0
         new_set << self.cur_result
         self.series.append(new_set)
         self.chartView.update()
-        print('sum=',new_set[0], type(new_set[0]))
-        print('count=',self.series.count())
-    
+
     def firstAction(self):
         self.layout().removeWidget(self.lblAreaLine)
-        # self.layout().removeWidget(self.lblAreaBar)
         self.lblAreaLine.setParent(None)
-        # self.lblAreaBar.setParent(None)
-        self.plotLine = WidgetPlotLine(self.centralwidget)  
-        # self.plotBar = WidgetPlotBar(self.centralwidget)   
-            
-        self.gridLayoutGraph.addWidget(self.plotLine)
-        # self.gridLayoutGraph.addWidget(self.plotBar)
 
+        self.gridLayoutGraph.addWidget(plot.WidgetPlotLine(self.centralwidget))
 
-# 그래프용 class
-class WidgetPlotLine(QWidget):
-    def __init__(self, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
-        
-        # self.setLayout(QVBoxLayout())
-        # self.canvas = PlotCanvasLine(self, width=10, height=8)
-        
-        
-        # self.x = np.arange(50)
-        # self.y = np.ones(50, dtype=np.float64)*np.nan
-        # self.line, = self.canvas.axes.plot(self.x, self.y, animated=True, lw=2)
-        # self.x2 = np.arange(50)
-        # self.y2 = np.ones(50, dtype=np.float64)*np.nan
-        # self.line2, = self.canvas.axes2.plot(self.x2, self.y2, animated=True,color='red', lw=2)
-        
-class PlotCanvasLine(FigureCanvas):
-    def __init__(self, parent=None, width=8, height=8, dpi=100):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        
-        self.axes = fig.add_subplot(xlim=(0, 60), ylim=(0, 1))
-        self.axes.spines['top'].set_visible(False)
-        self.axes.spines['bottom'].set_position('center')
-        self.axes.set_label('')
-        
-        FigureCanvas.__init__(self, fig)
-        self.setParent(parent)
-        FigureCanvas.setSizePolicy(self, 
-                QSizePolicy.Expanding, QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
-
-    
-    def plotLine(self):
-        pass
-
-# 웹소켓 websocket
-def send_api(path, method):
-    API_HOST = "http://k7b306.p.ssafy.io:8080"
-    # API_HOST = "http://192.168.0.30:8080"
-    url = API_HOST + path
-    print(url)
-    headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
-    body = {
-        "key1": "value1",
-        "key2": "value2"
-    }
-    
-    try:
-        if method == 'GET':
-            response = requests.get(url, headers=headers)
-        elif method == 'POST':
-            response = requests.post(url, headers=headers, data=json.dumps(body, ensure_ascii=False, indent="\t"),verify=False)
-        print("response status %r" % response.status_code)
-        print("response text %r" % response.text)
-    except Exception as ex:
-        print(ex)
-
-class Client(QThread, form_class):
-    """통신용 쓰레드"""
-
-    recieved_message = pyqtSignal(str)
-
-    def __init__(self):
-        QThread.__init__(self)
-        self.cond = QWaitCondition()
-        self.mutex = QMutex()
-        self._status = True
-        # self.cond.wakeAll()
-
-        self.client = QtWebSockets.QWebSocket("",QtWebSockets.QWebSocketProtocol.Version13,None)
-        self.client.error.connect(self.error)
-
-        # # self.client.open(QUrl("ws://127.0.0.1:8000/ws"))
-        self.client.open(QUrl("ws://k7b306.p.ssafy.io:8080/ws"))
-        # self.client.open(QUrl("ws://192.168.0.30:8080/ws"))
-        self.client.pong.connect(self.onPong)
-        self.client.textMessageReceived.connect(self.handle_message)
-        print("client")
-        
-
-    def run(self):
-        # 에러처리
-        while True:
-            self.mutex.lock()
-            # print("state:",self.client.state()) # 정상 연결은 3, 연결 안됨은 0, 에러는 2
-            if self.client.state()==0:
-                print("not connected")
-
-            if not self._status:
-                self.cond.wait(self.mutex)
-            self.mutex.unlock()
-
-    def toggle_status(self):
-        self._status = not self._status
-        if self._status:
-            self.cond.wakeAll()
-    def websocketFinish(self):
-        self._status = False
-        self.client.close()
-    def status_true(self):
-        self._status = True
-        if self._status:
-            self.cond.wakeAll()
-    def status_false(self):
-        self._status = False
-
-    @property
-    def status(self):
-        return self._status
-
-    def __del__(self):
-        self.wait()
-
-    def do_ping(self):
-        print("client: do_ping")
-        self.client.ping(b"foo")
-
-    def send_message(self):
-        print("client: send_message")
-        self.client.sendTextMessage("asd")
-        
-    def handle_message(self, message):
-        print("handle_message: ",type(message), len(message))
-        self.recieved_message.emit(message)
-
-    def onPong(self, elapsedTime, payload):
-        print("onPong - time: {} ; payload: {}".format(elapsedTime, payload))
-
-    def error(self, error_code):
-        print("error code: {}".format(error_code))
-        print(self.client.errorString())
-
-    def close(self):
-        self.client.close()
-
-    def pause_inference(self):
-        response=send_api('/pause','POST')
-        # self._status = False
-        print(response)
-
-    def restart_inference(self):
-        response=send_api('/restart','POST')
-        # self._status = True
-        # self.cond.wakeAll()
-        print(response)
-
-    def status_inference(self):
-        response=send_api('/status','GET')
-        print(response)
-
-    def stopThread(self):
-        print('Thread Stop')
-        self.power = False
-        self.terminate()
-        # self.wait(3000)
-
-
+    # 창 닫을 떄 발생하는 이벤트
+    def closeEvent(self, event):
+        try:
+            self.websocket.close()
+        except AttributeError:
+            pass
 
 
 def main():
-    #QApplication : 프로그램을 실행시켜주는 클래스
-    app = QApplication(sys.argv) 
+    # QApplication : 프로그램을 실행시켜주는 클래스
+    app = QApplication(sys.argv)
     # QTimer.singleShot(100000, quit_app)
 
+    # WindowClass의 인스턴스 생성
+    myWindow = InferenceWindowClass()
 
-    #WindowClass의 인스턴스 생성
-    myWindow = InferenceWindowClass() 
-
-    #프로그램 화면을 보여주는 코드
+    # 프로그램 화면을 보여주는 코드
     myWindow.show()
-    
+
     myWindow.firstAction()
 
-    #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
+    # 프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
     app.exec_()
 
 
-
-if __name__ == "__main__" :
-
+if __name__ == "__main__":
     main()
