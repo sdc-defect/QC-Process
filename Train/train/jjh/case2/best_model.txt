@@ -1,1 +1,1 @@
- fold, 19 epoch
+95 epoch
