@@ -292,6 +292,7 @@ class InferenceWindowClass(QMainWindow, form_class):
             QApplication.setOverrideCursor(Qt.ArrowCursor)
             if response.status_code == 200:
                 QMessageBox.information(self, '모델 업로드', "업로드 성공")
+                self.getModelList()
             else:
                 QMessageBox.critical(self, '모델 업로드', "업로드 실패")
 
@@ -300,13 +301,12 @@ class InferenceWindowClass(QMainWindow, form_class):
         response = utils.send_api(ip, '/model/list', 'GET')
         QApplication.setOverrideCursor(Qt.ArrowCursor)
         self.modelBox.clear()
-        self.modelBox.addItem('default')
-        self.modelBox.setCurrentIndex(0)
-        self.modelName = self.modelBox.currentText()
         if response.status_code == 200:
             models = json.loads(response.content.decode('utf-8'))['models']
             for model in models:
                 self.modelBox.addItem(model)
+        self.modelBox.setCurrentIndex(0)
+        self.modelName = self.modelBox.currentText()
 
     def modelSelect(self, text):
         QApplication.setOverrideCursor(Qt.WaitCursor)
