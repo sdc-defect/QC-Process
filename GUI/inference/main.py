@@ -24,11 +24,11 @@ import utils
 from all_images import AllImageWindowClass
 import utils.client as client
 import utils.plot as plot
-from utils import saveImageFile
 
 # UI파일 연결
 # 단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
-form_class = uic.loadUiType("ui/inference.ui")[0]
+form = utils.resource_path('ui/inference.ui')
+form_class = uic.loadUiType(form)[0]
 ip = "k7b306.p.ssafy.io:8080"
 
 
@@ -166,9 +166,9 @@ class InferenceWindowClass(QMainWindow, form_class):
         logger.info(logMessage)
 
         # 이미지 파일 jpg로 변환해서 저장
-        saveImageFile(imgDescription["img"], imagePath)
-        saveImageFile(imgDescription["cam"], camPath)
-        saveImageFile(imgDescription["merged"], mergedPath)
+        utils.saveImageFile(imgDescription["img"], imagePath)
+        utils.saveImageFile(imgDescription["cam"], camPath)
+        utils.saveImageFile(imgDescription["merged"], mergedPath)
 
     # 초기화
     def initUI(self):
@@ -349,9 +349,9 @@ class InferenceWindowClass(QMainWindow, form_class):
         result: dict = json.loads(content[1:-1].replace("\\", ""))
 
         save = self.inferenceDir + '/single/' + result['filename']
-        saveImageFile(result['img'], f'{save}.jpg')
-        saveImageFile(result['cam'], f'{save}_cam.jpg')
-        saveImageFile(result['merged'], f'{save}_merged.jpg')
+        utils.saveImageFile(result['img'], f'{save}.jpg')
+        utils.saveImageFile(result['cam'], f'{save}_cam.jpg')
+        utils.saveImageFile(result['merged'], f'{save}_merged.jpg')
         self.labelSingleCAMShow.setPixmap(QPixmap(f'{save}_merged.jpg'))
 
         if result['label'] == 0:
