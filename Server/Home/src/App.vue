@@ -136,7 +136,9 @@ export default {
 .horizontalAlign {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-around;
+  width: 1000px;
+  margin: 0 auto;
 }
 .dummyMargin1 {
   height: 3rem;
