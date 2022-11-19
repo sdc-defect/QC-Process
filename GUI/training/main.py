@@ -467,6 +467,7 @@ class trainingWindowClass(QMainWindow, form_class):
     def process_finished(self):
         self.message("Process finished.")
         self.p = None
+        self.pushButtonControlStart.setEnabled(True)
 
     # 학습 정지
     def trainingStop(self):
