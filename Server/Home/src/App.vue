@@ -204,13 +204,6 @@ export default {
   font-family: "notoSansBold";
 }
 
-@media (min-width: 992px) {
-.btnSingle {
-  
-}
-  
-} 
-
 /* .logo {
     height: 6em;
     padding: 1.5em;
