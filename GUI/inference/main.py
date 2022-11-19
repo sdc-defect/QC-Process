@@ -24,6 +24,8 @@ import utils
 from all_images import AllImageWindowClass
 import utils.client as client
 import utils.plot as plot
+import utils.highlight as highlight
+import datetime
 
 # UI파일 연결
 # 단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -104,6 +106,9 @@ class InferenceWindowClass(QMainWindow, form_class):
         self.chartView.setMinimumWidth(300)
         self.gridLayoutGraph.addWidget(self.chartView)
 
+        #로그 하이라이트
+        self.highlighter = highlight.Highlighter(self.textBrowserLogContent)
+
     # 웹소켓에서 데이터 받았을 때 실행
     def logSave(self, logContext):
         imgDescription = json.loads(logContext.replace("'", "\""))
@@ -125,11 +130,10 @@ class InferenceWindowClass(QMainWindow, form_class):
             "Merged_path": mergedPath
         }
 
+        tmpTimestamp=logMessage['Timestamp'].split('_')
+        tmpTime=tmpTimestamp[1].split(':')
         self.textBrowserLogContent.append(
-            "Timestamp: " + logMessage["Timestamp"] + ", File_name: " + logMessage["File_name"] + ", Probability_ok: " +
-            logMessage["Probability_ok"] + ", Probability_def: " + logMessage["Probability_def"] + ", Result: " +
-            logMessage["Result"] + ", Image_path: " + logMessage["Image_path"] + ", CAM_path: " + logMessage[
-                "CAM_path"] + ", Merged_path: " + logMessage["Merged_path"] + "\n")
+            tmpTimestamp[0] +' ' +tmpTime[0]+':'+tmpTime[1]+':'+ tmpTime[2] + ' -> '+ logMessage["Result"]+' [' + logMessage["Probability_ok"] + " , "+ logMessage["Probability_def"] + "]")
         self.get_data(logMessage)
         self.get_result(logMessage)
 
@@ -281,6 +285,8 @@ class InferenceWindowClass(QMainWindow, form_class):
         if fname:
             self.inferenceDir = fname
             self.textBrowserImageFile.setText(fname)
+            tmpSystemTime=str(datetime.datetime.now()).split('.')
+            self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Direcotry selected")
 
     # 메뉴에 모델 열기 누르면
     def editModelDir(self):
@@ -293,6 +299,8 @@ class InferenceWindowClass(QMainWindow, form_class):
             if response.status_code == 200:
                 QMessageBox.information(self, '모델 업로드', "업로드 성공")
                 self.getModelList()
+                tmpSystemTime=str(datetime.datetime.now()).split('.')
+                self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Model uploaded")
             else:
                 QMessageBox.critical(self, '모델 업로드', "업로드 실패")
 
@@ -302,6 +310,8 @@ class InferenceWindowClass(QMainWindow, form_class):
         QApplication.setOverrideCursor(Qt.ArrowCursor)
         self.modelBox.clear()
         if response.status_code == 200:
+            tmpSystemTime=str(datetime.datetime.now()).split('.')
+            self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Model refreshed")
             models = json.loads(response.content.decode('utf-8'))['models']
             for model in models:
                 self.modelBox.addItem(model)
@@ -314,6 +324,8 @@ class InferenceWindowClass(QMainWindow, form_class):
         QApplication.setOverrideCursor(Qt.ArrowCursor)
         if response.status_code == 200:
             QMessageBox.information(self, '모델 변경', "성공")
+            tmpSystemTime=str(datetime.datetime.now()).split('.')
+            self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Model changed")
         else:
             QMessageBox.critical(self, '모델 변경', "실패")
 
@@ -354,12 +366,20 @@ class InferenceWindowClass(QMainWindow, form_class):
         utils.saveImageFile(result['merged'], f'{save}_merged.jpg')
         self.labelSingleCAMShow.setPixmap(QPixmap(f'{save}_merged.jpg'))
 
-        if result['label'] == 0:
-            self.textBrowserSingleResult.setText("양품")
-        else:
-            self.textBrowserSingleResult.setText("불량")
+        tmpResult="양품"
+        if result['label'] == 1:
+            tmpResult="불량"
+        self.textBrowserSingleResult.setText(tmpResult)
         self.textBrowserSingleResult_2.setText(f'{(result["prob"][0] * 100):.2f}%')
         self.textBrowserSingleResult_3.setText(f'{(result["prob"][1] * 100):.2f}%')
+
+        tmpTimestamp=result['timestamp'].split('_')
+        tmpTime=tmpTimestamp[1].split(':')
+        self.textBrowserLogContent.append(
+            tmpTimestamp[0] +' ' +tmpTime[0]+':'+tmpTime[1]+':'+ tmpTime[2] + ' -> '+ tmpResult+' [' + str(format(round(result["prob"][0], 6),'.6f'))+ " , "+ str(format(round(result["prob"][1], 6),'.6f')) + "]")
+
+        tmpSystemTime=str(datetime.datetime.now()).split('.')
+        self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Inference stopped")
 
     # 모든 이미지 추론 시작
     @pyqtSlot()
@@ -376,12 +396,12 @@ class InferenceWindowClass(QMainWindow, form_class):
                 os.mkdir(self.inferenceDir + "/merged")
 
             if self.websocket is not None:
-                print("websocket already exist")
                 self.websocket.close()
 
             self.websocket = client.Client(f"ws://{ip}/ws")
             self.websocket.signal.connect(self.logSave)
-            self.textBrowserLogContent.append("Inference started\n")
+            tmpSystemTime=str(datetime.datetime.now()).split('.')
+            self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Inference started")
 
             # 정지, 일시정지 버튼 활성화
             self.pushButtonControlStart.setEnabled(False)
@@ -393,7 +413,8 @@ class InferenceWindowClass(QMainWindow, form_class):
 
     # 모든 이미지 추론 정지
     def allStopInference(self):
-        self.textBrowserLogContent.append("Inference stoped\n")
+        tmpSystemTime=str(datetime.datetime.now()).split('.')
+        self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Inference stopped")
         self.websocket.close()
 
         # 시작 버튼 활성화, 나머지 비활성화
@@ -405,7 +426,8 @@ class InferenceWindowClass(QMainWindow, form_class):
         self.pushButtonSingleStartInference.setEnabled(True)
 
     def pauseInference(self):
-        self.textBrowserLogContent.append("Inference paused\n")
+        tmpSystemTime=str(datetime.datetime.now()).split('.')
+        self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Inference paused")
         response = utils.send_api(ip, '/pause', 'POST')
 
         # 다시 시작, 정지 활성화
@@ -416,7 +438,8 @@ class InferenceWindowClass(QMainWindow, form_class):
             self.pushButtonControlStop.setEnabled(True)
 
     def restartInference(self):
-        self.textBrowserLogContent.append("Inference restarted\n")
+        tmpSystemTime=str(datetime.datetime.now()).split('.')
+        self.textBrowserLogContent.append(tmpSystemTime[0]+" -> Inference restarted")
         response = utils.send_api(ip, '/restart', 'POST')
 
         # 정지, 일시정지 버튼 활성화
@@ -459,6 +482,7 @@ class InferenceWindowClass(QMainWindow, form_class):
             self.series.append(self.a)
             self.cur_result = 0
         new_set << self.cur_result
+        new_set.setColor(QColor(52, 152, 219))
         self.series.append(new_set)
         self.chartView.update()
 
