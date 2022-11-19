@@ -1,0 +1,18 @@
+Model: "my_model6"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ inception_resnet_v2 (Functi  (None, 1536)             54336736  
+ onal)                                                           
+                                                                 
+ dense_23 (Dense)            multiple                  184440    
+                                                                 
+ dense_24 (Dense)            multiple                  14520     
+                                                                 
+ dense_25 (Dense)            multiple                  242       
+                                                                 
+=================================================================
+Total params: 54,535,938
+Trainable params: 54,475,394
+Non-trainable params: 60,544
+_________________________________________________________________

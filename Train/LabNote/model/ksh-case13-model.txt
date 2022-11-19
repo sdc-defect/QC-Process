@@ -1,0 +1,26 @@
+Model: "my_model2_10"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ efficientnetv2-b1 (Function  (None, 10, 10, 1280)     6931124   
+ al)                                                             
+                                                                 
+ batch_normalization_654 (Ba  multiple                 5120      
+ tchNormalization)                                               
+                                                                 
+ re_lu_35 (ReLU)             multiple                  0         
+                                                                 
+ dropout_72 (Dropout)        multiple                  0         
+                                                                 
+ global_average_pooling2d_39  multiple                 0         
+  (GlobalAveragePooling2D)                                       
+                                                                 
+ dropout_73 (Dropout)        multiple                  0         
+                                                                 
+ dense_48 (Dense)            multiple                  2562      
+                                                                 
+=================================================================
+Total params: 6,938,806
+Trainable params: 6,865,174
+Non-trainable params: 73,632
+_________________________________________________________________
