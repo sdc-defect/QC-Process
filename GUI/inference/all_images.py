@@ -11,8 +11,6 @@ form = utils.resource_path('ui/all_images.ui')
 form_class = uic.loadUiType(form)[0]
 
 
-# form_class = uic.loadUiType(r"C:\Users\multicampus\Desktop\guiFILE\6try1\inference\all_images.ui")[0]
-
 # 화면을 띄우는데 사용되는 Class 선언
 class AllImageWindowClass(QMainWindow, form_class):
     def __init__(self, allInferencedFile, allFileLst, okInferencedFile, okFileLst, defInferencedFile, defFileLst):
@@ -60,7 +58,6 @@ class AllImageWindowClass(QMainWindow, form_class):
         cnt = 0
         if len(nameLst):
             for name in nameLst:
-                # print(name, fileDict[name]["Timestamp"],fileDict[name]["Result"] )
                 self.tableWidgetAllFile.setItem(cnt, 0, QTableWidgetItem(name))
                 self.tableWidgetAllFile.setItem(cnt, 1, QTableWidgetItem(fileDict[name]["Timestamp"]))
                 resultItem=QTableWidgetItem(fileDict[name]["Result"])
@@ -72,15 +69,12 @@ class AllImageWindowClass(QMainWindow, form_class):
                 cnt = cnt + 1
         else:
             self.tableWidgetAllFile.clear()
-        # pass
 
     # 파일 리스트에 데이터 넣기
     def showList(self, images):
 
-        print("images:::", images)
         self.tableWidgetAllFile.setColumnCount(2)
         self.tableWidgetAllFile.setRowCount(len(images["fileLst"]))
-        print(len(images["fileLst"]))
 
         self.tableWidgetAllFile.setHorizontalHeaderLabels(['FileName', 'CreatedTime'])
         self.tableWidgetAllFile.horizontalHeaderItem(0).setToolTip("코드...")
