@@ -1,17 +1,21 @@
 <template>
   <div class="guideContent">
-    <div>
-      <div class="bodyHeight justifyVerticalCenter">
-        <img class="arrowHeight" src="../assets/leftArrow.png" alt="" v-if="status != 0" @click="moveToBefore()" />
-      </div>
-      <div class="dummyMargin2 arrowHeight"></div>
-    </div>
     <div class="contentBody">
       <div class="bodyHeight justifyCenter">
+        <div> 
+          <div class="bodyHeight justifyVerticalCenter">
+            <img class="arrowHeight" src="../assets/leftArrow.png" alt="" v-if="status != 0" @click="moveToBefore()" />
+          </div>
+        </div>
         <img v-if="status == 0" class="bodyImage" src="../assets/train1.png" alt="" />
         <img v-if="status == 1" class="bodyImage" src="../assets/train2.png" alt="" />
         <img v-if="status == 2" class="bodyImage" src="../assets/train3.png" alt="" />
         <img v-if="status == 3" class="bodyImage" src="../assets/train4.png" alt="" />
+        <div >
+          <div class="bodyHeight justifyVerticalCenter" >
+            <img class="arrowHeight" src="../assets/rightArrow.png" alt="" v-if="status != 3" @click="moveToNext()" />
+          </div>
+        </div>
       </div>
       <div class="textStyle">
         <div v-if="status == 0">
@@ -19,7 +23,8 @@
           <br />
           <div>양품과 불량을 구분하여 Train Data 파일 경로를 선택합니다.</div>
           <br />
-          <div>Test Data, Validation Data가 별도로 있는 경우 파일을 선택하며, 별도 선택이 없으면 설정한 비율에 맞게 이미지가 자동으로 할당됩니다.</div>
+          <div>Test Data, Validation Data가 별도로 있는 경우 파일을 선택하며, 별도 선택이 없으면 설정한 비율에 맞게 이미지가 자동으로 
+            할당됩니다.</div>
           <br />
           <div>※ jpg, png 형식 외의 파일은 학습이 불가능 합니다.</div>
         </div>
@@ -48,12 +53,7 @@
         </div>
       </div>
     </div>
-    <div>
-      <div class="bodyHeight justifyVerticalCenter">
-        <img class="arrowHeight" src="../assets/rightArrow.png" alt="" v-if="status != 3" @click="moveToNext()" />
-      </div>
-      <div class="dummyMargin2 arrowHeight"></div>
-    </div>
+
     <!-- <div>rigthArrow</div> -->
   </div>
 </template>
@@ -92,10 +92,8 @@ export default {
   height: 70%;
 }
 .justifyVerticalCenter {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 30%;
+  margin: 30px;
+  width: 30px;
 }
 .arrowHeight {
   /* height: 10%; */
@@ -105,7 +103,8 @@ export default {
   width: 5rem;
 }
 .contentBody {
-  width: 60%;
+  width: 800px;
+  margin: 0 auto;
   /* background-color: rgb(201, 204, 215); */
 }
 .justifyCenter {
@@ -119,8 +118,10 @@ export default {
   box-shadow: 0 0 12px 2px #b6b6b6;
 }
 .textStyle {
-  padding: 1rem 2rem;
-  font-size: 1.1em;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  margin-left: -32px;
+  font-size: 1.17em;
   text-align: left;
   /* box-shadow: 0 0 30px 1px #dcdcdc66; */
 }

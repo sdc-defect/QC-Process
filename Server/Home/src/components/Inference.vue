@@ -1,17 +1,23 @@
 <template>
   <div class="guideContent">
-    <div>
-      <div class="bodyHeight justifyVerticalCenter">
-        <img class="arrowHeight" src="../assets/leftArrow.png" alt="" v-if="status != 0" @click="moveToBefore()" />
-      </div>
-      <div class="dummyMargin2 arrowHeight"></div>
-    </div>
     <div class="contentBody">
       <div class="bodyHeight justifyCenter">
+        <div>
+          <div class="bodyHeight justifyVerticalCenter">
+            <img class="arrowHeight" src="../assets/leftArrow.png" alt="" v-if="status != 0" @click="moveToBefore()" />
+          </div>
+          <div class="dummyMargin2 arrowHeight"></div>
+        </div>
         <img v-if="status == 0" class="bodyImage" src="../assets/inference1.png" alt="" />
         <img v-if="status == 1" class="bodyImage" src="../assets/inference2.png" alt="" />
         <img v-if="status == 2" class="bodyImage" src="../assets/inference3.png" alt="" />
         <img v-if="status == 3" class="bodyImage" src="../assets/inference4.png" alt="" />
+        <div>
+          <div class="bodyHeight justifyVerticalCenter">
+            <img class="arrowHeight" src="../assets/rightArrow.png" alt="" v-if="status != 3" @click="moveToNext()" />
+          </div>
+          <div class="dummyMargin2 arrowHeight"></div>
+        </div>
       </div>
       <div class="textStyle">
         <div v-if="status == 0">
@@ -46,12 +52,7 @@
         </div>
       </div>
     </div>
-    <div>
-      <div class="bodyHeight justifyVerticalCenter">
-        <img class="arrowHeight" src="../assets/rightArrow.png" alt="" v-if="status != 3" @click="moveToNext()" />
-      </div>
-      <div class="dummyMargin2 arrowHeight"></div>
-    </div>
+
     <!-- <div>rigthArrow</div> -->
   </div>
 </template>
@@ -90,10 +91,8 @@ export default {
   height: 70%;
 }
 .justifyVerticalCenter {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 30%;
+  margin: 30px;
+  width: 30px;
 }
 .arrowHeight {
   /* height: 10%; */
@@ -103,7 +102,8 @@ export default {
   width: 5rem;
 }
 .contentBody {
-  width: 60%;
+  width: 800px;
+  margin: 0 auto;
   /* background-color: rgb(201, 204, 215); */
 }
 .justifyCenter {
@@ -117,7 +117,7 @@ export default {
   box-shadow: 0 0 12px 2px #b6b6b6;
 }
 .textStyle {
-  padding: 1rem 2rem;
+  padding: 1rem 0;
   font-size: 1.1em;
   text-align: left;
   /* box-shadow: 0 0 30px 1px #dcdcdc66; */

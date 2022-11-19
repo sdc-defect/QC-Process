@@ -93,7 +93,7 @@ export default {
       console.log(this.status);
     },
     downloadTraining() {
-      window.open("https://drive.google.com/file/d/1iMNtSGJVIAveHiylGz1mqao2MdV9ZsfG/view?usp=sharing");
+      window.open("https://drive.google.com/file/d/1k5qUKT8MaZwKyT2LoR72Utexy8em15KF/view?usp=sharing");
     },
     downloadInference() {
       window.open("https://drive.google.com/file/d/1iMNtSGJVIAveHiylGz1mqao2MdV9ZsfG/view?usp=sharing");
@@ -148,6 +148,7 @@ export default {
 }
 .footerBody {
   padding: 3rem;
+  margin-top: 40px;
   background-color: #33343e;
   color: #ffffff;
   text-align: left;
@@ -200,6 +201,14 @@ export default {
 .fontNormal:hover {
   font-family: "notoSansBold";
 }
+
+@media (min-width: 992px) {
+.btnSingle {
+  
+}
+  
+} 
+
 /* .logo {
     height: 6em;
     padding: 1.5em;
