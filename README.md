@@ -92,3 +92,8 @@ AI 모델을 활용하여 전문지식이 없는 작업자도 쉽게 모델을 �
 | BE 명세서 | [Link]()                                                     |
 | AI 명세서 | [Link]()                                                     |
 
+# Unity
+
+- 유니티 빌드파일 다운 링크
+
+https://drive.google.com/file/d/1XetT9bt9oXOcluUNJdlPmBEX_M9JMp9p/view?usp=sharing
