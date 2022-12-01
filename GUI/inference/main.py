@@ -1,6 +1,6 @@
 import sys
 from typing import Optional
-
+from PyQt5.QtCore import QTimerEvent
 from PyQt5 import uic
 import os
 from PyQt5 import QtWidgets
@@ -26,6 +26,9 @@ import utils.client as client
 import utils.plot as plot
 import utils.highlight as highlight
 import datetime
+import pyqtgraph as pg
+import numpy as np
+from PyQt5.QtWidgets import *
 
 # UI파일 연결
 # 단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
@@ -55,60 +58,43 @@ class InferenceWindowClass(QMainWindow, form_class):
         self.okInferencedFile = {}
         self.defInferencedFile = {}
 
-        self.yy = 0
-        self.total = 0
-        self.old_ts = 0
-        self.a = 0
-        self.cur_result = 0
+
+        self.ts=0
 
         self.initUI()
         self.setWindowTitle("Inference")
         self.setWindowIcon(QIcon('logo.png'))
 
-        # 그래프
-        self.canvas = plot.PlotCanvasLine(self, width=10, height=8)
-        self.gridLayoutGraph.addWidget(self.canvas)
-        self.x = np.arange(60)
-        self.y = np.ones(60, dtype=np.float64) * np.nan
-        self.line, = self.canvas.axes.plot(self.x, self.y, animated=True, color='red', lw=2)
-        self.ani = animation.FuncAnimation(self.canvas.figure, self.update_line, blit=True, interval=60000)
-        self.pushButtonControlStart.clicked.connect(lambda x: self.ani.event_source.start())
-        self.pushButtonControlStop.clicked.connect(lambda x: self.ani.event_source.stop())
-        self.ani.event_source.stop()
-
-        self.series = QBarSeries()
 
         # chart object
-        chart = QChart()
-        chart.addSeries(self.series)
-        chart.layout().setContentsMargins(0, 0, 0, 0)
+        pg.setConfigOptions(background='w', foreground='black') 
 
-        chart.setTitle('생산량')
-        chart.setAnimationOptions(QChart.SeriesAnimations)
-
-        dt = QDateTime.currentDateTime()
-        self.ts = dt.toString('mm')
-
-        axisX = QBarCategoryAxis()
-        axisX.append('시간')
-
-        axisY = QValueAxis()
-        axisY.setRange(0, 500)
-
-        chart.addAxis(axisX, Qt.AlignBottom)
-        chart.addAxis(axisY, Qt.AlignLeft)
-        self.series.attachAxis(axisX)
-        self.series.attachAxis(axisY)
-        chart.legend().setVisible(True)
-        chart.legend().setAlignment(Qt.AlignBottom)
-
-        self.chartView = QChartView(chart)
-        self.chartView.setMinimumWidth(300)
-        self.gridLayoutGraph.addWidget(self.chartView)
-
+        self.barX = list(range(60))
+        self.barY = np.array([0]*60)
+        self.lineX = list(range(60))
+        self.lineY= np.array([0]*60)
+        self.lineChart = pg.PlotWidget(title="불량률")
+        self.lineChart.setLabel('left', '불량률 (%)')
+        self.lineChart.setLabel('bottom', '시간 (분)')
+        self.barChart = pg.PlotWidget(title="생산량")
+        self.barChart.setLabel('left', '생산량 (개)')
+        self.barChart.setLabel('bottom', '시간 (분)')
+        self.lineChart.showGrid(x=False, y=True)
+        self.barChart.showGrid(x=False, y=True)
+        self.barChart.setXRange(0, 60, padding=0)   
+        self.barChart.setYRange(0, 100, padding=0) 
+        self.lineChart.setXRange(0, 60, padding=0)   
+        self.lineChart.setYRange(0, 100, padding=0)
+        self.lineChart.plot(self.barX, self.barY, pen='r')
+        self.gridLayoutGraph.addWidget(self.lineChart)
+        self.gridLayoutGraph.addWidget(self.barChart)
+        
         #로그 하이라이트
         self.highlighter = highlight.Highlighter(self.textBrowserLogContent)
 
+        
+    
+    
     # 웹소켓에서 데이터 받았을 때 실행
     def logSave(self, logContext):
         imgDescription = json.loads(logContext.replace("'", "\""))
@@ -134,7 +120,6 @@ class InferenceWindowClass(QMainWindow, form_class):
         tmpTime=tmpTimestamp[1].split(':')
         self.textBrowserLogContent.append(
             tmpTimestamp[0] +' ' +tmpTime[0]+':'+tmpTime[1]+':'+ tmpTime[2] + ' -> '+ logMessage["Result"]+' [' + logMessage["Probability_ok"] + " , "+ logMessage["Probability_def"] + "]")
-        self.get_data(logMessage)
         self.get_result(logMessage)
 
         # 메인 화면 이미지 리스트에 계속 추가해주기
@@ -244,6 +229,9 @@ class InferenceWindowClass(QMainWindow, form_class):
 
         self.logger.addHandler(streamHandler)
         return self.logger
+
+
+
 
     # 테이블 클릭시 이미지 띄우기
     def clickTableImages(self):
@@ -449,48 +437,40 @@ class InferenceWindowClass(QMainWindow, form_class):
             self.pushButtonControlPause.setEnabled(True)
             self.pushButtonControlStop.setEnabled(True)
 
-    def get_data(self, log):
-        if type(log) == dict:
-            if log['Result'] == '불량':
-                self.yy += 1
-            self.total += 1
-            dt = QDateTime.currentDateTime()
-            ts = dt.toString('mm')
-            if ts != self.old_ts:
-                self.old_ts = ts
-
-    def update_line(self, i):
-        y = self.yy / self.total if self.yy != 0 else 0
-        old_y = self.line.get_ydata()
-        new_y = np.r_[old_y[1:], y]
-        self.line.set_ydata(new_y)
-
-        return [self.line]
 
     def get_result(self, data):
-        if type(data) == dict:
-            self.cur_result += 1
         dt = QDateTime.currentDateTime()
-
-        ts = dt.toString('mm')
-
-        if len(self.series.barSets()) > 0:
-            self.a = self.series.barSets()[-1]
-            self.series.take(self.a)
-        new_set = QBarSet(f'{ts}')
-        if self.a != 0 and new_set.label() != self.a.label():
-            self.series.append(self.a)
-            self.cur_result = 0
-        new_set << self.cur_result
-        new_set.setColor(QColor(52, 152, 219))
-        self.series.append(new_set)
-        self.chartView.update()
+        if int(self.ts)>int(dt.toString('mm')):
+            self.barChart.clear()
+            self.lineChart.clear()
+            self.lineY=[0]*60
+            self.barY=[0]*60
+        self.ts = dt.toString('mm')
+        self.barY[int(self.ts)]+=1
+        if data["Result"]=='불량':
+            self.lineY[int(self.ts)]+=1
+        self.drawChart(self.barX, self.barY, self.lineY)
+        
+        
+    def drawChart(self, x, y,Y):
+        """ clear() 로 이전에 그린 차트 제거함. """
+        
+        dt = QDateTime.currentDateTime()
+        self.lineChart.clear()
+        self.barChart.clear() 
+        self.barChart.setXRange(0, 60, padding=0)   
+        self.barChart.setYRange(0, 100, padding=0) 
+        self.lineChart.setXRange(0, 60, padding=0)   
+        self.lineChart.setYRange(0, 100, padding=0)
+        if int(dt.toString('mm'))>0:
+            self.lineChart.plot(self.barX[0:int(dt.toString('mm'))], 100*np.array(Y[0:int(dt.toString('mm'))])/(np.array(y[0:int(dt.toString('mm'))])+0.000000001), pen='r', symbol='o',symbolSize=8 ,symbolBrush=('r'))
+        bar_chart2 = pg.BarGraphItem(x=x, height=y, width=1, brush=QColor(52, 152, 219))
+        self.barChart.addItem(bar_chart2)  
 
     def firstAction(self):
         self.layout().removeWidget(self.lblAreaLine)
         self.lblAreaLine.setParent(None)
 
-        self.gridLayoutGraph.addWidget(plot.WidgetPlotLine(self.centralwidget))
 
     # 창 닫을 떄 발생하는 이벤트
     def closeEvent(self, event):
