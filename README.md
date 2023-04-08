@@ -67,6 +67,10 @@ AI 모델을 활용하여 전문지식이 없는 작업자도 쉽게 모델을 �
 ![아키텍처](/uploads/7ad7d0a400d1869c78862135d7726bd0/아키텍처.png)
 
 
+# 데이터셋
+### Kaggle의 주조 데이터셋
+- https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product
+
 # 🤖 이미지 평가 및 개선 모델
 
 ### EfficientNet
